@@ -1,31 +1,66 @@
 import os
+import re
 import requests
-import urllib.request
 from PIL import Image
+from io import BytesIO
+import time
 
 # =========================
-# 1. 설정
+# 1. 설정 (여기만 수정하면 됨)
 # =========================
 ACCESS_KEY = "epIj8a7EvUfAyR05Jr7iaaItTtfEVzpjyuK4BD_ldJA"
 
-CLASSES = [
-    "pizza", "hamburger", "sushi", "pasta", "steak", "sandwich", "fried_chicken", "ramen", "apple", "banana", "strawberry", "mushroom", "cake", "croissant", "salad",
-    "dog", "cat", "lion", "elephant", "panda", "giraffe", "penguin", "dolphin", "owl", "butterfly",
-    "rose", "sunflower", "cactus", "pine_tree", "maple_leaf", "tulip", "bamboo", "grass",
-    "laptop", "smartphone", "digital_camera", "wristwatch", "backpack", "chair", "umbrella",
-    "car", "bicycle", "motorcycle", "airplane", "bus",
-    "mountain", "beach", "forest", "desert", "glacier"
+TARGET_COUNT = 100
+MIN_WIDTH = 256
+MIN_HEIGHT = 256
+SLEEP_TIME = 2
+
+BASE_DIR = "un_images"
+
+MASTER_CLASSES = [
+    "pizza","hamburger","sushi","pasta","salad","steak","cake","sandwich","fried_chicken","bread",
+    "apple","banana","strawberry","orange","carrot",
+    "golden_retriever","bulldog","siamese_cat","persian_cat","eagle","owl","lion","elephant","zebra","giraffe",
+    "rose","sunflower","daisy","tulip","palm_tree","pine_tree","maple_tree","bamboo",
+    "laptop","watch","camera","chair","clock","microwave","refrigerator",
+    "car","bicycle","motorcycle","airplane","bus",
+    "backpack","sneakers","umbrella","glasses","hat"
 ]
 
-MAX_NUM = 60
+SIMPLE_CLASSES = [
+    "pizza","burger","sushi","pasta","salad","steak","cake","sandwich","fried_chicken","bread",
+    "apple","banana","strawberry","orange","carrot",
+    "golden_retriever","bulldog","siamese_cat","persian_cat","eagle","owl","lion","elephant","zebra","giraffe",
+    "rose","sunflower","daisy","tulip","palm_tree","pine_tree","maple_tree","bamboo",
+    "laptop","wristwatch","camera","chair","wall_clock","microwave","refrigerator",
+    "car","bicycle","motorcycle","airplane","bus",
+    "backpack","sneakers","umbrella","glasses","hat"
+]
 
-BASE_DIR = "us_images"
 os.makedirs(BASE_DIR, exist_ok=True)
 
 # =========================
-# 2. Unsplash 검색
+# 2. 유틸
 # =========================
-def unsplash_search(query, per_page=30):
+def format_name(name):
+    return name.replace("_", "-")
+
+def get_start_index(folder, simple_cls):
+    pattern = re.compile(rf"un_{simple_cls}_(\d+)\.jpg")
+    max_idx = 0
+
+    for f in os.listdir(folder):
+        match = pattern.match(f)
+        if match:
+            num = int(match.group(1))
+            max_idx = max(max_idx, num)
+
+    return max_idx + 1
+
+# =========================
+# 3. API
+# =========================
+def search_images(query, page):
     url = "https://api.unsplash.com/search/photos"
 
     headers = {
@@ -33,160 +68,162 @@ def unsplash_search(query, per_page=30):
     }
 
     params = {
-        "query": query.replace("_", " "),  # 검색은 공백으로
-        "per_page": per_page
+        "query": query.replace("_", " "),
+        "per_page": 30,
+        "page": page
     }
 
     res = requests.get(url, headers=headers, params=params)
+
+    if res.status_code == 429:
+        print("⏳ Rate limit → 60초 대기")
+        time.sleep(60)
+        return []
 
     if res.status_code != 200:
         print("API ERROR:", res.text)
         return []
 
-    data = res.json()
+    return [item["urls"]["regular"] for item in res.json().get("results", [])]
 
-    return [item["urls"]["regular"] for item in data.get("results", [])]
-
-
-# =========================
-# 3. 다운로드
-# =========================
-def download_image(url, path):
+def download_image(url):
     try:
-        urllib.request.urlretrieve(url, path)
-        return True
+        res = requests.get(url, timeout=10)
+        if res.status_code != 200:
+            return None
+
+        img = Image.open(BytesIO(res.content))
+        w, h = img.size
+
+        if w < MIN_WIDTH or h < MIN_HEIGHT:
+            return None
+
+        return res.content
     except:
-        return False
-
-
-# =========================
-# 4. 검증
-# =========================
-def is_valid_image(path):
-    try:
-        img = Image.open(path)
-        img.verify()
-        return True
-    except:
-        return False
-
+        return None
 
 # =========================
-# 5. 전체 파이프라인
+# 4. 메인
 # =========================
-for cls in CLASSES:
-    print(f"\n[START] {cls}")
+for idx in range(len(MASTER_CLASSES)):
 
-    class_dir = os.path.join(BASE_DIR, cls)
+    master_cls = MASTER_CLASSES[idx]
+    simple_cls = format_name(SIMPLE_CLASSES[idx])
+
+    print(f"\n[START] {master_cls}")
+
+    class_dir = os.path.join(BASE_DIR, master_cls)
     os.makedirs(class_dir, exist_ok=True)
 
-    count = 0
+    start_idx = get_start_index(class_dir, simple_cls)
+    count = start_idx - 1
 
-    while count < MAX_NUM:
-        urls = unsplash_search(cls, per_page=30)
+    page = 1
+    seen = set()
+
+    while count < TARGET_COUNT:
+        urls = search_images(simple_cls, page)
+
+        if not urls:
+            print("이미지 없음")
+            break
 
         for url in urls:
-            if count >= MAX_NUM:
+            if count >= TARGET_COUNT:
                 break
 
-            file_name = f"us_{cls}_{count+1:03d}.jpg"
-            file_path = os.path.join(class_dir, file_name)
+            if url in seen:
+                continue
+            seen.add(url)
 
-            success = download_image(url, file_path)
-
-            if not success:
+            img_data = download_image(url)
+            if img_data is None:
                 continue
 
-            if not is_valid_image(file_path):
-                os.remove(file_path)
-                continue
-
-            print(f"Saved: {file_path}")
             count += 1
 
-    print(f"[DONE] {cls} -> {count} images")
+            file_name = f"un_{simple_cls}_{count:03d}.jpg"
+            path = os.path.join(class_dir, file_name)
 
+            with open(path, "wb") as f:
+                f.write(img_data)
 
-# 이미지 개수, 해상도 검사
+            print(f"Saved: {path}")
+
+        page += 1
+        time.sleep(SLEEP_TIME)
+
+    print(f"[DONE] {master_cls} -> {count}/{TARGET_COUNT}")
 
 # =========================
-# 설정
+# 5. 검증 + 부족분 자동 보충
 # =========================
-BASE_DIR = "us_images"
-EXPECTED_COUNT = 60
-MIN_WIDTH = 256
-MIN_HEIGHT = 256
+print("\n[검증 시작]\n")
 
-# =========================
-# 검사 시작
-# =========================
-print("\n[데이터셋 검사 시작]\n")
+for idx in range(len(MASTER_CLASSES)):
 
-total_classes = 0
-total_images = 0
+    master_cls = MASTER_CLASSES[idx]
+    simple_cls = format_name(SIMPLE_CLASSES[idx])
 
-for cls in os.listdir(BASE_DIR):
-    class_dir = os.path.join(BASE_DIR, cls)
+    class_dir = os.path.join(BASE_DIR, master_cls)
+    files = [f for f in os.listdir(class_dir) if f.endswith(".jpg")]
 
-    if not os.path.isdir(class_dir):
-        continue
+    valid_files = []
 
-    total_classes += 1
-
-    files = [
-        f for f in os.listdir(class_dir)
-        if f.lower().endswith(".jpg")
-    ]
-
-    print(f"\n[{cls}]")
-
-    # 1. 개수 체크
-    count = len(files)
-    total_images += count
-
-    if count != EXPECTED_COUNT:
-        print(f"❌ 이미지 개수 문제: {count}개 (기대값: {EXPECTED_COUNT})")
-    else:
-        print(f"✔ 이미지 개수 정상: {count}개")
-
-    # 2. 해상도 체크
-    small_images = []
-    broken_images = []
-
-    for file in files:
-        path = os.path.join(class_dir, file)
-
+    for f in files:
+        path = os.path.join(class_dir, f)
         try:
-            with Image.open(path) as img:
-                width, height = img.size
+            img = Image.open(path)
+            w, h = img.size
 
-                if width < MIN_WIDTH or height < MIN_HEIGHT:
-                    small_images.append((file, width, height))
-
+            if w >= MIN_WIDTH and h >= MIN_HEIGHT:
+                valid_files.append(f)
+            else:
+                os.remove(path)
         except:
-            broken_images.append(file)
+            os.remove(path)
 
-    # 결과 출력
-    if small_images:
-        print(f"❌ 해상도 부족 이미지 ({len(small_images)}개)")
-        for f, w, h in small_images[:5]:  # 너무 많으면 5개만 출력
-            print(f"   - {f} ({w}x{h})")
-    else:
-        print("✔ 해상도 조건 만족")
+    count = len(valid_files)
 
-    if broken_images:
-        print(f"❌ 깨진 이미지 ({len(broken_images)}개)")
-        for f in broken_images[:5]:
-            print(f"   - {f}")
-    else:
-        print("✔ 깨진 이미지 없음")
+    print(f"{master_cls}: {count}/{TARGET_COUNT}")
 
-# =========================
-# 전체 요약
-# =========================
-print("\n======================")
-print("전체 요약")
-print("======================")
-print(f"클래스 수: {total_classes}")
-print(f"총 이미지 수: {total_images}")
-print("검사 완료\n")
+    if count < TARGET_COUNT:
+        print(f"→ 부족분 재수집 시작")
+
+        page = 1
+        seen = set()
+        start_idx = get_start_index(class_dir, simple_cls)
+
+        while count < TARGET_COUNT:
+            urls = search_images(simple_cls, page)
+
+            if not urls:
+                break
+
+            for url in urls:
+                if count >= TARGET_COUNT:
+                    break
+
+                if url in seen:
+                    continue
+                seen.add(url)
+
+                img_data = download_image(url)
+                if img_data is None:
+                    continue
+
+                file_name = f"un_{simple_cls}_{start_idx:03d}.jpg"
+                path = os.path.join(class_dir, file_name)
+
+                with open(path, "wb") as f:
+                    f.write(img_data)
+
+                print(f"ReSaved: {path}")
+
+                start_idx += 1
+                count += 1
+
+            page += 1
+            time.sleep(SLEEP_TIME)
+
+print("\n[완료]")
