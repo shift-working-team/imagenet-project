@@ -3,5 +3,3 @@
 ['remote "dagshub"']
     url = https://dagshub.com/Shift-working/imagenet-project.dvc
     auth = basic
-    ask_password = false
-    user = blesty00
