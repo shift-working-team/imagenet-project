@@ -8,7 +8,7 @@ from tqdm import tqdm
 TARGET_COUNT = 60
 MIN_RES = 256
 PREFIX = "hf"
-BASE_DIR = "./dataset"
+BASE_DIR = "./data/raw"
 
 # ==========================================
 # 2. 아주 단순해진 50개 클래스 설정
