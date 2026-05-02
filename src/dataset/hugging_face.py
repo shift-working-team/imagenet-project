@@ -1,197 +1,187 @@
 import os
+import re
+import glob
+from dotenv import load_dotenv
 from datasets import load_dataset
-from tqdm import tqdm
+from PIL import Image
 
-# ==========================================
-# 1. 수집 기본 설정
-# ==========================================
-TARGET_COUNT = 60
-MIN_RES = 256
-PREFIX = "hf"
-BASE_DIR = "./data/raw"
+# =====================================================================
+# [설정 부분]
+# =====================================================================
+# 토큰
+load_dotenv()
+HF_TOKEN = os.environ.get("HF_TOKEN")
 
-# ==========================================
-# 2. 아주 단순해진 50개 클래스 설정
-# ==========================================
-# 도메인별로 '메인 데이터셋'과 '여분 데이터셋(fallback)'을 하나씩만 둡니다.
-DOMAIN_CONFIGS = {
-    "food": {
-        "dataset": "ethz/food101",
-        "fallback_dataset": "Kaludi/data-food-category-classification", # 메인에서 못 채우면 여기서 찾음
-        "mapping": {
-            'pizza': 'pizza', 'hamburger': 'hamburger', 'sushi': 'sushi',
-            'pasta': 'spaghetti_carbonara', 'salad': 'caesar_salad', 
-            'steak': 'steak', 'cake': 'chocolate_cake', 'sandwich': 'club_sandwich',
-            'fried chicken': 'fried_chicken', 'bread': 'garlic_bread', 
-            'apple': 'apple_pie', 'banana': 'frozen_yogurt', 
-            'strawberry': 'strawberry_shortcake', 'orange': 'macarons', 
-            'carrot': 'carrot_cake'
-        }
-    },
-    "animal": {
-        "dataset": "AlvaroVasquezAI/Animal_Image_Classification_Dataset",
-        "fallback_dataset": "Prgckwb/fake-animals",
-        "mapping": {
-            'golden retriever': 'golden retriever', 
-            'bulldog': 'French bulldog',
-            'siamese cat': 'Siamese cat', 
-            'persian cat': 'Persian cat',
-            'eagle': 'bald eagle', 
-            'owl': 'great grey owl', 
-            'lion': 'lion',
-            'elephant': 'African elephant', 
-            'zebra': 'zebra', 
-            'giraffe': 'giraffe'
-        }
-    },
-    "plant": {
-        "dataset": "anhaltai/plantNaturalist500k",
-        "fallback_dataset": "DeadPixels/DPhi_Sprint_25_Flowers",
-        "mapping": {
-            'rose': 'hip, rose hip, rosehip', 
-            'sunflower': 'daisy', 
-            'daisy': 'daisy', 
-            'tulip': 'tulip', 
-            'palm tree': 'palmtree',
-            'pine tree': 'pine', 
-            'maple tree': 'buckeye', 
-            'bamboo': 'bamboo'
-        }
-    },
-    "object": {
-        "dataset": "timm/objectnet",
-        "fallback_dataset": "ILSVRC/imagenet-1k", # 사물 여분 데이터셋 예시
-        "mapping": {
-            'laptop': 'notebook, notebook computer', 'watch': 'digital watch',
-            'camera': 'reflex camera', 'chair': 'folding chair',
-            'clock': 'wall clock', 'microwave': 'microwave, microwave oven',
-            'refrigerator': 'refrigerator, icebox'
-        }
-    },
-    "vehicle": {
-        "dataset": "DrBimmer/vehicle-classification",
-        "fallback_dataset": "ILSVRC/imagenet-1k",
-        "mapping": {
-            'car': 'sports car', 'bicycle': 'mountain bike, all-terrain bike, off-roader',
-            'motorcycle': 'motor scooter, scooter', 'airplane': 'airliner',
-            'bus': 'school bus'
-        }
-    },
-    "fashion": {
-        "dataset": "zalando-datasets/fashion_mnist",
-        "fallback_dataset": "ILSVRC/imagenet-1k",
-        "mapping": {
-            'backpack': 'backpack, back pack, knapsack, packsack, rucksack, haversack',
-            'sneakers': 'running shoe', 'umbrella': 'umbrella',
-            'glasses': 'sunglass', 'hat': 'cowboy hat, ten-gallon hat'
-        }
-    }
+print(f"이거 토큰 : {HF_TOKEN}")
+
+# 수집할 데이터셋
+DATASET_NAME = "KrushiJethe/fashion_data" 
+# 데이터셋 내의 이미지 데이터가 있는 필드명
+IMAGE_FIELD_NAME = "image"
+# 데이터셋 내의 라벨 데이터가 있는 필드명
+LABEL_FIELD_NAME = "articleType"
+
+# 여러 라벨을 하나의 대표 클래스로 묶는 매핑 딕셔너리
+CLASS_MAPPING = {
+    "t-shirt": ["Tshirts", "Tops"],
+    "sneakers":["Casual Shoes"],
+    #"umbrella":["Umbrellas"],
+    "glasses":["Sunglasses"],
+    "pants":["Jeans"],
 }
 
-# 로드 속도를 높이기 위한 메모리 캐싱
-loaded_datasets = {}
+# 클래스별로 수집할 이미지의 최대 개수
+NUM_IMAGES_PER_CLASS = 100
+# 저장할 이미지의 해상도 (width, height)
+TARGET_RESOLUTION = 256 
+# 이미지를 저장할 최상위 디렉토리명
+BASE_SAVE_DIR = "./dataset_output" 
+# 수집할 데이터셋의 split 이름 (예: "train", "validation", "test")
+SPLIT_NAME = "train"
 
-def get_hf_dataset(dataset_path):
-    if dataset_path not in loaded_datasets:
-        print(f"\n⏳ 데이터셋 로드 중: {dataset_path} ...")
-        loaded_datasets[dataset_path] = load_dataset(dataset_path, split="train")
-    return loaded_datasets[dataset_path]
+# 컨테이너를 실행한 상태에서는 컨테이너에 캐시 저장됨
+# 캐시 확인 -> ls -lah ~/.cache/huggingface
+# 캐시 삭제 -> rm -rf ~/.cache/huggingface
+USE_STREAMING = False
+# =====================================================================
 
-# ==========================================
-# 3. 추가 수집(Fallback) 로직이 포함된 함수
-# ==========================================
-def fetch_images_from_dataset(ds_path, master_name, target_labels, current_count, save_path):
-    """특정 데이터셋에서 이미지를 가져오는 핵심 함수 (메인, 여분 모두 이 함수를 거침)"""
-    if current_count >= TARGET_COUNT:
-        return current_count
-        
-    try:
-        ds = get_hf_dataset(ds_path)
-        hf_label_names = ds.features['label'].names
-        
-        # 1. 딕셔너리에 적은 매핑 이름으로 먼저 시도, 없으면 2. 내 마스터 이름으로 시도
-        search_labels = [target_labels, master_name] 
-        found_label = None
-        
-        for label in search_labels:
-            if label in hf_label_names:
-                found_label = label
-                break
+# 클래스 명명 규칙 적용
+def format_class_name(class_name: str) -> str:
+    """
+    클래스명은 소문자로 하고 띄어쓰기가 있을 경우 "-"로 대체
+    """
+    return str(class_name).lower().replace("_", "-").replace(" ", "-")
+
+# 마지막 이미지의 번호 + 1
+def get_next_image_index(save_dir: str, formatted_class_name: str) -> int:
+    """
+    이미지를 여러 차례 이어서 수집할 수 있도록 마지막 이미지 번호를 탐색
+    디렉토리를 스캔하여 가장 높은 번호를 찾은 뒤 +1을 반환
+    """
+    if not os.path.exists(save_dir):
+        return 1
+    
+    # jpg와 jpeg 확장자 모두 검색
+    search_pattern_jpg = os.path.join(save_dir, f"hf_{formatted_class_name}_*.jpg")
+    search_pattern_jpeg = os.path.join(save_dir, f"hf_{formatted_class_name}_*.jpeg")
+    
+    existing_files = glob.glob(search_pattern_jpg) + glob.glob(search_pattern_jpeg)
+    
+    max_idx = 0
+    # 파일명에서 정규표현식을 통해 번호 추출 (예: hf_fried-chicken_001.jpg -> 1)
+    regex = re.compile(rf"hf_{formatted_class_name}_(\d+)\.jpe?g$")
+    
+    for file_path in existing_files:
+        basename = os.path.basename(file_path)
+        match = regex.match(basename)
+        if match:
+            idx = int(match.group(1))
+            if idx > max_idx:
+                max_idx = idx
                 
-        if not found_label:
-            return current_count # 이 데이터셋에는 해당 클래스가 없음
+    return max_idx + 1
 
-        target_idx = hf_label_names.index(found_label)
-        class_ds = ds.filter(lambda x: x['label'] == target_idx)
-        
-        for item in tqdm(class_ds, desc=f"Saving {master_name} from {ds_path.split('/')[-1]}", leave=False):
-            if current_count >= TARGET_COUNT:
-                break
-            
-            img = item['image']
-            if img.width >= MIN_RES and img.height >= MIN_RES:
-                img = img.convert("RGB")
-                img_number = str(current_count + 1).zfill(3)
-                img_name = f"{PREFIX}_{master_name.replace(' ', '_')}_{img_number}.jpg"
-                img.save(os.path.join(save_path, img_name), "JPEG", quality=95)
-                current_count += 1
-                
-    except Exception as e:
-        print(f"  -> ⚠️ {ds_path} 검색 중 에러 발생: {e}")
-        
-    return current_count
-
-# ==========================================
-# 4. 메인 실행부
-# ==========================================
 def collect_hf_images():
-    os.makedirs(BASE_DIR, exist_ok=True)
-    total_report = {}
-    insufficient_classes = []
+    """
+    메인 데이터 수집 함수.
+    Hugging Face 데이터셋에서 설정을 반영하여 이미지를 수집하고 저장
+    """
 
-    for domain_name, config in DOMAIN_CONFIGS.items():
-        print(f"\n" + "="*50)
-        print(f"🚀 [{domain_name.upper()}] 도메인 수집 시작")
-        print("="*50)
+    label_to_rep_class = {}
+    for rep_class, labels in CLASS_MAPPING.items():
+        for label in labels:
+            label_to_rep_class[label] = rep_class
+    
 
-        main_ds = config['dataset']
-        fallback_ds = config.get('fallback_dataset')
+    print(label_to_rep_class)
+    # 데이터셋별 낱개로 수집
+    # streaming=True 속성을 사용하면 전체 데이터셋을 메모리나 디스크에 한 번에 다운로드하지 않고
+    # generator 형태로 하나씩(낱개로) 가져오므로 메모리와 네트워크 효율성이 극대화
+    print(f"[{DATASET_NAME}] 데이터셋 스트리밍 로드 시작...")
+    dataset = load_dataset(DATASET_NAME, split=SPLIT_NAME, streaming=USE_STREAMING, token=HF_TOKEN)
+    
+    # 랜덤으로 가져오기
+    # random_seed = random.randint(0, 10000)
+    # dataset = load_dataset(DATASET_NAME, split=SPLIT_NAME, streaming=USE_STREAMING).shuffle(seed=random_seed, buffer_size=1000)
 
-        for master_name, hf_label in config['mapping'].items():
-            folder_name = master_name.lower().replace(" ", "_")
-            save_path = os.path.join(BASE_DIR, folder_name)
-            os.makedirs(save_path, exist_ok=True)
-            
-            print(f"\n🔍 '{folder_name}' 수집 진행 중...")
-            
-            # 1. 메인 데이터셋에서 먼저 수집 시도
-            count = fetch_images_from_dataset(main_ds, folder_name, hf_label, 0, save_path)
-            
-            # 2. 목표 장수(60장)를 못 채웠고, 여분 데이터셋이 있다면 추가 수집 시도
-            if count < TARGET_COUNT and fallback_ds:
-                print(f"  -> 🔄 목표 미달({count}/{TARGET_COUNT}). 여분 데이터셋({fallback_ds})에서 추가 수집을 시도합니다.")
-                count = fetch_images_from_dataset(fallback_ds, folder_name, hf_label, count, save_path)
-
-            # 최종 장수 기록
-            total_report[folder_name] = count
-            if count < TARGET_COUNT:
-                insufficient_classes.append((folder_name, count))
-
-    # ==========================================
-    # 최종 결과 리포트 출력
-    # ==========================================
-    print("\n" + "#"*50)
-    print("📊 [전체 클래스 수집 완료 리포트]")
-    print("#"*50)
-    for cls, cnt in total_report.items():
-        print(f"- {cls}: {cnt}장 수집")
+    # 클래스별로 포맷팅된 폴더명과, 현재까지 수집된 개수, 그리고 저장될 시작 번호를 관리할 딕셔너리
+    class_info = {}
+    for label in CLASS_MAPPING.keys():
+        formatted_name = format_class_name(label)
+        save_path = os.path.join(BASE_SAVE_DIR, formatted_name)
         
-    if insufficient_classes:
-        print("\n🚨 [목표 미달 클래스 알림] (60장 미만)")
-        for cls, cnt in insufficient_classes:
-            print(f"  👉 {cls}: {cnt}장 (부족분: {TARGET_COUNT - cnt}장)")
-    else:
-        print("\n✅ 50개 모든 클래스가 목표치(60장)를 성공적으로 달성했습니다!")
+        # [규칙 1, 4] 클래스를 폴더로 관리하며 폴더명은 변환된 클래스명을 따른다.
+        os.makedirs(save_path, exist_ok=True)
+        
+        # 이어서 수집하기 위한 시작 인덱스 탐색
+        start_idx = get_next_image_index(save_path, formatted_name)
+        
+        class_info[label] = {
+            "formatted_name": formatted_name,
+            "save_path": save_path,
+            "collected_count": 0,
+            "current_idx": start_idx
+        }
+
+    print("데이터 수집을 시작합니다...")
+    
+    # 스트리밍 데이터 순회
+    for item in dataset:
+
+        print("1. 데이터셋 로드 시작...")
+        # 모든 클래스가 목표 수집량을 채웠는지 확인
+        if all(info["collected_count"] >= NUM_IMAGES_PER_CLASS for info in class_info.values()):
+            print("모든 클래스의 이미지 수집이 완료되었습니다.")
+            break
+
+        print("2. 데이터셋 라벨 아이템 꺼내기...")    
+        current_label = item.get(LABEL_FIELD_NAME)
+        
+        print(current_label)
+        # 현재 뽑힌 라벨이 정의한 매핑 딕셔너리에 존재하는지 확인
+        if current_label in label_to_rep_class:
+            rep_class = label_to_rep_class[current_label]
+            target_info = class_info[rep_class]
+            
+
+            print("4. 이미지 유효성 검사...")
+            # 이미 목표 개수를 채운 클래스라면 스킵
+            if target_info["collected_count"] >= NUM_IMAGES_PER_CLASS:
+                continue
+                
+            # 이미지 유효성 체크
+            image = item.get(IMAGE_FIELD_NAME)
+            if image is None:
+                continue
+            
+            print("5. 이미지 변환...")
+            try:
+                # 이미지를 jpg/jpeg로만 취급하기 위해 RGB 모드로 변환 (알파 채널 등 제거)
+                if image.mode != "RGB":
+                    image = image.convert("RGB")
+                    
+                #이미지 해상도가 최소 256px만 수집
+                if image.width < TARGET_RESOLUTION or image.height < TARGET_RESOLUTION:
+                    continue
+
+                print("6. 클래스 명명 규칙에 따라...")
+                # [규칙 3, 4] 이미지 명명 규칙 (hf_[클래스명]_[3자리숫자].jpg)
+                # {:03d}를 통해 3자리 숫자로 맞추고 빈자리는 0으로 채움
+                file_name = f"hf_{target_info['formatted_name']}_{target_info['current_idx']:03d}.jpg"
+                file_path = os.path.join(target_info["save_path"], file_name)
+                
+                print("7. 이미지 저장...")
+                image.save(file_path, "JPEG", quality=95)
+                
+                # 카운트 및 인덱스 증가
+                target_info["collected_count"] += 1
+                target_info["current_idx"] += 1
+                
+                print(f"Saved: {file_path} ({target_info['collected_count']}/{NUM_IMAGES_PER_CLASS})")
+                
+            except Exception as e:
+                # 오류 발생 시 스크립트가 멈추지 않도록 예외 처리
+                print(f"이미지 저장 중 오류 발생 (Label: {current_label}): {e}")
 
 if __name__ == "__main__":
     collect_hf_images()
