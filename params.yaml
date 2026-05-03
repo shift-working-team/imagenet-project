@@ -1,0 +1,50 @@
+project:
+  name: imagenet-project
+
+seed: 42
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  captions_file: data/raw/captions.csv
+
+split:
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1
+
+preprocess:
+  image_size: 256
+  normalize: true
+  lowercase_caption: true
+  remove_punctuation: true
+  min_word_freq: 2
+  max_caption_length: 30
+
+model:
+  encoder:
+    type: cnn
+    backbone: resnet18
+    pretrained: true
+    output_dim: 512
+
+  decoder:
+    type: lstm
+    embedding_dim: 256
+    hidden_dim: 512
+    num_layers: 1
+    dropout: 0.3
+
+train:
+  batch_size: 32
+  epochs: 20
+  learning_rate: 0.001
+  optimizer: adam
+  teacher_forcing_ratio: 1.0
+  num_workers: 2
+
+evaluate:
+  batch_size: 32
+  metrics:
+    - loss
+    - bleu
