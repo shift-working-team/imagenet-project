@@ -11,7 +11,7 @@ from sentence_transformers import SentenceTransformer, util           # SBERT
 # ----------------------
 # 1. 설정
 # ----------------------
-ROOT_DIR = "./raw"                         # 이미지 루트 폴더 (raw/클래스/이미지)
+ROOT_DIR = "data/raw"                         # 이미지 루트 폴더 (raw/클래스/이미지)
 OUTPUT_JSON = "annotation.json"         # 결과 JSON 파일 이름
 
 TARGET_CAPTIONS = 3                        # 이미지당 캡션 개수 (3 또는 5 추천)
@@ -24,7 +24,7 @@ VAL_RATIO = 0.15                           # val 비율
 TEST_RATIO = 0.15                          # test 비율
 
 device = "cuda" if torch.cuda.is_available() else "cpu"  # GPU 사용 여부
-
+print("device : ", device)
 # ----------------------
 # 2. 모델 로드
 # ----------------------
