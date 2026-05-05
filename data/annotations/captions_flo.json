@@ -1,0 +1,1202 @@
+[
+    {
+        "image": "airplane/kg_airplane_001.jpg",
+        "class": "airplane",
+        "captions": [
+            "A small white airplane is on the runway.",
+            "In this image we can see an airplane on the road. In the background there are vehicles, poles, trees and grass.",
+            "There is a small white airplane on the runway. There are many windows on the side of the airplane. There is a flag on the tail of the plane."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_002.jpg",
+        "class": "airplane",
+        "captions": [
+            "A small U.S. Navy plane flying in the sky.",
+            "In this image we can see an aircraft flying in the air. In the background there is sky.",
+            "A small plane is flying in the air. The plane is a US Navy plane. There are numbers on the side of the plane. The sky is cloudy."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_003.jpg",
+        "class": "airplane",
+        "captions": [
+            "A man walking next to a small yellow airplane.",
+            "In this image we can see a man walking on the ground. We can also see an airplane on the grass.",
+            "A man is walking towards a small yellow airplane. The man is wearing a black short sleeve shirt and black shorts. The airplane is small and has two propellers on the wings. The plane is on a grassy field."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_004.jpg",
+        "class": "airplane",
+        "captions": [
+            "An old airplane with a red star on it.",
+            "In this image we can see an airplane on the ground. In the background there are hills and sky.",
+            "A silver airplane with a red star on it. There is a red number 10 on the side of the plane. There are clouds in the sky."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_005.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "This is an image of a plane. The plane is flying in the sky. The sky is blue and clear. The airplane is white and red. There are small windows on the side of the plane. There is a propeller on the front of the airplane. The propeller is black. The tail of the the plane is red and white."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_006.jpg",
+        "class": "airplane",
+        "captions": [
+            "An old fighter plane flying in the sky.",
+            "In this image I can see an aircraft which is in green and cream color. Background is in white color.",
+            "A military plane is flying in the air. The plane is green and white. There are two red lights on the front of the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_007.jpg",
+        "class": "airplane",
+        "captions": [
+            "A model airplane sitting on top of a lush green hillside.",
+            "In this image we can see an aircraft. In the background of the image there are trees.",
+            "The image is of a small plane. The plane is white with a red, white and blue stripe on the side. There is a blue and white circle on the front of the plane. There are small black wheels on the plane as well. The background of the image is blurred. There appears to be a mountain range in the background."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_008.jpg",
+        "class": "airplane",
+        "captions": [
+            "A fighter jet flying over a snow covered mountain.",
+            "In this image we can see an aircraft flying in the air. In the background there is snow and sky.",
+            "This is an image of a plane. The plane is a fighter jet. The fighter jet is gray. The jet has two wings. The wings are triangular. The sky is blue and white. There is snow on the ground. The snow is white. The ground is covered in snow. The airplane is flying in the air. The nose of the plane is black."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_009.jpg",
+        "class": "airplane",
+        "captions": [
+            "The tail of a jet flying over the ocean.",
+            "In this image we can see an airplane flying in the sky.",
+            "A plane is flying in the sky. The plane is black. The sky is partly cloudy. The clouds are white. The water is blue. There are some small waves in the water."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_010.jpg",
+        "class": "airplane",
+        "captions": [
+            "A fighter jet flying over a body of water.",
+            "In this image we can see an aircraft flying in the sky.",
+            "A jet is flying in the sky. The jet is white and black. There is a black letter N on the side of the jet. There are many windows on the jet's body. There's a yellow object under the jet on the ground. The ground below the jet is covered in water. The water is blue and green. The sky is blue. The weather is sunny."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_011.jpg",
+        "class": "airplane",
+        "captions": [
+            "A fighter jet flying through a cloudy blue sky.",
+            "In this image we can see an aircraft flying in the sky.",
+            "An airplane is flying in the sky. The airplane is black and silver. There are propellers on the wings of the plane. There is a yellow light on the side of the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_012.jpg",
+        "class": "airplane",
+        "captions": [
+            "A small white airplane flying through a blue sky.",
+            "In this image I can see an aircraft which is in white and black color. Background is in blue color.",
+            "A small plane is flying in the sky. The plane is white and has black writing on the side of it. There are black wheels on the plane."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_013.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A plane is flying in the sky. The plane is white and black. There are black writing on the side of the plane. The sky is blue and clear."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_014.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a blue sky.",
+            "In this image we can see an aeroplane flying in the sky.",
+            "This is an image of a plane. The plane is flying in the sky. The sky is blue and clear. The airplane is white, red, and black. There are small windows on the side of the plane. There is a propeller on the back of the airplane. The wheels on the plane are black. The propeller is silver. The tail on the airplane is dark gray."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_015.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large yellow airplane flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "This is an image of a plane. The plane is flying in the sky. The sky is blue and clear. The airplane is yellow and brown. There is a large propeller on the back of the plane. There are small windows on the side of the airplane. The wheels on the plane are black. The tail of the the plane has a large letter on it."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_016.jpg",
+        "class": "airplane",
+        "captions": [
+            "Two planes are flying in the sky together.",
+            "In this image we can see two airplanes flying in the sky.",
+            "Two planes are flying in the sky. The plane on the left is green and white and the one on the right is brown. The sky is blue and clear."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_017.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "An airplane is flying in the sky. The sky is blue and clear. The airplane is white and black. There are small windows on the side of the plane. The plane has two engines on each wing."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_018.jpg",
+        "class": "airplane",
+        "captions": [
+            "A blue and white airplane flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A plane is flying in the sky. The plane is blue and white. The sky is blue with white clouds. There are two engines under the plane."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_019.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A plane is flying in the air. The plane is white and black. The sky is blue and clear. There are two engines on the side of the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_020.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large passenger jet flying through a cloudy blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A large white and blue airplane is flying in the sky. There are white clouds under the airplane. There is a bright sun behind the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_021.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane is shown on a white background.",
+            "In this image we can see an animated picture of an aeroplane.",
+            "The image is a drawing of a plane. The plane is white. The tail of the plane is long. There are two engines on the plane. There is a window on the side of the airplane. The windows are small. The window is black. The background of the image is white with black lines. The lines are outlined in black."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_022.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a cloudy sky.",
+            "In this image we can see an airplane flying in the sky. At the bottom of the image there are trees.",
+            "An airplane is flying in the sky. There are trees below the airplane. There is a sunset behind the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_023.jpg",
+        "class": "airplane",
+        "captions": [
+            "A silhouette of a plane flying in the sky.",
+            "In this image I can see an aircraft which is in black color. Background is in green color.",
+            "The image is a silhouette of a plane in the sky. The background is a solid green color. The silhouette of the plane is black."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_024.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane is shown in a cartoon style.",
+            "In this image we can see an animated picture of an aeroplane.",
+            "This is an animated image of a plane. The plane is white and blue. The nose of the plane is gray. There are small windows on the side of the airplane. There is a large engine on the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_025.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large propeller airplane sitting on top of an airport runway.",
+            "In this image we can see an airplane on the runway. In the background there is grass, trees and sky.",
+            "A large white airplane is sitting on a runway. There is a blue propeller on the front of the plane. There are small windows on the side of the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_026.jpg",
+        "class": "airplane",
+        "captions": [
+            "A mannequin sitting in the back of an airplane.",
+            "In this image we can see a mannequin in a vehicle.",
+            "A mannequin is sitting in the window of a plane. The plane is white and the window is open. There are shelves on the side of the plane."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_027.jpg",
+        "class": "airplane",
+        "captions": [
+            "A view of the wing of an airplane flying over a city.",
+            "In this image we can see an airplane wing. In the background of the image there are clouds and sky.",
+            "An airplane is flying in the sky. The wing of the plane is white and has a pink tip. There are white clouds in the distance. There is a city below the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_028.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large passenger jet flying through a cloudy blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A large white airplane is flying in the sky. There are white clouds under the plane. There is a blue sky above the clouds."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_029.jpg",
+        "class": "airplane",
+        "captions": [
+            "The wing of an airplane flying above the clouds.",
+            "In this image we can see an aeroplane wing and clouds in the sky.",
+            "The wing of an airplane is seen above the clouds. The clouds are white and fluffy. The sky is blue and pink."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_030.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane is shown on a white background.",
+            "In this image we can see an animated picture of an aeroplane.",
+            "The image is of a plane. The plane is white and has a blue tail. There are two engines under the wings. The wheels of the plane are black. The background of the image is white."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_031.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane flying in the sky at sunset.",
+            "In this image we can see an aeroplane flying in the sky.",
+            "An airplane is flying in the sky. The sky is cloudy and orange. There are small gray clouds in the distance. The airplane is white."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_032.jpg",
+        "class": "airplane",
+        "captions": [
+            "A blue and white airplane flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A plane is flying in the sky. The plane is white and blue. There is writing on the side of the plane. The sky is blue and clear."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_033.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane is flying in the air against a white background.",
+            "In this image we can see an airplane.",
+            "This is an image of a plane. The plane is white with a blue and red stripe on it. The tail of the plane is blue with a red stripe. There are small white letters on the tail. There is a blue logo on the side of the airplane. The wheels on the plane are large and black. The background of the image is white."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_034.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport runway.",
+            "In this image we can see an aeroplane on the runway. We can also see some lights, poles and the sky which looks cloudy.",
+            "An airplane is sitting on the ground. There is water under the plane. There are lights on the side of the plane in front of it."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_035.jpg",
+        "class": "airplane",
+        "captions": [
+            "A view of the wing of an airplane in the sky.",
+            "In this image we can see an airplane wing. In the background there are clouds and sky.",
+            "The wing of an airplane is seen from the bottom of the photo. The airplane is white and the tail of the plane is red. There are many white clouds in the sky. The sky is blue and there are a lot of wispy clouds. The clouds are white and fluffy. The sun is shining brightly on the left side of the picture."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_036.jpg",
+        "class": "airplane",
+        "captions": [
+            "A fighter jet flying through a blue sky.",
+            "In this image we can see an aircraft flying in the air. In the background there is sky.",
+            "A military plane is flying in the sky. The plane is gray and has a camouflage pattern on it. There are numbers and letters on the side of the plane. The sky is blue and clear."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_037.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a cloudy sky.",
+            "In this image we can see an aeroplane flying in the sky.",
+            "An airplane is flying in the sky. There are two large engines under the wings of the airplane. There is a large cloud under the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_038.jpg",
+        "class": "airplane",
+        "captions": [
+            "A series of photographs of airplanes flying in the sky.",
+            "This is a collage image. In this image we can see airplanes flying in the sky. In the background there is sky with clouds.",
+            "The sky is blue with white clouds. The sun is shining through the clouds. There are airplanes in the sky. The airplanes are flying in different directions."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_039.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane taking off from an airport runway.",
+            "In this image we can see an airplane flying in the air. In the background there are trees and sky with clouds.",
+            "An airplane is taking off from an airport runway. The plane is white with a blue stripe down the side. The landing gear is down. The sky is blue with white clouds."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_040.jpg",
+        "class": "airplane",
+        "captions": [
+            "The wing of an airplane flying over the clouds.",
+            "In this image we can see an airplane wing. In the background of the image there is sky.",
+            "The wing of an airplane is visible above the clouds. The sky is blue and the sun is setting in the distance. The clouds are white and fluffy."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_041.jpg",
+        "class": "airplane",
+        "captions": [
+            "A Finnair plane is parked at an airport.",
+            "In this image we can see airplanes on the ground. In the background there are buildings, poles, trees and sky.",
+            "There is a large white and blue airplane on the ground. There is a white building behind the airplane. There are several carts under the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_042.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large passenger jet flying through a cloudy sky.",
+            "In this image we can see an airplane flying in the sky. We can also see the sky with the clouds.",
+            "A large white airplane is flying in the sky. There are large white clouds under the airplane. There is a red and white stripe on the side of the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_043.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport runway.",
+            "In this image we can see an airplane on the runway. In the background there are trees, buildings and sky.",
+            "A large blue and white airplane is sitting on a runway. There is a yellow line painted on the ground in front of the plane. There are buildings behind the plane in the distance."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_044.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a blue sky.",
+            "In this image we can see an aeroplane flying in the sky.",
+            "A large white airplane is flying in the sky. There are two large engines under the wings of the plane. The sky is blue with white clouds in it."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_045.jpg",
+        "class": "airplane",
+        "captions": [
+            "A view of the wing of an airplane as the sun sets.",
+            "In this image we can see an airplane flying in the sky.",
+            "The wing of an airplane is seen above the clouds. The sun is setting in the distance and the sky is orange and blue. The clouds are white and fluffy."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_046.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport runway.",
+            "In this image we can see an aeroplane on the ground. In the background there is sky.",
+            "A large white airplane is on the ground. There are two large engines under the wings of the plane. There is a light under the nose of the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_047.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large passenger jet flying through a blue sky.",
+            "In this image we can see an aeroplane flying in the sky.",
+            "A large white airplane is flying in the sky. There is a blue stripe on the side of the plane. There are two large engines under the wing of the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_048.jpg",
+        "class": "airplane",
+        "captions": [
+            "A small propeller plane flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A small white airplane is flying in the sky. There is a propeller on the front of the plane. There are windows on the side of the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_049.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport tarmac.",
+            "In this image we can see an airplane on the runway. In the background there are trees and sky with clouds.",
+            "A plane is sitting on the runway. The plane is white with a blue stripe down the side. The sky above the plane is blue. There are white clouds in the sky."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_050.jpg",
+        "class": "airplane",
+        "captions": [
+            "The inside of an airplane with rows of seats.",
+            "This is an inside view of an airplane. In this image we can see seats. At the top of the image there are windows.",
+            "This is an image of an airplane. The airplane has rows of seats. The seats are black with white writing on them. There are windows on the sides of the plane. The windows are tinted blue. There is a white cloud in the sky. The clouds are white and blue. The sun is shining through the windows."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_051.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying over a large body of water.",
+            "In this image we can see an airplane flying in the air. We can also see some boats on the water and the sky which looks cloudy.",
+            "An airplane is flying over the water. There are small waves in the water around the airplane. There is a sailboat in the distance."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_052.jpg",
+        "class": "airplane",
+        "captions": [
+            "A United Airlines passenger jet flying through the sky.",
+            "In this picture we can see an airplane flying in the sky.",
+            "An airplane is flying in the sky. There are many clouds below the airplane. The airplane is white and blue. There is writing on the side of the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_053.jpg",
+        "class": "airplane",
+        "captions": [
+            "A paper airplane is sitting in the grass.",
+            "In this image we can see a paper airplane. In the background of the image there are plants.",
+            "This is an image of a paper airplane. The airplane is made up of paper. The paper airplane is white. There are lines on the plane. The lines are black. The plane has a propeller on the nose. The propeller is gray. There is a text on the right side of the plane that is black and white. The text is written in gray. The grass is green and brown."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_054.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport runway.",
+            "In this picture we can see an airplane on the ground and in the background we can find few trees and a vehicle.",
+            "A large airplane is parked on the runway. The plane is white and blue. There is writing on the side of the plane. There are small black circles on the front of the airplane."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_055.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "An airplane is flying in the sky. The sky is clear and blue. The airplane is white and has two large engines on each of its wings. The landing gear is down."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_056.jpg",
+        "class": "airplane",
+        "captions": [
+            "A jet flying through a cloudy blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A plane is flying in the sky. The sky is blue with white clouds. The plane is black. The clouds are fluffy and white."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_057.jpg",
+        "class": "airplane",
+        "captions": [
+            "A model airplane made out of legos sitting on a table.",
+            "In this image we can see a model of an aircraft on the floor. In the background there is a wall.",
+            "A model airplane is sitting on the ground. There is a white wall behind the model airplane. The model plane is made out of legos. The legos are white in color."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_058.jpg",
+        "class": "airplane",
+        "captions": [
+            "A United Airlines jet flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A United Airlines plane is flying in the sky. The plane is gray with blue stripes on the tail. There are white clouds under the plane."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_059.jpg",
+        "class": "airplane",
+        "captions": [
+            "A model airplane with a propeller on a white background.",
+            "In this image I can see an aircraft which is white and orange in color on the white colored surface.",
+            "The image is of a model airplane. The airplane is white and has an orange propeller on the front. The propeller has two black wheels on it. The background is plain white."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_060.jpg",
+        "class": "airplane",
+        "captions": [
+            "A little boy riding in a small yellow airplane.",
+            "In this image we can see a boy sitting in a toy plane. In the background there is sky.",
+            "A little boy is sitting in a toy plane. The plane is yellow with black stripes on it. The boy is wearing a blue shirt. There is a propeller on the front of the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_061.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport runway.",
+            "In this image we can see an airplane on the runway. On the ground there is grass. In the background there are trees, buildings and sky.",
+            "There is a large white airplane on the runway. There is a red tail on the plane. There are buildings in the distance behind the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_062.jpg",
+        "class": "airplane",
+        "captions": [
+            "A British Airways jet flying through a blue sky.",
+            "In this image we can see an airplane flying in the air. In the background there is sky.",
+            "A British Airways plane is flying in the air. The plane is white, blue, red and white. The sky is blue and clear."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_063.jpg",
+        "class": "airplane",
+        "captions": [
+            "An American Airlines passenger jet flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A large white airplane is flying in the sky. There is a red stripe on the side of the airplane. There are two engines under the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_064.jpg",
+        "class": "airplane",
+        "captions": [
+            "A piece of paper airplane sitting on top of a red surface.",
+            "In this image we can see a paper airplane on the red color surface.",
+            "A piece of paper is sitting on a red surface. The paper is white and has a pointed tip. There is a shadow under the paper on the surface."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_065.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying over a stadium filled with lights.",
+            "In this image we can see an aeroplane flying in the air. In the background, we can also see some lights and the sky.",
+            "An airplane is flying in the air. There are two engines on each of the wings of the plane. There is a row of lights below the plane on the ground."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_066.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane is shown from the side of the plane.",
+            "This is an animated image. In this image we can see an aeroplane.",
+            "The image is a drawing of a plane. The plane is gray. There are two jet engines on the wing of the plane. There is blue lights on the side of the airplane. The background of the image is white. The image is an animated image. The airplane is facing towards the right. The engines are black and round. The tail lights are blue and white."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_067.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport tarmac.",
+            "In this image we can see an airplane on the runway. In the background there are buildings, poles and sky with clouds.",
+            "A large white airplane is sitting on the ground. There is an orange cone in front of the airplane. There are large engines on the sides of the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_068.jpg",
+        "class": "airplane",
+        "captions": [
+            "A small blue and white airplane sitting on a runway.",
+            "In this image we can see an airplane on the ground. In the background there is sky with clouds.",
+            "There is a small plane on the ground. The plane is white and blue. There are black numbers on the side of the plane. There is a flag on the tail of the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_069.jpg",
+        "class": "airplane",
+        "captions": [
+            "A white airplane with a red lion painted on the side.",
+            "In this image we can see airplanes on the runway. In the background there are poles, buildings, trees and sky.",
+            "There are two planes parked on the runway. The plane closest to the camera has the word lion on it in red. The tail of the plane has a red symbol on it. The sky is overcast and gray."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_070.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner taking off from an airport runway.",
+            "In this image we can see an airplane on the runway. We can also see some grass, a group of trees, some poles and the sky which looks cloudy.",
+            "A large blue and white airplane is on the runway. There is grass under the plane. There are trees in the distance behind the airplane."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_071.jpg",
+        "class": "airplane",
+        "captions": [
+            "A man standing in front of an airplane on a runway.",
+            "In this image we can see a person standing on the ground. In the background there is an airplane on the runway, trees and sky with clouds.",
+            "A man in a white shirt and black pants is standing in front of a small white airplane. The man is wearing white shoes. The sky is blue with white clouds."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_072.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A large white airplane is flying in the sky. There is a blue and red stripe on the side of the plane. There are two large engines under the plane on the ground."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_073.jpg",
+        "class": "airplane",
+        "captions": [
+            "A yellow and red biplane flying over a mountain.",
+            "In this image I can see an aircraft which is in yellow, red and black color. Background the sky is in white and blue color.",
+            "A yellow and red biplane is flying over a mountain. The mountain is covered in snow. There are clouds in the sky above the mountain."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_074.jpg",
+        "class": "airplane",
+        "captions": [
+            "The inside of a cockpit of an airplane.",
+            "In this image I can see inside view of an aircraft. I can also see few seats, few machines, few lights and few other objects.",
+            "This is an image of a cockpit of a plane. The cockpit is very dark. There are two seats in the cockpit. The seats are covered with a white blanket. There is a control panel in the center of the cockpit with various gauges and dials. The gauges are blue and white. The windshield on the cockpit is dark blue."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_075.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large passenger jet flying through a cloudy blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "An airplane is flying in the sky. There are two engines under the wings of the airplane. There is a red and white stripe on the front of the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_076.jpg",
+        "class": "airplane",
+        "captions": [
+            "A blue and white airplane on a runway.",
+            "In this image we can see an airplane on the runway. In the background there are trees and sky. At the bottom there is grass.",
+            "There is a large blue airplane on the runway. There are trees behind the airplane. There is grass on the ground under the plane."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_077.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane with a cartoon character on the side of it.",
+            "In this image we can see an airplane and a vehicle on the ground. We can also see some text on it.",
+            "There is a large white and blue airplane on the ground. There is a yellow and white truck parked next to the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_078.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a cloudy sky.",
+            "In this image we can see an airplane flying in the air. In the background there is sky with clouds.",
+            "A large white airplane is flying in the sky. There are black wheels on the bottom of the plane. There is a red, white and blue stripe on the tail of the airplane."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_079.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner taking off from an airport runway.",
+            "In this image we can see airplanes on the runway. In the background there are trees and sky with clouds.",
+            "There is a large plane on the runway. There is smoke coming out of the back of the plane. There are trees on the other side of the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_080.jpg",
+        "class": "airplane",
+        "captions": [
+            "A woman sitting on the ground in front of an airplane.",
+            "In this image we can see a woman sitting on the road. In the background there are trees, aeroplanes and sky.",
+            "A woman is sitting on the ground. She is wearing a white shirt and blue shorts. There is a plane flying in the sky above the woman."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_081.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane is shown against a black background.",
+            "In this image I can see an aircraft which is in white color. Background is in black color.",
+            "The image is of a large white airplane against a black background. The airplane has two large engines on each side of it. There are two windows on the side of the airplane. The windows are small and round. The nose of the plane is rounded. The plane has a long white tail."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_082.jpg",
+        "class": "airplane",
+        "captions": [
+            "A jet flying through a cloudy blue sky.",
+            "In this picture we can see an airplane flying in the sky.",
+            "A plane is flying in the sky. The sky is partly cloudy. The clouds are white and fluffy. The sun is shining through the clouds. The plane is casting a shadow on the bottom of it. There are two wings on the plane. The nose of the plane is black. There is a propeller on the front of the airplane. The tail of the jet is dark gray."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_083.jpg",
+        "class": "airplane",
+        "captions": [
+            "The wing of an airplane flying over the clouds.",
+            "In this image we can see an airplane wing. In the background of the image there are clouds and sky.",
+            "The wing of an airplane is visible in the sky. The sky is blue with white clouds. The sun is shining through the clouds. Below the airplane are blue water."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_084.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a cloudy sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A large white airplane is flying in the sky. There are large black clouds in the distance above the airplane. The airplane has two large engines under the wings."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_085.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport tarmac.",
+            "In this image we can see an airplane on the runway. We can also see some vehicles on the road, a group of people standing on the ground, some trees and the sky which looks cloudy.",
+            "There is a large white airplane on the ground. There is a white truck in front of the airplane. There are people standing around the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_086.jpg",
+        "class": "airplane",
+        "captions": [
+            "A small red and white airplane on a dark background.",
+            "In this image I can see an aircraft which is in white and red color. Background is in black color.",
+            "The image is of a small red and white plane. The plane is on a solid grey background. The front of the plane is white with red stripes on it. There are two propellers on either side of the wings. The wheels are small and black. The windows on the plane are tinted black."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_087.jpg",
+        "class": "airplane",
+        "captions": [
+            "A small propeller plane flying through a cloudy sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A small plane is flying in the sky. The plane is white and black. There is a propeller on the front of the plane. The sky is blue with white clouds."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_088.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner taking off from a runway.",
+            "In this image we can see an airplane on the runway. In the background there is sky.",
+            "A large white airplane is flying in the air. There are two large engines under the plane. There is a blue sky behind the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_089.jpg",
+        "class": "airplane",
+        "captions": [
+            "A small white airplane on a runway at night.",
+            "In this image we can see an airplane on the ground. We can also see some grass, a group of poles with lights, a building, a signboard with some text on it, some trees, the hills and the sky which looks cloudy.",
+            "There is a small white airplane on the runway. There are lights on the sides of the airplane. There is a hill behind the airplane with trees on it."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_090.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner taking off from an airport runway.",
+            "In this picture we can see an airplane flying in the air, lights, trees and in the background there is sky with clouds.",
+            "A plane is taking off from an airport. The plane is white and has two large wings. The landing wheels are down. The sky is partly cloudy and orange. The sun is setting behind the plane. There are trees in the distance. There is water below the plane that is reflecting the sun. The lights are reflecting on the water."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_091.jpg",
+        "class": "airplane",
+        "captions": [
+            "A small propeller plane sitting on a runway.",
+            "In this image we can see an airplane on the ground. In the background, we can also see the grass, trees and also the sky with the clouds.",
+            "A small plane is sitting on a runway. The plane is painted green, orange, and brown. There is a white star on the side of the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_092.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane flying in the sky with another plane in the background.",
+            "In this image we can see two airplanes flying in the sky.",
+            "There are two planes flying in the sky. The sky is blue and clear. The plane closest to the camera is white and blue. There is writing on the side of the plane."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_093.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane flying in the sky at sunset.",
+            "In this image we can see an airplane flying in the sky. In the background, we can also see the sun and the sky with clouds.",
+            "A plane is flying in the sky. The sun is setting behind the plane and the sky is orange and yellow. The plane has its landing gear down."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_094.jpg",
+        "class": "airplane",
+        "captions": [
+            "A row of airplanes sitting on top of an airport tarmac.",
+            "In this image we can see airplanes on the ground. In the background there are trees and sky.",
+            "There are planes lined up on the runway. The planes are mostly white. The tails of the planes are dark blue. The nose of the plane is black. There are wheels on the plane. The wheels are black. The sky is partly cloudy. The grass on the ground is brown. The sun is shining on the planes. The plane on the right has two engines on it."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_095.jpg",
+        "class": "airplane",
+        "captions": [
+            "A small white airplane flying over a field.",
+            "In this image I can see an aircraft which is in white color. I can also see something is written on it.",
+            "A small white plane is flying in the air. There are black wheels on the plane. There is writing on the side of the plane in black."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_096.jpg",
+        "class": "airplane",
+        "captions": [
+            "A model airplane is shown against a white background.",
+            "In this image I can see an aircraft which is in cream, blue, red and black color. Background is in white color.",
+            "The image is of a model airplane. The model airplane is white with blue and red circles around the wings. There is a black and white checkered design on the front of the plane. The background is white."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_097.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a cloudy blue sky.",
+            "In this image we can see an airplane flying in the air. In the background there is sky with clouds.",
+            "A large white airplane is flying in the sky. There are large white clouds under the airplane. There is a large silver wing on the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_098.jpg",
+        "class": "airplane",
+        "captions": [
+            "A black and white photo of a biplane flying over a field.",
+            "This is a black and white image. In this image we can see an aircraft flying in the air. In the background there are buildings, trees and sky.",
+            "This is a black and white image of a biplane. The biplane is flying over a grassy area. There are several houses on the ground below the biplane in the air. The sky above the bi plane is gray. There is a person sitting on the bi-plane. There trees are standing on the grassy field below the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_099.jpg",
+        "class": "airplane",
+        "captions": [
+            "A jal airplane flying in the sky above clouds.",
+            "In this image we can see an airplane flying in the sky.",
+            "A white airplane is flying in the sky. There are white clouds under the plane. There is writing on the side of the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_100.jpg",
+        "class": "airplane",
+        "captions": [
+            "A red and white airplane flying through a cloudy sky.",
+            "In this picture we can see an airplane flying in the sky.",
+            "A white and red airplane is flying in the sky. There are large white clouds behind the airplane. There is a red engine under the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_101.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane is on the runway at sunset.",
+            "In this image we can see an aeroplane on the runway. In the background there is sky with clouds.",
+            "An airplane is sitting on the runway. The airplane is red. There are white lines on the ground in front of the airplane. The sky is cloudy and orange."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_102.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying over a large body of water.",
+            "In this image we can see an airplane flying in the air. We can also see some boats on the water and the sky which looks cloudy.",
+            "An airplane is flying over the water. There are small waves in the water around the airplane. There is a sailboat in the distance."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_103.jpg",
+        "class": "airplane",
+        "captions": [
+            "A US Customs Service plane flying over the ocean.",
+            "In this picture we can see an airplane flying in the air and in the background we can find water.",
+            "A large white airplane is flying over the water. There is writing on the side of the plane. There are two propellers on the airplane."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_104.jpg",
+        "class": "airplane",
+        "captions": [
+            "A white and blue jet airliner in the sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A large white and blue airplane is flying in the sky. There is a large white cloud under the plane. There are small windows on the side of the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_105.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying over a city under a cloudy sky.",
+            "In this image we can see an aeroplane flying in the sky. In the background we can also see the buildings, skyscrapers, vehicles on the road, water and also the sky with the clouds.",
+            "A large white airplane is flying over a city. There are tall buildings under the airplane. There is water under the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_106.jpg",
+        "class": "airplane",
+        "captions": [
+            "A blue and yellow airplane flying in the sky.",
+            "In this image we can see an aircraft flying in the sky.",
+            "This is an animated image of a plane. The plane is blue with yellow tips on the wings. The front of the plane is red with a propeller on the front. The sky is blue and clear. There is a mountain range in the background. The sun is shining brightly in the sky."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_107.jpg",
+        "class": "airplane",
+        "captions": [
+            "A green paper airplane flying in the air.",
+            "In this image we can see a green color paper airplane on the black color background.",
+            "This is an image of an origami airplane. The airplane is made of paper. The paper is bright green. The plane has two wings. The wings are long and sharp. The background of the image is black. The image was taken indoors. There are no clouds in the sky. There is a shadow on the black background."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_108.jpg",
+        "class": "airplane",
+        "captions": [
+            "A model airplane is flying in the sky.",
+            "In this image I can see an aircraft which is in white and blue color.",
+            "A silver airplane is flying in the air. There is a blue sky behind the airplane. There are red and blue circles on the wings of the plane."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_109.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport tarmac.",
+            "In this image we can see an aeroplane on the runway. On the left side of the image there are people. In the background there are buildings. At the top there is sky.",
+            "There is a large white airplane on the ground. There are large black tires on the front of the airplane. The sky above the airplane is blue with white clouds in it."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_110.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport runway.",
+            "In this image we can see an aeroplane on the runway. In the background there is sky with clouds.",
+            "A large white and blue airplane is sitting on the runway. There are large blue wheels on the plane. There is a yellow line on the ground under the plane on the grass."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_111.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport tarmac.",
+            "In this image we can see an airplane on the ground. In the background there are trees and sky with clouds.",
+            "An airplane is sitting on the ground. There are large engines under the wings of the airplane. There is a large window on the front of the plane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_112.jpg",
+        "class": "airplane",
+        "captions": [
+            "A small propeller plane sitting on top of a field.",
+            "In this image we can see an aircraft on the ground. In the background there are trees and sky with clouds.",
+            "A small white airplane is parked on the grass. There is a blue stripe on the side of the plane. There are small black wheels on the bottom of the airplane."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_113.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport tarmac.",
+            "In this image we can see an aeroplane on the runway. We can also see a vehicle and a person walking on the road. On the backside we can a group of trees, poles and the sky which looks cloudy.",
+            "A large white airplane is sitting on a runway. There is a white truck parked next to the airplane. A person in a yellow jacket is walking towards the airplane on the runway."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_114.jpg",
+        "class": "airplane",
+        "captions": [
+            "A red and white jet airliner on a purple background.",
+            "In this image I can see an aircraft which is in white and red color. Background is in purple color.",
+            "This is an image of a plane. The plane is painted white and red. There is a purple background behind the plane. There are white lines drawn on the purple background."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_115.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport runway.",
+            "In this picture we can see an airplane on the ground, lights, trees and in the background there is sky with clouds.",
+            "An airplane is sitting on the ground. There are lights around the plane. The sky is purple and orange. There is a forest of trees behind the airplane."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_116.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner flying through a blue sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A large white airplane is flying in the sky. There are two large engines under the wings of the plane. The sky is clear and blue."
+        ],
+        "split": "val"
+    },
+    {
+        "image": "airplane/kg_airplane_117.jpg",
+        "class": "airplane",
+        "captions": [
+            "An American Airlines jet sitting on the tarmac.",
+            "In this image we can see an aeroplane on the runway. In the background we can also see grass.",
+            "A large white airplane is sitting on a runway. There is writing on the side of the plane. There are yellow lines painted on the runway."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_118.jpg",
+        "class": "airplane",
+        "captions": [
+            "A large jetliner sitting on top of an airport runway.",
+            "In this image we can see an aeroplane on the ground. In the background there are buildings, street lights and sky.",
+            "The image is of an airplane. The airplane is silver and has two engines on either side of it. The wheels of the airplane are black and the landing gear is black. The sky behind the airplane is pink and purple. There is a building in the background that is lit up. There are street lights in front of the building."
+        ],
+        "split": "test"
+    },
+    {
+        "image": "airplane/kg_airplane_119.jpg",
+        "class": "airplane",
+        "captions": [
+            "An airplane flying in the sky with a blue sky behind it.",
+            "In this image we can see an airplane flying in the sky.",
+            "A plane is flying in the air. The plane is white and has black letters on the tail. There are small windows on the side of the plane. The sky is blue and there are some clouds."
+        ],
+        "split": "train"
+    },
+    {
+        "image": "airplane/kg_airplane_120.jpg",
+        "class": "airplane",
+        "captions": [
+            "A British Airways jet is flying in the sky.",
+            "In this image we can see an airplane flying in the sky.",
+            "A British Airways plane is flying in the air. The plane is blue, white, red, and white. The belly of the plane is painted blue. The landing gear is down."
+        ],
+        "split": "train"
+    }
+]
