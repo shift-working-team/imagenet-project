@@ -22,20 +22,20 @@ hf_token = os.getenv("HF_TOKEN")
 
 # 전체 클래스를 검수하려면 True
 # 특정 클래스만 검수하려면 False
-CHECK_ALL_CLASSES = False
+CHECK_ALL_CLASSES = True
 
 # 전체 클래스 검수 시 기준이 되는 raw 데이터 루트
 DATA_RAW_ROOT_DIR = Path("data/raw")
 
 # 특정 클래스만 검수할 때 사용할 클래스 폴더 경로
 # CHECK_ALL_CLASSES = False 일 때만 사용됨
-TARGET_CLASS_DIR = Path("data/raw/lavender")
+TARGET_CLASS_DIR = Path("data/raw")
 
 # 입력 JSON 파일
-INPUT_JSON_PATH = Path("data/annotations/captions_all.json")
+INPUT_JSON_PATH = Path("data/annotations/captions_flo_all.json")
 
 # 출력 JSON 파일
-OUTPUT_JSON_PATH = Path("data/annotations/clip_checked_lavender.json")
+OUTPUT_JSON_PATH = Path("data/annotations/clip_checked_flo_all.json")
 
 # 사용할 CLIP 모델
 MODEL_NAME = "openai/clip-vit-base-patch32"

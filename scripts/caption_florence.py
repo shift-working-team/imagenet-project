@@ -16,13 +16,13 @@ from transformers import AutoProcessor, Florence2ForConditionalGeneration
 
 # 전체 클래스 캡셔닝: "data/raw"
 # 특정 클래스만 캡셔닝: "data/raw/apple"
-INPUT_IMAGE_DIR = "data/raw/airplane"
+INPUT_IMAGE_DIR = "data/raw"
 
 # image 값을 "pizza/hf_pizza_001.jpg" 형태로 만들기 위한 기준 경로
 DATA_RAW_ROOT = "data/raw"
 
 # 결과 JSON 저장 경로
-OUTPUT_JSON_PATH = "data/annotations/captions_flo.json"
+OUTPUT_JSON_PATH = "data/annotations/captions_flo_all.json"
 
 # transformers 5.7.0에서는 florence-community 모델 사용 권장
 # base-ft: 가볍고 다운스트림 task에 fine-tuning된 모델
@@ -52,10 +52,10 @@ CAPTION_TASKS = [
 
 # 생성 옵션
 NUM_BEAMS = 3
-MAX_NEW_TOKENS = 128
+MAX_NEW_TOKENS = 64
 
 # 몇 장마다 중간 저장할지
-SAVE_EVERY = 120
+SAVE_EVERY = 220
 
 # 이미 JSON에 있는 이미지는 건너뛸지 여부
 SKIP_ALREADY_DONE = True
