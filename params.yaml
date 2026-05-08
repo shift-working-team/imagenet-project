@@ -1,50 +1,91 @@
 project:
   name: imagenet-project
 
-seed: 42
-
 data:
   raw_dir: data/raw
-  processed_dir: data/processed
-  captions_file: data/raw/captions.csv
+  captions_file: data/annotations/annotation.json
+
+tokenizer:
+  min_freq: 2
+  max_vocab_size: 10000
+  special_tokens : 
+    pad: "<pad>"
+    bos: "<bos>"
+    eos: "<eos>"
+    unk: "<unk>"
 
 split:
-  train_ratio: 0.8
-  val_ratio: 0.1
-  test_ratio: 0.1
-
-preprocess:
-  image_size: 256
-  normalize: true
-  lowercase_caption: true
-  remove_punctuation: true
-  min_word_freq: 2
-  max_caption_length: 30
-
-model:
-  encoder:
-    type: cnn
-    backbone: resnet18
-    pretrained: true
-    output_dim: 512
-
-  decoder:
-    type: lstm
-    embedding_dim: 256
-    hidden_dim: 512
-    num_layers: 1
-    dropout: 0.3
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
 
 train:
-  batch_size: 32
+  seed: 42
   epochs: 20
-  learning_rate: 0.001
+  batch_size: 32
+  num_workers: 4
+  device: cuda
   optimizer: adam
-  teacher_forcing_ratio: 1.0
-  num_workers: 2
+
+preprocess:
+  image_size: 224
+  normalize: true
+  max_caption_length: 30
+
+loss:
+  name: cross_entropy
+  ignore_index: pad_token
 
 evaluate:
   batch_size: 32
   metrics:
-    - loss
     - bleu
+    - rouge_l
+    - meteor
+
+logging:
+  use_wandb: true
+  project_name: imagenet-project
+  log_interval: 10
+
+outputs:
+  base_dir: outputs
+
+cnn:
+  backbone: resnet18
+  pretrained: true
+  freeze: true
+  output_dim: 512
+  dropout: 0.3
+  pooling: avg
+
+model:
+  lstm:
+    embed_dim: 256
+    hidden_dim: 512
+    num_layers: 1
+    dropout: 0.3
+    bidirectional: false
+    optimizer: adam
+    learning_rate: 0.001
+    weight_decay: 0.0
+
+  gru:
+    embed_dim: 256
+    hidden_dim: 512
+    num_layers: 1
+    dropout: 0.3
+    bidirectional: false
+    optimizer: adam
+    learning_rate: 0.001
+    weight_decay: 0.0
+
+  transformer:
+    embed_dim: 256
+    hidden_dim: 512
+    num_layers: 1
+    dropout: 0.3
+    bidirectional: false
+    optimizer: adam
+    learning_rate: 0.001
+    weight_decay: 0.0
