@@ -1,7 +1,7 @@
 import torch.nn as nn
 
 class DecoderLSTM(nn.Module): # MM
-  def __init__(self, voca_size, emd_size=256, hidden_size=512, max_len=20):
+  def __init__(self, voca_size=10000, emd_size=256, hidden_size=512, max_len=20):
     super().__init__()
     self.h = nn.Linear(512, hidden_size)
     self.c = nn.Linear(512, hidden_size)
