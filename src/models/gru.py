@@ -2,20 +2,38 @@ import torch
 import torch.nn as nn
 
 class DecoderGRU(nn.Module):
-    def __init__(self, voca_size=10000, emd_size=256, hidden_size=512, max_len=20):
+    def __init__(self, voca_size=10000, emd_size=256, hidden_size=512, max_len=30):
         super().__init__()
+        self.max_len = max_len
+
         self.h = nn.Linear(512, hidden_size)
 
-        self.emd = nn.Embedding(voca_size, emd_size)
+        self.embedding = nn.Embedding(voca_size, emd_size)
         self.gru = nn.GRU(emd_size, hidden_size, batch_first=True)
         self.fc = nn.Linear(hidden_size, voca_size)
 
-    def forward(self, features, captions):
-        h = self.h(features).unsqueeze(0)  # (1, B, hidden)
+    def forward(self, feature, caption):
+        h = self.h(feature).unsqueeze(0) # 이미지 특성을 초기 h값으로 설정, 초기 문맥
+        input = self.embedding(caption)
 
-        emd_cap = self.emd(captions)       # (B, T, emd)
-        out, h = self.gru(emd_cap, h)      # (B, T, hidden)
+        out, h = self.gru(input, h)
 
-        out = self.fc(out)                 # (B, T, vocab)
+        out = self.fc(out)
 
         return out
+    
+    def generate(self, feature, start_token):
+        h = self.h(feature).unsqueeze(0) # 이미지 특성을 초기 h값으로 설정, 초기 문맥
+        input = self.embedding(start_token).unsqueeze(1)
+
+        generated_inx = []
+        for _ in range(self.max_len):
+            out, h = self.gru(input, h)
+            logits = self.fc(out).squeeze(1)
+            pred = torch.argmax(logits, dim=1)
+
+            generated_inx.append(pred)
+
+            input = self.embedding(pred).unsqueeze(1)
+    
+        return generated_inx
