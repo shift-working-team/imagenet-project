@@ -22,7 +22,7 @@ class DecoderGRU(nn.Module):
 
         return out
     
-    def generate(self, feature, start_token):
+    def generate(self, feature, start_token, end_token):
         h = self.h(feature).unsqueeze(0) # 이미지 특성을 초기 h값으로 설정, 초기 문맥
         input = self.embedding(start_token).unsqueeze(1)
 
@@ -33,6 +33,9 @@ class DecoderGRU(nn.Module):
             pred = torch.argmax(logits, dim=1)
 
             generated_inx.append(pred)
+
+            if pred.item() == end_token:
+                break
 
             input = self.embedding(pred).unsqueeze(1)
     
