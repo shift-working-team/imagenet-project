@@ -1,5 +1,14 @@
 import os
 import random
+import shutil
+
+# ================================
+# 0. 설정
+# ================================
+TARGET_COUNT = 60
+MIN_RES = 128  # 해상도 128
+PREFIX = "kg"
+BASE_DIR = "./data/raw"
 
 # ================================
 # 1. 경로
@@ -7,40 +16,41 @@ import random
 DATA_DIR = r"C:\Users\qud46\Desktop\raw_kg"
 
 # ================================
-# 2. 클래스 목록 (최종 50개)
+# 2. 클래스 목록
 # ================================
 CLASS_LIST = [
     # 음식 및 식재료
-    "pizza","hamburger","sushi","pasta","salad","steak","cup_cake","sandwich","waffle","dumpling",
+    "pizza","hamburger","sushi","pasta","salad",
+    "steak","cup_cake","sandwich","waffle","dumpling",
 
     # 동물
-    "golden-retriever","bulldog","siamese-cat","persian-cat",
-    "elephant","sheep","horse","penguin","butterfly","squirrel",
+    "golden-retriever","bulldog","siamese-cat",
+    "persian-cat","elephant","sheep","horse",
+    "penguin","butterfly","squirrel",
 
     # 꽃
-    "rose","sunflower","daisy","tulip","dandelion","lily","lavender","orchid","iris","marigold","aster",
+    "rose","sunflower","daisy","tulip","dandelion",
+    "lily","lavender","orchid","iris","marigold","aster",
 
     # 과일
-    "apple","banana","strawberry","orange","carrot","tomato","cucumber",
+    "apple","banana","strawberry","orange",
+    "carrot","tomato","cucumber",
 
     # 탈것
     "car","bicycle","motorcycle","airplane","bus",
 
     # 패션 및 잡화
-    "t-shirt","sneakers","earrings","glasses","pants","bracelet","necklace"
+    "t-shirt","sneakers","earrings","glasses",
+    "pants","bracelet","necklace"
 ]
 
-# ================================
-# 3. 기준 개수
-# ================================
-THRESHOLD = 60  # 원하는 장수로 변경
-
-print("클래스별 이미지 정리 시작\n")
+print("클래스별 이미지 60장 맞추기 시작\n")
 
 # ================================
-# 4. 메인 로직
+# 3. 메인 로직
 # ================================
 for cls in CLASS_LIST:
+
     cls_path = os.path.join(DATA_DIR, cls)
 
     if not os.path.exists(cls_path):
@@ -55,25 +65,51 @@ for cls in CLASS_LIST:
 
     current_count = len(images)
 
-    print(f"{cls}: 현재 {current_count}장 → 목표 {THRESHOLD}장")
+    print(
+        f"{cls}: 현재 {current_count}장 "
+        f"→ 목표 {TARGET_COUNT}장"
+    )
 
-    # 초과된 경우 → 랜덤 삭제
-    if current_count > THRESHOLD:
-        delete_count = current_count - THRESHOLD
+    # ================================
+    # 1) 60장 초과 → 랜덤 삭제
+    # ================================
+    if current_count > TARGET_COUNT:
 
-        # 랜덤으로 삭제할 파일 선택
-        to_delete = random.sample(images, delete_count)
+        delete_count = current_count - TARGET_COUNT
+
+        to_delete = random.sample(
+            images,
+            delete_count
+        )
 
         for file in to_delete:
+
             file_path = os.path.join(cls_path, file)
+
             try:
                 os.remove(file_path)
+
             except:
                 continue
 
         print(f"   → {delete_count}장 삭제 완료")
 
-    else:
-        print(f"   → 삭제 없음")
+    # ================================
+    # 2) 60장 미만 → 부족 개수 출력
+    # ================================
+    elif current_count < TARGET_COUNT:
 
-print("\n 정리 완료!")
+        need_count = TARGET_COUNT - current_count
+
+        print(
+            f"   → {need_count}장 부족 "
+            f"(추가 수집 필요)"
+        )
+
+    # ================================
+    # 3) 정확히 60장
+    # ================================
+    else:
+        print("   → 이미 60장 완료")
+
+print("\n전체 정리 완료!")

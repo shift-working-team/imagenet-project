@@ -1,9 +1,17 @@
 import os
-from PIL import Image
 import hashlib
+from PIL import Image
 
 # ================================
-# 1. 클래스 + 유사어 매핑 (최종)
+# 0. 설정
+# ================================
+TARGET_COUNT = 60
+MIN_RES = 128  # 해상도 128
+PREFIX = "kg"
+BASE_DIR = "./data/raw"
+
+# ================================
+# 1. 클래스 + 유사어 매핑
 # ================================
 CLASS_MAP = {
     # 음식
@@ -74,15 +82,25 @@ CLASS_MAP = {
 # ================================
 HOME = os.path.expanduser("~")
 
-SRC_ROOT = os.path.join(HOME, "Desktop", "raw_full_kg", "extracted")
-DST_ROOT = os.path.join(HOME, "Desktop", "raw_kg")
+SRC_ROOT = os.path.join(
+    HOME,
+    "Desktop",
+    "raw_full_kg",
+    "extracted"
+)
+
+DST_ROOT = os.path.join(
+    HOME,
+    "Desktop",
+    "raw_kg"
+)
 
 os.makedirs(DST_ROOT, exist_ok=True)
 
 # ================================
 # 3. 해상도 필터
 # ================================
-def is_valid_image(path, min_size=128):
+def is_valid_image(path, min_size=MIN_RES):
     try:
         with Image.open(path) as img:
             w, h = img.size
@@ -95,7 +113,7 @@ def is_valid_image(path, min_size=128):
 # ================================
 def get_hash(path):
     try:
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             return hashlib.md5(f.read()).hexdigest()
     except:
         return None
@@ -106,26 +124,33 @@ seen_hashes = set()
 # 5. 클래스 매칭
 # ================================
 def match_class(folder_name):
-    name = folder_name.lower().replace("-", " ").replace("_", " ")
+    name = folder_name.lower()
+    name = name.replace("-", " ").replace("_", " ")
+
     words = name.split()
 
     for target, keywords in CLASS_MAP.items():
         for kw in keywords:
             kw_words = kw.split()
+
             if all(word in words for word in kw_words):
                 return target
+
     return None
 
 # ================================
 # 6. 메인 로직
 # ================================
-class_counter = {cls: 1 for cls in CLASS_MAP.keys()}
+class_counter = {
+    cls: 1 for cls in CLASS_MAP.keys()
+}
 
 copied = 0
 skipped = 0
 no_match = 0
 
 for root, dirs, files in os.walk(SRC_ROOT):
+
     for d in dirs:
         matched_class = match_class(d)
 
@@ -137,42 +162,56 @@ for root, dirs, files in os.walk(SRC_ROOT):
         dst_path = os.path.join(DST_ROOT, matched_class)
 
         for img in os.listdir(src_path):
+
             src_file = os.path.join(src_path, img)
 
             if not os.path.isfile(src_file):
                 continue
 
-            # 확장자 없는 경우도 허용
+            # 이미지 검증
             try:
                 with Image.open(src_file) as im:
                     im.verify()
+
             except:
                 skipped += 1
                 continue
 
             # 해상도 필터
-            if not is_valid_image(src_file, 128):
+            if not is_valid_image(src_file):
                 skipped += 1
                 continue
 
             # 중복 제거
             img_hash = get_hash(src_file)
+
             if img_hash is None or img_hash in seen_hashes:
                 skipped += 1
                 continue
+
             seen_hashes.add(img_hash)
 
             if not os.path.exists(dst_path):
                 os.makedirs(dst_path, exist_ok=True)
 
-            number = str(class_counter[matched_class]).zfill(3)
+            number = str(
+                class_counter[matched_class]
+            ).zfill(3)
+
             class_name_for_file = matched_class.replace("_", "-")
-            new_name = f"kg_{class_name_for_file}_{number}.jpg"
+
+            new_name = (
+                f"{PREFIX}_{class_name_for_file}_{number}.jpg"
+            )
+
             dst_file = os.path.join(dst_path, new_name)
 
             try:
                 with Image.open(src_file) as im:
-                    im.convert("RGB").save(dst_file, "JPEG")
+                    im.convert("RGB").save(
+                        dst_file,
+                        "JPEG"
+                    )
 
                 class_counter[matched_class] += 1
                 copied += 1
