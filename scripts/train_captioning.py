@@ -1,3 +1,6 @@
+import sys
+sys.path.append("/workspace/src")
+
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -5,8 +8,8 @@ from torch.utils.data import DataLoader
 from dataset.build_voca import build_voca, tokenizer
 from dataset.dataset import CaptionDataset
 from transforms.image_transform import get_train_transform
-from src.models.cnn_lstm import CNN_LSTM
-from src.engines.captioning_trainer import train_one_epoch
+from models.cnn_lstm import CNN_LSTM
+from engines.captioning_trainer import train_one_epoch
 
 
 
