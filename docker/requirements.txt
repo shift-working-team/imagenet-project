@@ -1,47 +1,56 @@
 # =========================
-# Core (기본 환경 / 타입)
+# Core ML / DL
 # =========================
-numpy==1.26.4
-typing_extensions==4.10.0
-
-# =========================
-# Deep Learning Framework (PyTorch 생태계)
-# =========================
-# ※ torch / torchvision은 base image에 포함된다고 가정
+torchvision==0.26.0
+torchaudio==2.2.1
 timm==0.9.12
 accelerate==0.27.2
 
 # =========================
-# Transformer / NLP / Multimodal
+# Transformers / NLP / Vision-Language
 # =========================
 transformers==4.38.2
 tokenizers==0.15.2
-huggingface-hub==0.20.3
-safetensors==0.4.2
-sentencepiece==0.2.0
-open_clip_torch==2.23.0
-nltk==3.8.1
-
-# =========================
-# Dataset / Data Handling
-# =========================
 datasets==2.18.0
+huggingface-hub==0.20.3
+sentence-transformers==2.7.0
+sentencepiece==0.2.0
+open-clip-torch==2.24.0
+
+# =========================
+# Training / Logging
+# =========================
+wandb==0.26.1
+
+# =========================
+# Data / CV
+# =========================
+numpy==1.26.4
 pandas==2.1.4
-
-# =========================
-# Image Processing / Vision
-# =========================
-albumentations==1.4.7
+scipy==1.15.3
+scikit-learn==1.7.2
+scikit-image==0.25.2
 opencv-python-headless==4.9.0.80
-pillow==10.3.0
-imagehash==4.3.1
+albumentations==1.4.7
+Pillow==10.3.0
+ImageHash==4.3.1
 
 # =========================
-# Evaluation Metrics
+# Utils
 # =========================
+tqdm==4.66.2
+PyYAML==6.0.1
+requests==2.32.3
+joblib==1.5.3
+
+# =========================
+# Evaluation
+# =========================
+pycocotools==2.0.11
 pycocoevalcap==1.2
 rouge-score==0.1.2
 sacrebleu==2.4.0
+nltk==3.8.1
 
 # =========================
 # Visualization
@@ -49,28 +58,14 @@ sacrebleu==2.4.0
 matplotlib==3.8.3
 
 # =========================
-# Experiment / Logging
+# Storage / Cloud (optional but used)
 # =========================
-wandb==0.26.1
+boto3==1.42.91
+botocore==1.42.91
+s3fs==2026.3.0
+fsspec==2024.2.0
 
 # =========================
-# Utils / System
+# Experiment / Data Versioning
 # =========================
-PyYAML==6.0.1
-tqdm==4.66.2
-requests==2.32.3
-
-# =========================
-#DVC
-# =========================
-networkx==3.3
 dvc==3.67.1
-boto3==1.34.34
-
-# =========================
-# 
-# =========================
-sentence_transformers==2.7.0
-
-
-
