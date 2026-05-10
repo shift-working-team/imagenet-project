@@ -113,4 +113,12 @@ for epoch in range(params["train"]["epochs"]):
         device
     )
 
+    # 4. 지표 기록
+    wandb.log({
+        "train/loss": loss,
+        "bleu":calculate_bleu_n()
+    })
+
     print(f"Epoch {epoch+1} Loss: {loss:.4f}")
+
+wandb.finish()
