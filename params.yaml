@@ -2,17 +2,12 @@ project:
   name: imagenet-project
 
 data:
-  raw_dir: data/raw
-  captions_file: data/annotations/annotation.json
+  raw_dir: /workspace/data/raw/
+  captions_file: /workspace/data/annotations/annotation.json
 
 tokenizer:
-  min_freq: 2
+  min_freq: 5
   max_vocab_size: 10000
-  special_tokens : 
-    pad: "<pad>"
-    bos: "<bos>"
-    eos: "<eos>"
-    unk: "<unk>"
 
 split:
   train_ratio: 0.7
