@@ -20,7 +20,10 @@ checkpoints/
 #############################################
 # 3. 실험 결과 / 출력
 #############################################
-outputs/
+outputs/*
+!outputs/data_check/
+!outputs/data_check/*.txt
+
 results/
 logs/
 wandb/
