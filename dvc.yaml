@@ -7,7 +7,6 @@ stages:
     params:
       - tokenizer.min_freq
       - tokenizer.max_vocab_size
-      - tokenizer.special_tokens
     outs:
       - outputs/tokenizer/vocab.json
 
