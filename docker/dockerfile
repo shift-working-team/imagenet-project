@@ -1,0 +1,4 @@
+FROM j1seon/supercoding:v3
+
+RUN pip install --no-cache-dir \
+    # 라이브러리명==버전
