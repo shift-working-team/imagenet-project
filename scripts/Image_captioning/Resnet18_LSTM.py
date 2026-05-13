@@ -14,8 +14,8 @@ from metrics.captioning.cider import calculate_cider
 from dataset.build_voca import build_voca, tokenizer
 from dataset.dataset import CaptionDataset
 from transforms.image_transform import get_train_transform
-from engines.Captioning_trainer.CNN_LSTM_trainer import train_one_epoch
-from engines.Captioning_trainer.CNN_LSTM_validator import validation_one_epoch
+from engines.Captioning_trainer.Resnet18_LSTM_trainer import train_one_epoch
+from engines.Captioning_trainer.Resnet18_LSTM_validator import validation_one_epoch
 from models.lstm import DecoderLSTM
 from models.resnet18_seon import EncoderResnet18
 
@@ -97,7 +97,8 @@ criterion = nn.CrossEntropyLoss(
 
 # optimizer
 optimizer = torch.optim.Adam(
-    decoder.parameters(),
+    list(encoder.projection.parameters()) +
+    list(decoder.parameters()),
     lr=params["model"]["lstm"]["learning_rate"]
 )
 
@@ -127,7 +128,7 @@ wandb.init(
     project="imagenet-project",
     entity="super-shift-working", # 팀 계정이 있다면 작성
     config=my_config,
-    name="cnn-lstm-20260512-seon"
+    name="Resnet18-lstm-20260513-baseline"
 )
 
 
@@ -151,6 +152,8 @@ for epoch in range(params["train"]["epochs"]):
         device,
         w2i,
     )
+
+    print(f"Epoch {epoch+1} Train_Loss: {train_loss:.4f} Val_Loss: {val_loss:.4f}")
 
     generated_inx = decoder.generate(
             feature,
@@ -190,7 +193,5 @@ for epoch in range(params["train"]["epochs"]):
         "bleu":calculate_bleu_n(generated_dict, target_dict)
     })
 
-
-    print(f"Epoch {epoch+1} Train_Loss: {train_loss:.4f} Val_Loss: {val_loss:.4f}")
 
 wandb.finish()
