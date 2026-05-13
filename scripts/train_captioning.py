@@ -17,8 +17,8 @@ from engines.captioning_trainer import train_one_epoch
 json_path = "/workspace/data/annotations/annotation.json"
 image_dir = "/workspace/data/raw/"
 
-BATCH_SIZE = 8
-EPOCHS = 5
+BATCH_SIZE = 2
+EPOCHS = 1
 LR = 1e-4
 
 
