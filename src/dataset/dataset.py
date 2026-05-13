@@ -26,6 +26,9 @@ class CaptionDataset(Dataset):
             if item['split'] == split
         ]
 
+        # #디버깅용
+        # self.data = self.data[:10]
+
         self.image_dir = image_dir
         self.w2i = w2i
         self.transform = transform
