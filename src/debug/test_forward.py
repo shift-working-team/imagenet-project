@@ -8,6 +8,9 @@ from lstm import DecoderLSTM
 from gru import DecoderGRU
 from transformer import DecoderTransformer
 from resnet18 import get_resnet18
+from efficientnet import get_efficientnet_b0
+from convnext import get_convnext_tiny
+from mobilenet import get_mobilenet_v3_small
 
 
 
@@ -82,6 +85,63 @@ resnet18_out = resnet18_model(
 )
 
 print(f"ResNet18: {resnet18_out.shape}")
+
+# expected:
+# torch.Size([8, 50])
+
+
+
+### EfficientNet-B0 Forward ###
+efficientnet_model = get_efficientnet_b0(
+    num_classes=NUM_CLASSES
+).to(device)
+
+efficientnet_out = efficientnet_model(
+    dummy_images
+)
+
+print(
+    f"EfficientNet-B0: "
+    f"{efficientnet_out.shape}"
+)
+
+# expected:
+# torch.Size([8, 50])
+
+
+
+### ConvNeXt-Tiny Forward ###
+convnext_model = get_convnext_tiny(
+    num_classes=NUM_CLASSES
+).to(device)
+
+convnext_out = convnext_model(
+    dummy_images
+)
+
+print(
+    f"ConvNeXt-Tiny: "
+    f"{convnext_out.shape}"
+)
+
+# expected:
+# torch.Size([8, 50])
+
+
+
+### MobileNetV3 Small Forward ###
+mobilenet_model = get_mobilenet_v3_small(
+    num_classes=NUM_CLASSES
+).to(device)
+
+mobilenet_out = mobilenet_model(
+    dummy_images
+)
+
+print(
+    f"MobileNetV3 Small: "
+    f"{mobilenet_out.shape}"
+)
 
 # expected:
 # torch.Size([8, 50])
