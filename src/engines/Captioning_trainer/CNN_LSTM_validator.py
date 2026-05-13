@@ -33,10 +33,4 @@ def validation_one_epoch(
 
             total_loss += loss.item()
 
-        generated_inx = decoder.generate(
-            feature[-1].unsqueeze(0),
-            torch.tensor([w2i["<sos>"]]),
-            torch.tensor([w2i["<eos>"]])
-            )
-
-    return total_loss / len(loader), generated_inx
+    return total_loss / len(loader), feature[-1].unsqueeze(0), target_caption[-1]

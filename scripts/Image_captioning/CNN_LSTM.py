@@ -102,33 +102,33 @@ optimizer = torch.optim.Adam(
 )
 
 
-# def get_git_revision_hash():
-#     # 전체 해시 출력
-#     return subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
+def get_git_revision_hash():
+    # 전체 해시 출력
+    return subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
 
 
-# # 1. 설정값 정의 (yaml 파일에서 읽어오는 것을 추천)
-# my_config = {
-#     "model_name": "cnn-lstm",
-#     "learning_rate": params["model"]["lstm"]["learning_rate"],
-#     "batch_size": params["train"]["batch_size"],
-#     "image_size": params["preprocess"]["image_size"],
-#     "seed": params["train"]["seed"],
-#     "epochs" : params["train"]["epochs"],
-#     "dataset_version": "dvc-v1",
-#     "optimizer": params["train"]["optimizer"],
-#     "dvice": device.type,
-#     "commit_hash": get_git_revision_hash()
-# }
+# 1. 설정값 정의 (yaml 파일에서 읽어오는 것을 추천)
+my_config = {
+    "model_name": "cnn-lstm",
+    "learning_rate": params["model"]["lstm"]["learning_rate"],
+    "batch_size": params["train"]["batch_size"],
+    "image_size": params["preprocess"]["image_size"],
+    "seed": params["train"]["seed"],
+    "epochs" : params["train"]["epochs"],
+    "dataset_version": "dvc-v1",
+    "optimizer": params["train"]["optimizer"],
+    "dvice": device.type,
+    "commit_hash": get_git_revision_hash()
+}
 
 
-# # 2. W&B 초기화
-# wandb.init(
-#     project="imagenet-project",
-#     entity="super-shift-working", # 팀 계정이 있다면 작성
-#     config=my_config,
-#     name="test-cnn-lstm-20260510-seon"
-# )
+# 2. W&B 초기화
+wandb.init(
+    project="imagenet-project",
+    entity="super-shift-working", # 팀 계정이 있다면 작성
+    config=my_config,
+    name="cnn-lstm-20260512-seon"
+)
 
 
 # train
@@ -143,7 +143,7 @@ for epoch in range(params["train"]["epochs"]):
         device
     )
 
-    val_loss, generated_inx = validation_one_epoch(
+    val_loss, feature, target_inx = validation_one_epoch(
         encoder,
         decoder,
         val_loader,
@@ -152,21 +152,45 @@ for epoch in range(params["train"]["epochs"]):
         w2i,
     )
 
-    sentence = []
-    for i in generated_inx:
-        sentence.append(i2w[i.item()])
-    sentence = " ".join(sentence[:-1])
+    generated_inx = decoder.generate(
+            feature,
+            torch.tensor([w2i["<sos>"]]),
+            torch.tensor([w2i["<eos>"]])
+            )
+    
+    # <end> 제거
+    generated_inx = generated_inx[:-1]
+    end_inx = torch.where(target_inx == w2i["<eos>"])[0]
+    target_inx = target_inx[:end_inx].tolist()
+    
+    print(f'생성캡션: {generated_inx}')
+    print(f'타겟캡션: {target_inx}')
 
+    generated_sentence = []
+    for i in generated_inx:
+        generated_sentence.append(i2w[i])
+    generated_sentence = " ".join(generated_sentence)
+
+    target_sentence = []
+    for i in target_inx:
+        target_sentence.append(i2w[i])
+    target_sentence = " ".join(target_sentence)
+
+    print(f'생성 문장: {generated_sentence}')
+    print(f'타겟 문장: {target_sentence}')
+
+    generated_dict= {epoch:generated_sentence}
+    target_dict= {epoch:target_sentence}
+
+    
     # 4. 지표 기록
     wandb.log({
         "train/loss": train_loss,
         "validation/loss": val_loss,
-        "Generate_sentence": sentence
-        # "bleu":calculate_bleu_n()
+        "bleu":calculate_bleu_n(generated_dict, target_dict)
     })
 
 
     print(f"Epoch {epoch+1} Train_Loss: {train_loss:.4f} Val_Loss: {val_loss:.4f}")
-    print(f'생성 문장: {sentence}')
 
 wandb.finish()
