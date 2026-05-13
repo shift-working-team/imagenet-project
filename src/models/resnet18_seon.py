@@ -21,10 +21,9 @@ class EncoderResnet18(nn.Module):
 
     def forward(self, images):
         features = self.backbone(images)
-
+        features = features.view(features.size(0), -1)
         logits = self.fc(features)
 
-        features = features.view(features.size(0), -1)
         features = self.projection(features)
 
         return logits, features
