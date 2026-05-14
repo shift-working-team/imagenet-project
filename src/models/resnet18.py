@@ -6,9 +6,12 @@ class EncoderResnet18(nn.Module):
 
     def __init__(self, num_classes=50, embed_size=512):
         super().__init__()
-        model = models.resnet18(pretrained=True)
+        model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
         modules = list(model.children())[:-1]
         self.backbone = nn.Sequential(*modules)
+
+        for param in self.backbone.parameters():
+            param.requires_grad = False
 
         self.classifier = nn.Linear(model.fc.in_features, num_classes)
 
@@ -16,7 +19,8 @@ class EncoderResnet18(nn.Module):
 
     def forward(self, images):
         features = self.backbone(images)
-        features = features.flatten(1)
+        features = features.view(features.size(0), -1)
+
         logits = self.classifier(features)
-        embeddings = self.projector(features)
-        return logits, embeddings
+        features = self.projector(features)
+        return logits, features

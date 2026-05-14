@@ -12,12 +12,12 @@ from metrics.captioning.bleu import calculate_bleu_n
 from metrics.captioning.cider import calculate_cider
 
 from dataset.build_voca import build_voca, tokenizer
-from dataset.dataset import CaptionDataset
-from transforms.image_transform import get_train_transform
+from dataset.captioning_dataset import CaptionDataset
+from transforms.image_transform import get_caption_transform
 from engines.Captioning_trainer.Resnet18_LSTM_trainer import train_one_epoch
 from engines.Captioning_trainer.Resnet18_LSTM_validator import validation_one_epoch
 from models.lstm import DecoderLSTM
-from models.resnet18_seon import EncoderResnet18
+from models.resnet18 import EncoderResnet18
 
 
 # params
@@ -40,7 +40,7 @@ w2i, i2w, voca_size = build_voca(
 
 
 # transform
-transform = get_train_transform()
+transform = get_caption_transform()
 
 
 # train dataset
@@ -89,17 +89,17 @@ decoder = DecoderLSTM(
     ).to(device)
 
 
-# loss
-criterion = nn.CrossEntropyLoss(
-    ignore_index=w2i["<pad>"]
+# optimizer
+optimizer = torch.optim.Adam(
+    list(encoder.projector.parameters()) +
+    list(decoder.parameters()),
+    lr=params["model"]["lstm"]["learning_rate"]
 )
 
 
-# optimizer
-optimizer = torch.optim.Adam(
-    list(encoder.projection.parameters()) +
-    list(decoder.parameters()),
-    lr=params["model"]["lstm"]["learning_rate"]
+# loss
+criterion = nn.CrossEntropyLoss(
+    ignore_index=w2i["<pad>"]
 )
 
 
@@ -128,13 +128,12 @@ wandb.init(
     project="imagenet-project",
     entity="super-shift-working", # 팀 계정이 있다면 작성
     config=my_config,
-    name="Resnet18-lstm-20260513-baseline"
+    name="Resnet18+LSTM-20260514-v1"
 )
 
 
 # train
 for epoch in range(params["train"]["epochs"]):
-
     train_loss = train_one_epoch(
         encoder,
         decoder,
@@ -153,8 +152,6 @@ for epoch in range(params["train"]["epochs"]):
         w2i,
     )
 
-    print(f"Epoch {epoch+1} Train_Loss: {train_loss:.4f} Val_Loss: {val_loss:.4f}")
-
     generated_inx = decoder.generate(
             feature,
             torch.tensor([w2i["<sos>"]]),
@@ -162,12 +159,8 @@ for epoch in range(params["train"]["epochs"]):
             )
     
     # <end> 제거
-    generated_inx = generated_inx[:-1]
     end_inx = torch.where(target_inx == w2i["<eos>"])[0]
     target_inx = target_inx[:end_inx].tolist()
-    
-    print(f'생성캡션: {generated_inx}')
-    print(f'타겟캡션: {target_inx}')
 
     generated_sentence = []
     for i in generated_inx:
@@ -179,8 +172,16 @@ for epoch in range(params["train"]["epochs"]):
         target_sentence.append(i2w[i])
     target_sentence = " ".join(target_sentence)
 
-    print(f'생성 문장: {generated_sentence}')
-    print(f'타겟 문장: {target_sentence}')
+    print(f"Epoch {epoch+1} Train_Loss: {train_loss:.4f} Val_Loss: {val_loss:.4f}")
+    print('-'*30)
+
+    print(f'Generated index: {generated_inx}')
+    print(f'Target index: {target_inx}')
+    print('-'*30)
+
+    print(f'Generated sentence: {generated_sentence}')
+    print(f'Target sentence: {target_sentence}')
+    print('='*30)
 
     generated_dict= {epoch:generated_sentence}
     target_dict= {epoch:target_sentence}
@@ -190,7 +191,8 @@ for epoch in range(params["train"]["epochs"]):
     wandb.log({
         "train/loss": train_loss,
         "validation/loss": val_loss,
-        "bleu":calculate_bleu_n(generated_dict, target_dict)
+        "bleu":calculate_bleu_n(generated_dict, target_dict),
+        "cider":calculate_cider(generated_dict, target_dict)
     })
 
 

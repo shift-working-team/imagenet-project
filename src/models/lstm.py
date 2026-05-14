@@ -35,10 +35,11 @@ class DecoderLSTM(nn.Module): # MM
       logits = self.fc(out).squeeze(1)
       pred = torch.argmax(logits, dim=1)
 
-      generated_inx.append(pred.item())
 
       if pred.item() == end_token:
-        break
+          break
+    
+      generated_inx.append(pred.item())
 
       input = self.embedding(pred).unsqueeze(1)
     

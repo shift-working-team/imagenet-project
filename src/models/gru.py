@@ -32,10 +32,10 @@ class DecoderGRU(nn.Module):
             logits = self.fc(out).squeeze(1)
             pred = torch.argmax(logits, dim=1)
 
-            generated_inx.append(pred)
-
             if pred.item() == end_token:
                 break
+            
+            generated_inx.append(pred.item())
 
             input = self.embedding(pred).unsqueeze(1)
     
