@@ -2,6 +2,9 @@ from torchmetrics.classification import (
     MulticlassAccuracy
 )
 
+from utils.mixup import mixup_data
+from utils.cutmix import cutmix_data
+
 
 def train_one_epoch(
     model,
@@ -9,7 +12,8 @@ def train_one_epoch(
     criterion,
     optimizer,
     device,
-    num_classes
+    num_classes,
+    augmentation=None
 ):
 
     model.train()
@@ -23,19 +27,43 @@ def train_one_epoch(
     for images, labels in loader:
         images = images.to(device)
         labels = labels.to(device)
+
+        if augmentation == "mixup":
+            images, labels_a, labels_b, lam = mixup_data(
+                images,
+                labels
+            )
+
+        elif augmentation == "cutmix":
+            images, labels_a, labels_b, lam = cutmix_data(
+                images,
+                labels
+            )
+
         outputs = model(images)
 
-        loss = criterion(
-            outputs,
-            labels
-        )
+        if augmentation in ["mixup", "cutmix"]:
+            loss = (
+                lam * criterion(outputs, labels_a)
+                + (1 - lam) * criterion(outputs, labels_b)
+            )
+
+        else:
+            loss = criterion(
+                outputs,
+                labels
+            )
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
         preds = outputs.argmax(dim=1)
-        metric.update(preds, labels)
+
+        metric.update(
+            preds,
+            labels
+        )
 
     acc = metric.compute().item()
 
