@@ -16,8 +16,11 @@ from dataset.captioning_dataset import CaptionDataset
 from transforms.image_transform import get_caption_transform
 from engines.Captioning_trainer.Resnet18_Decoder_trainer import train_one_epoch
 from engines.Captioning_trainer.Resnet18_Decoder_validator import validation_one_epoch
-from models.lstm import DecoderLSTM
+from models.gru import DecoderGRU
 from models.resnet18 import EncoderResnet18
+
+from pycocoevalcap.bleu.bleu import Bleu
+from pycocoevalcap.cider.cider import Cider
 
 
 # params
@@ -81,10 +84,10 @@ val_loader = DataLoader(
 
 # model
 encoder = EncoderResnet18().to(device)
-decoder = DecoderLSTM(
+decoder = DecoderGRU(
     voca_size=voca_size,
-    emd_size=params["model"]["lstm"]["embed_dim"],
-    hidden_size=params["model"]["lstm"]["hidden_dim"],
+    emd_size=params["model"]["gru"]["embed_dim"],
+    hidden_size=params["model"]["gru"]["hidden_dim"],
     max_len=params["preprocess"]["max_caption_length"]
     ).to(device)
 
@@ -93,7 +96,7 @@ decoder = DecoderLSTM(
 optimizer = torch.optim.Adam(
     list(encoder.projector.parameters()) +
     list(decoder.parameters()),
-    lr=params["model"]["lstm"]["learning_rate"]
+    lr=params["model"]["gru"]["learning_rate"]
 )
 
 
@@ -110,8 +113,8 @@ def get_git_revision_hash():
 
 # 1. 설정값 정의 (yaml 파일에서 읽어오는 것을 추천)
 my_config = {
-    "model_name": "cnn-lstm",
-    "learning_rate": params["model"]["lstm"]["learning_rate"],
+    "model_name": "cnn-gru",
+    "learning_rate": params["model"]["gru"]["learning_rate"],
     "batch_size": params["train"]["batch_size"],
     "image_size": params["preprocess"]["image_size"],
     "seed": params["train"]["seed"],
@@ -128,7 +131,7 @@ wandb.init(
     project="imagenet-project",
     entity="super-shift-working", # 팀 계정이 있다면 작성
     config=my_config,
-    name="Resnet18+LSTM-20260514-v1"
+    name="Resnet18+GRU-20260514-v1"
 )
 
 
@@ -172,8 +175,8 @@ for epoch in range(params["train"]["epochs"]):
         target_sentence.append(i2w[i])
     target_sentence = " ".join(target_sentence)
 
-    generated_dict= {epoch:generated_sentence}
-    target_dict= {epoch:target_sentence}
+    generated_dict= {epoch:[generated_sentence]}
+    target_dict= {epoch:[target_sentence]}
 
     print(f"Epoch {epoch+1} Train_Loss: {train_loss:.4f} Val_Loss: {val_loss:.4f}")
     print('-'*30)
@@ -186,14 +189,38 @@ for epoch in range(params["train"]["epochs"]):
     print(f'Target sentence: {target_sentence}')
     print('='*30)
 
+    bleu_scorer = Bleu(4)
+
+    bleu_score, bleu_scores = bleu_scorer.compute_score(
+        target_dict,
+        generated_dict
+    )
+
+    print("BLEU-1:", bleu_score[0])
+    print("BLEU-2:", bleu_score[1])
+    print("BLEU-3:", bleu_score[2])
+    print("BLEU-4:", bleu_score[3])
+
+
+    cider_scorer = Cider()
+
+    cider_score, cider_scores = cider_scorer.compute_score(
+        target_dict,
+        generated_dict
+    )
+
+    print("CIDEr:", cider_score)
     
     # 4. 지표 기록
     wandb.log({
         "train/loss": train_loss,
         "validation/loss": val_loss,
-        "bleu":calculate_bleu_n(generated_dict, target_dict),
-        "cider":calculate_cider(generated_dict, target_dict)
+        "bleu1":bleu_score[0],
+        "bleu2":bleu_score[1],
+        "bleu3":bleu_score[2],
+        "bleu4":bleu_score[3],
+        "cider":cider_score
     })
 
 
-wandb.finish()
+wandb.finish
