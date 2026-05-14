@@ -49,6 +49,7 @@ class CaptionDataset(Dataset):
         if self.transform:
             image = self.transform(image)
 
+        references_caption = data["captions"]
         caption = random.choice(data["captions"])
 
         words = self.tokenizer(caption)
@@ -71,4 +72,4 @@ class CaptionDataset(Dataset):
 
         tokens = torch.tensor(tokens)
 
-        return image, tokens
+        return image, tokens, references_caption
