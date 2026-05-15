@@ -7,7 +7,7 @@ import torch
 from lstm import DecoderLSTM
 from gru import DecoderGRU
 from transformer import DecoderTransformer
-from resnet18 import get_resnet18
+from resnet18 import EncoderResnet18
 from efficientnet import get_efficientnet_b0
 from convnext import get_convnext_tiny
 from mobilenet import get_mobilenet_v3_small
@@ -72,7 +72,7 @@ print(f"Transformer: {transformer_out.shape}")
 ### ResNet18 Forward ###
 NUM_CLASSES = 50
 
-resnet18_model = get_resnet18(
+resnet18_model = EncoderResnet18(
     num_classes=NUM_CLASSES
 ).to(device)
 
@@ -80,14 +80,12 @@ dummy_images = torch.randn(
     8, 3, 224, 224
 ).to(device)
 
-resnet18_out = resnet18_model(
+logits, features = resnet18_model(
     dummy_images
 )
 
-print(f"ResNet18: {resnet18_out.shape}")
-
-# expected:
-# torch.Size([8, 50])
+print(f"ResNet18 logits: {logits.shape}")
+print(f"ResNet18 features: {features.shape}")
 
 
 

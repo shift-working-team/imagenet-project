@@ -69,3 +69,8 @@ fsspec==2024.2.0
 # Experiment / Data Versioning
 # =========================
 dvc==3.67.1
+
+
+# 추가 필요
+torchmetrics==1.9.0
+scikit-learn==1.7.2
