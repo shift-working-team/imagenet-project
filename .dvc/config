@@ -3,3 +3,5 @@
 ['remote "dagshub"']
     url = https://dagshub.com/Shift-working/imagenet-project.dvc
     auth = basic
+    user = sbin4142
+    password = 797328bd63dfc3c3d9b371ff17ef9b83d485ad9d

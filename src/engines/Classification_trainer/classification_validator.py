@@ -2,7 +2,11 @@ import torch
 
 from torchmetrics.classification import (
     MulticlassAccuracy,
-    MulticlassF1Score
+    MulticlassF1Score,
+
+    # precision / recall
+    MulticlassPrecision,
+    MulticlassRecall
 )
 
 
@@ -25,11 +29,13 @@ def validation_one_epoch(
         average="macro"
     ).to(device)
 
+    # precision metric
     # precision_metric = MulticlassPrecision(
     #     num_classes=num_classes,
     #     average="macro"
     # ).to(device)
 
+    # recall metric
     # recall_metric = MulticlassRecall(
     #     num_classes=num_classes,
     #     average="macro"
@@ -38,6 +44,7 @@ def validation_one_epoch(
     total_loss = 0
 
     with torch.no_grad():
+
         for images, labels in loader:
             images = images.to(device)
             labels = labels.to(device)
@@ -46,9 +53,9 @@ def validation_one_epoch(
                 outputs,
                 labels
             )
-
             total_loss += loss.item()
             preds = outputs.argmax(dim=1)
+
             acc_metric.update(
                 preds,
                 labels
@@ -77,5 +84,7 @@ def validation_one_epoch(
     return (
         total_loss / len(loader),
         acc,
-        f1
+        f1,
+        # precision,
+        # recall
     )

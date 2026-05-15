@@ -84,3 +84,28 @@ model:
     optimizer: adam
     learning_rate: 0.001
     weight_decay: 0.0
+
+classification:
+
+  model_name: resnet18
+
+  epochs: 50
+
+  learning_rate: 0.001
+
+  augmentation:
+    use_aug: false
+    type: none
+
+  metrics:
+    train:
+      - loss
+      - accuracy
+
+    validation:
+      - loss
+      - accuracy
+      - macro_f1
+
+  checkpoint:
+    save_dir: /workspace/checkpoints
