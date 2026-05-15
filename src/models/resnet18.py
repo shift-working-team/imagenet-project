@@ -42,4 +42,4 @@ class EncoderResnet18(nn.Module):
             return logits
 
         # captioning
-        return logits, features
+        return features
