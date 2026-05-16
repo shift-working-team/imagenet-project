@@ -16,7 +16,7 @@ from dataset.captioning_dataset import CaptionDataset
 from transforms.image_transform import get_caption_transform
 from engines.Captioning_trainer.Resnet18_Decoder_trainer import train_one_epoch
 from engines.Captioning_trainer.Resnet18_Decoder_validator import validation_one_epoch
-from models.gru import DecoderGRU
+from models.transformer import DecoderTransformer
 from models.resnet18 import EncoderResnet18
 
 from pycocoevalcap.bleu.bleu import Bleu
@@ -84,10 +84,11 @@ val_loader = DataLoader(
 
 # model
 encoder = EncoderResnet18().to(device)
-decoder = DecoderGRU(
+decoder = DecoderTransformer(
+    d_model=params["model"]["transformer"]["d_model"],
+    nhead=params["model"]["transformer"]["nhead"],
+    num_layers=params["model"]["transformer"]["num_layers"],
     voca_size=voca_size,
-    emd_size=params["model"]["gru"]["embed_dim"],
-    hidden_size=params["model"]["gru"]["hidden_dim"],
     max_len=params["preprocess"]["max_caption_length"]
     ).to(device)
 
@@ -96,7 +97,7 @@ decoder = DecoderGRU(
 optimizer = torch.optim.Adam(
     list(encoder.projector.parameters()) +
     list(decoder.parameters()),
-    lr=params["model"]["gru"]["learning_rate"]
+    lr=params["model"]["transformer"]["learning_rate"]
 )
 
 
@@ -113,8 +114,8 @@ def get_git_revision_hash():
 
 # 1. 설정값 정의 (yaml 파일에서 읽어오는 것을 추천)
 my_config = {
-    "model_name": "cnn-gru",
-    "learning_rate": params["model"]["gru"]["learning_rate"],
+    "model_name": "cnn-transformer",
+    "learning_rate": params["model"]["transformer"]["learning_rate"],
     "batch_size": params["train"]["batch_size"],
     "image_size": params["preprocess"]["image_size"],
     "seed": params["train"]["seed"],
@@ -131,7 +132,7 @@ wandb.init(
     project="imagenet-project",
     entity="super-shift-working", # 팀 계정이 있다면 작성
     config=my_config,
-    name="Resnet18+GRU-20260514-v1"
+    name="Resnet18+transformer-20260515-v2"
 )
 
 
@@ -209,6 +210,5 @@ for epoch in range(params["train"]["epochs"]):
         "bleu4":bleu_score[3],
         "cider":cider_score
     })
-    
 
-wandb.finish
+wandb.finish()

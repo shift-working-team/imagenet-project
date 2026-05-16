@@ -15,11 +15,12 @@ def validation_one_epoch(
 
     with torch.no_grad():
         total_loss = 0
-        for images, captions in loader:
+        for images, captions, references_caption in loader:
             images = images.to(device)
             captions = captions.to(device)
+            references_caption = list(zip(*references_caption))
 
-            _, feature = encoder(images)
+            feature = encoder(images)
 
             input_caption = captions[:, :-1]
             target_caption = captions[:, 1:]
@@ -33,4 +34,4 @@ def validation_one_epoch(
 
             total_loss += loss.item()
 
-    return total_loss / len(loader), feature[-1].unsqueeze(0), target_caption[-1]
+    return total_loss / len(loader), feature[-1].unsqueeze(0), references_caption[-1]
