@@ -19,6 +19,9 @@ from engines.Captioning_trainer.Resnet18_Decoder_validator import validation_one
 from models.lstm import DecoderLSTM
 from models.resnet18 import EncoderResnet18
 
+from pycocoevalcap.bleu.bleu import Bleu
+from pycocoevalcap.cider.cider import Cider
+
 
 # params
 with open("/workspace/params.yaml", "r", encoding="utf-8") as f:
@@ -143,7 +146,7 @@ for epoch in range(params["train"]["epochs"]):
         device
     )
 
-    val_loss, feature, target_inx = validation_one_epoch(
+    val_loss, feature, references_caption = validation_one_epoch(
         encoder,
         decoder,
         val_loader,
@@ -157,43 +160,55 @@ for epoch in range(params["train"]["epochs"]):
             torch.tensor([w2i["<sos>"]]),
             torch.tensor([w2i["<eos>"]])
             )
-    
-    # <end> 제거
-    end_inx = torch.where(target_inx == w2i["<eos>"])[0]
-    target_inx = target_inx[:end_inx].tolist()
 
     generated_sentence = []
     for i in generated_inx:
         generated_sentence.append(i2w[i])
     generated_sentence = " ".join(generated_sentence)
 
-    target_sentence = []
-    for i in target_inx:
-        target_sentence.append(i2w[i])
-    target_sentence = " ".join(target_sentence)
+    generated_dict = {epoch:[generated_sentence]}
+    references_dict = {epoch:list(references_caption)}
 
-    generated_dict= {epoch:generated_sentence}
-    target_dict= {epoch:target_sentence}
+    bleu_scorer = Bleu(4)
+    bleu_score, bleu_scores = bleu_scorer.compute_score(
+        references_dict,
+        generated_dict
+    )
+
+    cider_scorer = Cider()
+    cider_score, cider_scores = cider_scorer.compute_score(
+        references_dict,
+        generated_dict
+    )
 
     print(f"Epoch {epoch+1} Train_Loss: {train_loss:.4f} Val_Loss: {val_loss:.4f}")
-    print('-'*30)
+    print('-'*60)
 
     print(f'Generated index: {generated_inx}')
-    print(f'Target index: {target_inx}')
-    print('-'*30)
-
     print(f'Generated sentence: {generated_sentence}')
-    print(f'Target sentence: {target_sentence}')
-    print('='*30)
+    print('-'*60)
 
+    print(f'references sentence1: {references_dict[epoch][0]}')
+    print(f'references sentence2: {references_dict[epoch][1]}')
+    print('-'*60)
     
+    print("BLEU-1:", bleu_score[0])
+    print("BLEU-2:", bleu_score[1])
+    print("BLEU-3:", bleu_score[2])
+    print("BLEU-4:", bleu_score[3])
+    print("CIDEr:", cider_score)
+    print('='*60)
+
     # 4. 지표 기록
     wandb.log({
         "train/loss": train_loss,
         "validation/loss": val_loss,
-        "bleu":calculate_bleu_n(generated_dict, target_dict),
-        "cider":calculate_cider(generated_dict, target_dict)
+        "bleu1":bleu_score[0],
+        "bleu2":bleu_score[1],
+        "bleu3":bleu_score[2],
+        "bleu4":bleu_score[3],
+        "cider":cider_score
     })
-
+    
 
 wandb.finish()

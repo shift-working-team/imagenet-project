@@ -29,6 +29,11 @@ class CaptionDataset(Dataset):
         # #디버깅용
         # self.data = self.data[:10]
 
+        if split == "val":
+            self.is_val = True
+        else:
+            self.is_val = False
+        
         self.image_dir = image_dir
         self.w2i = w2i
         self.transform = transform
@@ -49,7 +54,9 @@ class CaptionDataset(Dataset):
         if self.transform:
             image = self.transform(image)
 
-        references_caption = data["captions"]
+        if self.is_val:
+            references_caption = data["captions"]
+
         caption = random.choice(data["captions"])
 
         words = self.tokenizer(caption)
@@ -72,4 +79,7 @@ class CaptionDataset(Dataset):
 
         tokens = torch.tensor(tokens)
 
-        return image, tokens, references_caption
+        if self.is_val:
+            return image, tokens, references_caption
+        else:
+            return image, tokens

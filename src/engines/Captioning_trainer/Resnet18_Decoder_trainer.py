@@ -18,7 +18,7 @@ def train_one_epoch(
         images = images.to(device)
         captions = captions.to(device)
 
-        _, feature = encoder(images)
+        feature = encoder(images)
 
         input_caption = captions[:, :-1]
         target_caption = captions[:, 1:]

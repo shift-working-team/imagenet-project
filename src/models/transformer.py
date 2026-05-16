@@ -8,7 +8,7 @@ class PositionalEncoding(nn.Module):
 
         pe = torch.zeros(max_len, d_model)
         position = torch.arange(0, max_len).unsqueeze(1)
-        dev_term = torch.exp(torch.arange(0,d_model/2) * (math.log(10000.0)/d_model))
+        dev_term = torch.exp(torch.arange(0,d_model, 2) * (-math.log(10000.0)/d_model))
 
         pe[:, 0::2] = torch.sin(position * dev_term)
         pe[:, 1::2] = torch.cos(position * dev_term)
@@ -20,7 +20,7 @@ class PositionalEncoding(nn.Module):
     
 
 class DecoderTransformer(nn.Module):
-    def __init__(self, d_model=512, nhead=8, num_layer=4, voca_size=10000, max_len=30):
+    def __init__(self, d_model=512, nhead=8, num_layers=4, voca_size=10000, max_len=30):
         super().__init__()
 
         self.d_model = d_model
@@ -31,7 +31,7 @@ class DecoderTransformer(nn.Module):
         self.pos_end = PositionalEncoding(d_model, max_len)
 
         decoder_layer = nn.TransformerDecoderLayer(d_model=d_model, nhead=nhead, batch_first=True)
-        self.transformer = nn.TransformerDecoder(decoder_layer, num_layers=num_layer)
+        self.transformer = nn.TransformerDecoder(decoder_layer, num_layers=num_layers)
 
         self.fc = nn.Linear(d_model, voca_size)
 
@@ -52,22 +52,26 @@ class DecoderTransformer(nn.Module):
     
     def generate(self, feature, start_token, end_token):
         memory = self.img_proj(feature).unsqueeze(1)
-        generated = start_token.unsqueeze(1)
+        generated = start_token.unsqueeze(0)
 
         for _ in range(self.max_len):
             input = self.embedding(generated)
             input = self.pos_end(input)
 
-            out = self.transformer(tgt=input, memory=memory)
-            logits = self.fc(out).squeeze(1)
-            pred = torch.argmax(logits, dim=1)
+            T = generated.size(1)
+            mask = torch.triu(torch.ones(T, T), diagonal=1).bool()
 
-            generated = torch.concat([generated, pred.unsqueeze(1)], dim=1)
+            out = self.transformer(tgt=input, memory=memory, tgt_mask=mask)
+            logits = self.fc(out)
+            logits = logits[:, -1, :]
+            pred = torch.argmax(logits, dim=1)
 
             if pred.item() == end_token:
                 break
 
-        return generated[:, 1:]
+            generated = torch.concat([generated, pred.unsqueeze(1)],dim=1)
+
+        return generated[:, 1:].squeeze(0).tolist()
 
 
         
