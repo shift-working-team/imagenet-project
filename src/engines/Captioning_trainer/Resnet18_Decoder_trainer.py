@@ -10,7 +10,7 @@ def train_one_epoch(
     device
 ):
 
-    encoder.eval()
+    encoder.train()
     decoder.train()
 
     total_loss = 0
@@ -18,7 +18,7 @@ def train_one_epoch(
         images = images.to(device)
         captions = captions.to(device)
 
-        feature = encoder(images)
+        feature = encoder(images, return_features=True)
 
         input_caption = captions[:, :-1]
         target_caption = captions[:, 1:]

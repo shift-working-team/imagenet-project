@@ -132,7 +132,7 @@ wandb.init(
     project="imagenet-project",
     entity="super-shift-working", # 팀 계정이 있다면 작성
     config=my_config,
-    name="Resnet18+transformer-20260515-v2"
+    name="Resnet18+transformer-20260516-v1"
 )
 
 
@@ -147,68 +147,84 @@ for epoch in range(params["train"]["epochs"]):
         device
     )
 
-    val_loss, feature, references_caption = validation_one_epoch(
+    val_loss, all_feature, all_references = validation_one_epoch(
         encoder,
         decoder,
         val_loader,
         criterion,
         device,
-        w2i,
-    )
-
-    generated_inx = decoder.generate(
-            feature,
-            torch.tensor([w2i["<sos>"]]),
-            torch.tensor([w2i["<eos>"]])
-            )
-
-    generated_sentence = []
-    for i in generated_inx:
-        generated_sentence.append(i2w[i])
-    generated_sentence = " ".join(generated_sentence)
-
-    generated_dict = {epoch:[generated_sentence]}
-    references_dict = {epoch:list(references_caption)}
-
-    bleu_scorer = Bleu(4)
-    bleu_score, bleu_scores = bleu_scorer.compute_score(
-        references_dict,
-        generated_dict
-    )
-
-    cider_scorer = Cider()
-    cider_score, cider_scores = cider_scorer.compute_score(
-        references_dict,
-        generated_dict
+        epoch
     )
 
     print(f"Epoch {epoch+1} Train_Loss: {train_loss:.4f} Val_Loss: {val_loss:.4f}")
-    print('-'*60)
 
-    print(f'Generated index: {generated_inx}')
-    print(f'Generated sentence: {generated_sentence}')
-    print('-'*60)
+    log_dict = {
+        "train/loss": train_loss,
+        "val/loss": val_loss
+    }
 
-    print(f'references sentence1: {references_dict[epoch][0]}')
-    print(f'references sentence2: {references_dict[epoch][1]}')
-    print('-'*60)
-    
-    print("BLEU-1:", bleu_score[0])
-    print("BLEU-2:", bleu_score[1])
-    print("BLEU-3:", bleu_score[2])
-    print("BLEU-4:", bleu_score[3])
-    print("CIDEr:", cider_score)
+    if epoch >= 5 and epoch % 5 == 0:
+        generated_token = decoder.generate(
+                all_feature,
+                torch.full((all_feature.size(0),), w2i["<sos>"]),
+                torch.tensor([w2i["<eos>"]])
+                )
+
+        generated_sentence = []
+        for sentence in generated_token:
+            end_inx = sentence.index(w2i["<eos>"])
+            sentence = sentence[:end_inx]
+
+            word = []
+            for i in sentence:
+                word.append(i2w[i])
+            
+            generated_sentence.append(' '.join(word))
+
+        generated_dict = {i:[sentence] for i, sentence in enumerate(generated_sentence)}
+        references_dict = {i:list(sentences) for i, sentences in enumerate(all_references)}
+
+        bleu_scorer = Bleu(4)
+        bleu_score, bleu_scores = bleu_scorer.compute_score(
+            references_dict,
+            generated_dict
+        )
+
+        cider_scorer = Cider()
+        cider_score, cider_scores = cider_scorer.compute_score(
+            references_dict,
+            generated_dict
+        )
+
+        sample_index = 0
+
+        print('-'*60)
+        print(f'Generated sentence: {generated_dict[sample_index]}')
+        print('-'*60)
+
+        print(f'references sentence1: {references_dict[sample_index][0]}')
+        print(f'references sentence2: {references_dict[sample_index][1]}')
+        print('-'*60)
+        
+        print("BLEU-1:", bleu_score[0])
+        print("BLEU-2:", bleu_score[1])
+        print("BLEU-3:", bleu_score[2])
+        print("BLEU-4:", bleu_score[3])
+        print("CIDEr:", cider_score)
+
+        log_dict = {
+            "train/loss": train_loss,
+            "val/loss": val_loss,
+            "bleu1":bleu_score[0],
+            "bleu2":bleu_score[1],
+            "bleu3":bleu_score[2],
+            "bleu4":bleu_score[3],
+            "cider":cider_score
+        }
+
     print('='*60)
 
     # 4. 지표 기록
-    wandb.log({
-        "train/loss": train_loss,
-        "validation/loss": val_loss,
-        "bleu1":bleu_score[0],
-        "bleu2":bleu_score[1],
-        "bleu3":bleu_score[2],
-        "bleu4":bleu_score[3],
-        "cider":cider_score
-    })
+    wandb.log(log_dict)
 
 wandb.finish()
