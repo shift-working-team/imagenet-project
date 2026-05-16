@@ -7,7 +7,8 @@ def validation_one_epoch(
     loader,
     criterion,
     device,
-    epoch
+    epoch,
+    epochs
 ):
 
     encoder.eval()
@@ -15,7 +16,7 @@ def validation_one_epoch(
 
     with torch.no_grad():
         total_loss = 0
-        if epoch >= 5 and epoch % 5 == 0:
+        if (epoch+1) >= 5 and ((epoch+1) % 5 == 0 or (epoch+1) == epochs):
             all_references = []
             all_feature = []
         else:
@@ -28,7 +29,7 @@ def validation_one_epoch(
 
             feature = encoder(images, return_features=True)
 
-            if epoch >= 5 and epoch % 5 == 0:
+            if (epoch+1) >= 5 and ((epoch+1) % 5 == 0 or (epoch+1) == epochs):
                 all_references.extend(list(zip(*batch_references)))
                 all_feature.append(feature.cpu())
             
@@ -44,7 +45,7 @@ def validation_one_epoch(
 
             total_loss += loss.item()
 
-    if epoch >= 5 and epoch % 5 == 0:
+    if (epoch+1) >= 5 and ((epoch+1) % 5 == 0 or (epoch+1) == epochs):
         return total_loss / len(loader), torch.cat(all_feature, dim=0), all_references
     else:
         return total_loss / len(loader), all_feature, all_references

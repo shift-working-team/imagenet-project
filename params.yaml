@@ -25,7 +25,6 @@ train:
 preprocess:
   image_size: 224
   normalize: true
-  max_caption_length: 30
 
 loss:
   name: cross_entropy
@@ -54,36 +53,34 @@ cnn:
   dropout: 0.3
   pooling: avg
 
-model:
+captioning:
+
+  model_name: gru # lstm | gru | transformer
+
+  epochs: 20
+  learning_rate: 0.0001
+  batch_size: 32
+  optimizer: adam
+
+  max_caption_length: 30
+
   lstm:
     embed_dim: 256
     hidden_dim: 512
-    num_layers: 1
-    dropout: 0.3
-    bidirectional: false
-    optimizer: adam
-    learning_rate: 0.001
-    weight_decay: 0.0
+    num_layers: 1  
 
   gru:
     embed_dim: 256
     hidden_dim: 512
     num_layers: 1
-    dropout: 0.3
-    bidirectional: false
-    optimizer: adam
-    learning_rate: 0.001
-    weight_decay: 0.0
 
   transformer:
     d_model: 512
     nhead: 8
     num_layers: 4
     dropout: 0.3
-    bidirectional: false
-    optimizer: adam
-    learning_rate: 0.0001
     weight_decay: 0.0
+
 
 classification:
 

@@ -9,7 +9,7 @@ def tokenizer(captions):
     
     return tokens
 
-def build_voca(json_path, min_freq=5, max_size=10000):
+def build_vocab(json_path, min_freq=5, max_size=10000):
     w2i = dict()
     i2w = dict()
 
