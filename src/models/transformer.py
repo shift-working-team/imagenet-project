@@ -50,10 +50,11 @@ class DecoderTransformer(nn.Module):
 
         return preq
     
-    def generate(self, feature, start_token, end_token):
-        memory = self.img_proj(feature).unsqueeze(1)
-        generated = start_token.unsqueeze(0)
-
+    def generate(self, features, start_token, end_token):
+        memory = self.img_proj(features).unsqueeze(1)
+        generated = start_token.unsqueeze(1)
+        finished = torch.zeros(generated.size(0), dtype=torch.bool, device=features.device)
+        
         for _ in range(self.max_len):
             input = self.embedding(generated)
             input = self.pos_end(input)
@@ -64,12 +65,16 @@ class DecoderTransformer(nn.Module):
             out = self.transformer(tgt=input, memory=memory, tgt_mask=mask)
             logits = self.fc(out)
             logits = logits[:, -1, :]
-            pred = torch.argmax(logits, dim=1)
 
-            if pred.item() == end_token:
-                break
+            pred = torch.argmax(logits, dim=1)
+            pred[finished] = end_token
 
             generated = torch.concat([generated, pred.unsqueeze(1)],dim=1)
+
+            finished |= (pred == end_token)
+
+            if finished.all():
+                break
 
         return generated[:, 1:].squeeze(0).tolist()
 
