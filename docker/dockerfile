@@ -1,4 +1,17 @@
 FROM j1seon/supercoding:v3
 
-RUN pip install --no-cache-dir \
-    # 라이브러리명==버전
+RUN pip uninstall -y torch torchvision torchaudio
+
+RUN python -m pip install \
+    torch torchvision torchaudio \
+    --index-url https://download.pytorch.org/whl/cu128
+
+RUN python -m pip install \
+    torchmetrics==1.9.0 \
+    scikit-learn==1.7.2 \
+    ipykernel==7.2.0 \
+    jupyterlab==4.5.6
+
+RUN python -c "import torch; print(torch.__version__)"
+RUN python -c "import torch; print(torch.version.cuda)"
+RUN python -c "import torchmetrics, sklearn, torchvision, torchaudio"

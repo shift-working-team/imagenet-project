@@ -202,6 +202,34 @@ print("Sentence Transformers Version:", sentence_transformers.__version__)
 print("✅ Sentence Transformers OK")
 
 # =========================================================
+import sklearn
+
+print("sklearn Version:", sklearn.__version__)
+
+print("✅ sklearn OK")
+
+# =========================================================
+import torchmetrics
+
+print("torchmetrics Version:", torchmetrics.__version__)
+
+print("✅ torchmetrics OK")
+
+# =========================================================
+import ipykernel
+
+print("ipykernel Version:", ipykernel.__version__)
+
+print("✅ ipykernel OK")
+
+# =========================================================
+import jupyterlab
+
+print("jupyterlab Version:", jupyterlab.__version__)
+
+print("✅ jupyterlab OK")
+
+# =========================================================
 
 print("\n" + "=" * 60)
 print("🎉 ALL IMPORTS & BASIC FUNCTION TESTS PASSED")

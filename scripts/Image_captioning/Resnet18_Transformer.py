@@ -107,33 +107,33 @@ criterion = nn.CrossEntropyLoss(
 )
 
 
-def get_git_revision_hash():
-    # 전체 해시 출력
-    return subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
+# def get_git_revision_hash():
+#     # 전체 해시 출력
+#     return subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
 
 
-# 1. 설정값 정의 (yaml 파일에서 읽어오는 것을 추천)
-my_config = {
-    "model_name": "cnn-transformer",
-    "learning_rate": params["model"]["transformer"]["learning_rate"],
-    "batch_size": params["train"]["batch_size"],
-    "image_size": params["preprocess"]["image_size"],
-    "seed": params["train"]["seed"],
-    "epochs" : params["train"]["epochs"],
-    "dataset_version": "dvc-v1",
-    "optimizer": params["train"]["optimizer"],
-    "dvice": device.type,
-    "commit_hash": get_git_revision_hash()
-}
+# # 1. 설정값 정의 (yaml 파일에서 읽어오는 것을 추천)
+# my_config = {
+#     "model_name": "cnn-transformer",
+#     "learning_rate": params["model"]["transformer"]["learning_rate"],
+#     "batch_size": params["train"]["batch_size"],
+#     "image_size": params["preprocess"]["image_size"],
+#     "seed": params["train"]["seed"],
+#     "epochs" : params["train"]["epochs"],
+#     "dataset_version": "dvc-v1",
+#     "optimizer": params["train"]["optimizer"],
+#     "dvice": device.type,
+#     "commit_hash": get_git_revision_hash()
+# }
 
 
-# 2. W&B 초기화
-wandb.init(
-    project="imagenet-project",
-    entity="super-shift-working", # 팀 계정이 있다면 작성
-    config=my_config,
-    name="Resnet18+transformer-20260516-v1"
-)
+# # 2. W&B 초기화
+# wandb.init(
+#     project="imagenet-project",
+#     entity="super-shift-working", # 팀 계정이 있다면 작성
+#     config=my_config,
+#     name="test-docker-20260516-v1"
+# )
 
 
 # train
@@ -224,7 +224,7 @@ for epoch in range(params["train"]["epochs"]):
 
     print('='*60)
 
-    # 4. 지표 기록
-    wandb.log(log_dict)
+#     # 4. 지표 기록
+#     wandb.log(log_dict)
 
-wandb.finish()
+# wandb.finish()
