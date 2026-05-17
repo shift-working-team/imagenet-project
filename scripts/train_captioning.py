@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader
 import yaml
 import wandb
 import subprocess
+import os
 from datetime import datetime
 
 from dataset.build_vocab import build_vocab, tokenizer
@@ -28,6 +29,14 @@ from metrics.evaluate_caption import evaluate_caption
 # params
 with open("/workspace/params.yaml", "r", encoding="utf-8") as f:
     params = yaml.safe_load(f)
+
+
+model_name = (
+    f'{params["captioning"]["encoder"]}-'
+    f'{params["captioning"]["decoder"]}'
+)
+version = params["captioning"]["version"]
+date = datetime.now().strftime("%Y%m%d")
 
 
 # device
@@ -86,7 +95,7 @@ val_loader = DataLoader(
 
 # model
 encoder = EncoderResnet18().to(device)
-if params["captioning"]["model_name"] == "transformer":
+if params["captioning"]["decoder"] == "transformer":
     decoder = DecoderTransformer(
         d_model=params["captioning"]["transformer"]["d_model"],
         nhead=params["captioning"]["transformer"]["nhead"],
@@ -94,14 +103,14 @@ if params["captioning"]["model_name"] == "transformer":
         voca_size=voca_size,
         max_len=params["captioning"]["max_caption_length"]
         ).to(device)
-elif params["captioning"]["model_name"] == "lstm":
+elif params["captioning"]["decoder"] == "lstm":
     decoder = DecoderLSTM(
         voca_size=voca_size,
         emd_size=params["captioning"]["lstm"]["embed_dim"],
         hidden_size=params["captioning"]["lstm"]["hidden_dim"],
         max_len=params["captioning"]["max_caption_length"]
         ).to(device)
-elif params["captioning"]["model_name"] == "gru":
+elif params["captioning"]["decoder"] == "gru":
     decoder = DecoderGRU(
         voca_size=voca_size,
         emd_size=params["captioning"]["gru"]["embed_dim"],
@@ -124,23 +133,17 @@ criterion = nn.CrossEntropyLoss(
 )
 
 
-def get_git_revision_hash():
-    # 전체 해시 출력
-    return subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
-
-
 # 1. 설정값 정의 (yaml 파일에서 읽어오는 것을 추천)
 my_config = {
-    "model_name": f'resnet18-{params["captioning"]["model_name"]}',
+    "model_name": f'resnet18-{params["captioning"]["decoder"]}',
     "learning_rate": params["captioning"]["learning_rate"],
     "batch_size": params["captioning"]["batch_size"],
     "image_size": params["preprocess"]["image_size"],
     "seed": params["train"]["seed"],
     "epochs" : params["captioning"]["epochs"],
-    "dataset_version": "dvc-v1",
+    "dataset_version": params["data"]["dataset_version"],
     "optimizer": params["captioning"]["optimizer"],
     "dvice": device.type,
-    "commit_hash": get_git_revision_hash()
 }
 
 
@@ -149,8 +152,35 @@ wandb.init(
     project="imagenet-project",
     entity="super-shift-working", # 팀 계정이 있다면 작성
     config=my_config,
-    name=f'resnet18_{params["captioning"]["model_name"]}-{datetime.today().strftime("%Y%m%d")}-v1'
+    name=f'{model_name}-{date}-{version}'
 )
+
+
+# checkpoint setting
+save_dir = params["captioning"]["checkpoint"]["save_dir"]
+os.makedirs(save_dir, exist_ok=True)
+
+save_prefix = f"{model_name}_{date}_{version}"
+
+best_val_loss = float("inf")
+
+def save_checkpoint(
+    path,
+    encoder,
+    decoder,
+    optimizer,
+    epoch,
+    train_loss,
+    val_loss
+):
+    torch.save({
+        "epoch": epoch,
+        "encoder_state_dict": encoder.state_dict(),
+        "decoder_state_dict": decoder.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "train_loss": train_loss,
+        "val_loss": val_loss
+    }, path)
 
 
 # train
@@ -209,6 +239,44 @@ for epoch in range(params["captioning"]["epochs"]):
         print(f'CIDEr: {metric_result["cider"]:.4f}')
 
     print('='*60)
+
+    epoch_path = os.path.join(save_dir, f"{save_prefix}_epoch_{epoch+1}.pt")
+    save_checkpoint(
+        epoch_path,
+        encoder,
+        decoder,
+        optimizer,
+        epoch+1,
+        train_loss,
+        val_loss
+    )
+
+    latest_path = os.path.join(save_dir, f"{save_prefix}_epoch_latest.pt")
+    save_checkpoint(
+        latest_path,
+        encoder,
+        decoder,
+        optimizer,
+        epoch+1,
+        train_loss,
+        val_loss
+    )
+
+    if val_loss < best_val_loss:
+        best_val_loss = val_loss
+
+        best_path = os.path.join(save_dir, f"{save_prefix}_best.pt")
+        save_checkpoint(
+            best_path,
+            encoder,
+            decoder,
+            optimizer,
+            epoch+1,
+            train_loss,
+            val_loss
+        )
+        print(f"Best model updated: {best_val_loss:.4f}")
+
 
     # 4. 지표 기록
     wandb.log(log_dict)
