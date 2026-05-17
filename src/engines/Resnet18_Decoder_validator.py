@@ -31,7 +31,7 @@ def validation_one_epoch(
 
             if (epoch+1) >= 5 and ((epoch+1) % 5 == 0 or (epoch+1) == epochs):
                 all_references.extend(list(zip(*batch_references)))
-                all_feature.append(feature.cpu())
+                all_feature.append(feature)
             
             input_caption = captions[:, :-1]
             target_caption = captions[:, 1:]

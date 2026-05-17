@@ -4,11 +4,15 @@ import requests
 from PIL import Image
 from io import BytesIO
 import time
+from dotenv import load_dotenv
 
 # =========================
 # 1. 설정 (여기만 수정하면 됨)
 # =========================
-ACCESS_KEY = "epIj8a7EvUfAyR05Jr7iaaItTtfEVzpjyuK4BD_ldJA"
+load_dotenv()
+US_TOKEN = os.environ.get("US_TOKEN")
+
+ACCESS_KEY = "US_TOKEN"
 
 TARGET_COUNT = 100
 MIN_WIDTH = 256

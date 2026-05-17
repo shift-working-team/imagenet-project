@@ -324,3 +324,6 @@ xxhash==3.7.0
 yarl==1.23.0
 zc.lockfile==4.0
 zstandard @ file:///croot/zstandard_1677013143055/work
+
+#5/25 추가필요
+notebook==7.5.0

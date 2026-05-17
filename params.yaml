@@ -4,6 +4,7 @@ project:
 data:
   raw_dir: /workspace/data/raw/
   captions_file: /workspace/data/annotations/annotation.json
+  dataset_version: raw-20260509-v1
 
 tokenizer:
   min_freq: 5
@@ -55,7 +56,9 @@ cnn:
 
 captioning:
 
-  model_name: gru # lstm | gru | transformer
+  encoder: resnet18
+  decoder: gru # lstm | gru | transformer
+  version: v1
 
   epochs: 20
   learning_rate: 0.0001
@@ -80,6 +83,9 @@ captioning:
     num_layers: 4
     dropout: 0.3
     weight_decay: 0.0
+
+  checkpoint:
+    save_dir: /workspace/checkpoints/captioning
 
 
 classification:
