@@ -261,7 +261,8 @@ wandb.init(
     project=params["logging"]["project_name"],
     entity="super-shift-working",
     config=my_config,
-    name=wandb_name
+    name=wandb_name,
+    tags=["classification"]
 )
 
 
