@@ -21,8 +21,8 @@ from models.lstm import DecoderLSTM
 from models.gru import DecoderGRU
 from models.transformer import DecoderTransformer
 
-from engines.resnet18_decoder_trainer import train_one_epoch
-from engines.resnet18_decoder_validator import validation_one_epoch
+from engines.captioning_trainer import train_one_epoch
+from engines.captioning_validator import validation_one_epoch
 
 from metrics.evaluate_caption import evaluate_caption
 

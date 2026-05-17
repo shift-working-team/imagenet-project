@@ -1,91 +1,77 @@
 stages:
-  build_vocab:
-    cmd: python src/dataset/build_voca.py
+  train_lstm_baseline:
+    cmd: python scripts/train_captioning.py --model lstm --augmentation none
     deps:
-      - data/annotations/annotation.json
-      - src/dataset/build_voca.py
+     - params.yaml
+     - data/raw
+     - data/annotations.json
+     - src/dataset/captioning_dataset.py
+     - src/dataset/build_vocab.py
+     - src/engines/captioning_trainer.py
+     - src/engines/captioning_validator.py
+     - src/metrics/evaluate_caption.py
+     - src/models/resnet18.py
+     - src/models/lstm.py
+     - src/transforms/image_transform.py
+     - scripts/train_captioning.py
     params:
-      - tokenizer.min_freq
-      - tokenizer.max_vocab_size
-      - tokenizer.special_tokens
+     - data
+     - tokenizer
+     - train
+     - preprocess
+     - captioning
     outs:
-      - outputs/tokenizer/vocab.json
+     - checkpoints/captioning
 
-  extract_cnn_features:
-    cmd: python scripts/extract_cnn_features.py
+
+  train_gru_baseline:
+    cmd: python scripts/train_captioning.py --model gru --augmentation none
     deps:
-      - data/raw
-      - data/annotations/annotation.json
-      - scripts/extract_cnn_features.py
-      - src
+     - params.yaml
+     - data/raw
+     - data/annotations.json
+     - src/dataset/captioning_dataset.py
+     - src/dataset/build_vocab.py
+     - src/engines/captioning_trainer.py
+     - src/engines/captioning_validator.py
+     - src/metrics/evaluate_caption.py
+     - src/models/resnet18.py
+     - src/models/gru.py
+     - src/transforms/image_transform.py
+     - scripts/train_captioning.py
     params:
-      - data
-      - transform
-      - cnn
+     - data
+     - tokenizer
+     - train
+     - preprocess
+     - captioning
     outs:
-      - data/processed/features
+     - checkpoints/captioning
 
-  train_lstm:
-    cmd: python src/engines/classification_trainer.py --params params.yaml --model lstm
+
+  train_transformer_baseline:
+    cmd: python scripts/train_captioning.py --model transformer --augmentation none
     deps:
-      - data/raw
-      - data/annotations/annotation.json
-      - outputs/tokenizer/vocab.json
-      - src
+     - params.yaml
+     - data/raw
+     - data/annotations.json
+     - src/dataset/captioning_dataset.py
+     - src/dataset/build_vocab.py
+     - src/engines/captioning_trainer.py
+     - src/engines/captioning_validator.py
+     - src/metrics/evaluate_caption.py
+     - src/models/resnet18.py
+     - src/models/transformer.py
+     - src/transforms/image_transform.py
+     - scripts/train_captioning.py
     params:
-      - data
-      - tokenizer.vocab_path
-      - preprocess
-      - cnn
-      - train
-      - models.lstm
+     - data
+     - tokenizer
+     - train
+     - preprocess
+     - captioning
     outs:
-      - outputs/lstm_checkpoints.json
-    metrics:
-      - outputs/metrics/lstm_train_metrics.json:
-          cache: false
-
-  train_gru:
-    cmd: python src/engines/classification_trainer.py --params params.yaml --model gru
-    deps:
-      - data/processed/images
-      - data/processed/manifest/train.json
-      - data/processed/manifest/val.json
-      - outputs/tokenizer/vocab.json
-      - configs/captioning/gru.yaml
-      - scripts/train_captioning.py
-      - src
-    params:
-      - train.epochs
-      - train.batch_size
-      - train.seed
-    outs:
-      - outputs/captioning/gru/checkpoints
-    metrics:
-      - outputs/captioning/gru/metrics/train_metrics.json:
-          cache: false
-
-  train_transformer:
-    cmd: python src/engines/classification_trainer.py --params params.yaml --model transformer
-    deps:
-      - data/processed/images
-      - data/processed/manifest/train.json
-      - data/processed/manifest/val.json
-      - outputs/tokenizer/vocab.json
-      - configs/captioning/transformer.yaml
-      - scripts/train_captioning.py
-      - src
-    params:
-      - train.epochs
-      - train.batch_size
-      - train.seed
-    outs:
-      - outputs/captioning/transformer/checkpoints
-    metrics:
-      - outputs/captioning/transformer/metrics/train_metrics.json:
-          cache: false
-  
-
+     - checkpoints/captioning
 
 
   train_resnet18_baseline:
