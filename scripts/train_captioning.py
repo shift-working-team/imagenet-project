@@ -143,7 +143,7 @@ my_config = {
     "epochs" : params["captioning"]["epochs"],
     "dataset_version": params["data"]["dataset_version"],
     "optimizer": params["captioning"]["optimizer"],
-    "dvice": device.type,
+    "device": device.type,
 }
 
 
