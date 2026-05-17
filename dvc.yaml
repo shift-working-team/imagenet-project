@@ -87,100 +87,155 @@ stages:
   
 
 
+
   train_resnet18_baseline:
     cmd: python scripts/train_classification.py --model resnet18 --augmentation none
     deps:
-      - data/raw
-      - src
-      - scripts/train_classification.py
-      - params.yaml
+     - data/raw
+     - scripts/train_classification.py
+     - params.yaml
+     - src/dataset/classification_dataset.py
+     - src/models/resnet18.py
+     - src/models/efficientnet.py
+     - src/models/convnext.py
+     - src/models/mobilenet.py
+     - src/engines/classification_trainer.py
+     - src/engines/classification_validator.py
+     - src/transforms/image_transform.py
+     - src/transforms/mixup.py
+     - src/transforms/cutmix.py
     params:
-      - data.dataset_version
-      - train
-      - preprocess
-      - classification
+     - data.dataset_version
+     - train
+     - preprocess
+     - classification
     outs:
      - checkpoints/classification
 
 
-train_efficientnet_b0_baseline:
-  cmd: python scripts/train_classification.py --model efficientnet_b0 --augmentation none
-  deps:
-    - data/raw
-    - src
-    - scripts/train_classification.py
-    - params.yaml
-  params:
-    - data.dataset_version
-    - train
-    - preprocess
-    - classification
-  outs:
-    - checkpoints/classification
+  train_efficientnet_b0_baseline:
+    cmd: python scripts/train_classification.py --model efficientnet_b0 --augmentation none
+    deps:
+     - data/raw
+     - scripts/train_classification.py
+     - params.yaml
+     - src/dataset/classification_dataset.py
+     - src/models/resnet18.py
+     - src/models/efficientnet.py
+     - src/models/convnext.py
+     - src/models/mobilenet.py
+     - src/engines/classification_trainer.py
+     - src/engines/classification_validator.py
+     - src/transforms/image_transform.py
+     - src/transforms/mixup.py
+     - src/transforms/cutmix.py
+    params:
+     - data.dataset_version
+     - train
+     - preprocess
+     - classification
+    outs:
+     - checkpoints/classification
 
 
-train_convnext_tiny_baseline:
-  cmd: python scripts/train_classification.py --model convnext_tiny --augmentation none
-  deps:
-    - data/raw
-    - src
-    - scripts/train_classification.py
-    - params.yaml
-  params:
-    - data.dataset_version
-    - train
-    - preprocess
-    - classification
-  outs:
-    - checkpoints/classification
+  train_convnext_tiny_baseline:
+    cmd: python scripts/train_classification.py --model convnext_tiny --augmentation none
+    deps:
+     - data/raw
+     - scripts/train_classification.py
+     - params.yaml
+     - src/dataset/classification_dataset.py
+     - src/models/resnet18.py
+     - src/models/efficientnet.py
+     - src/models/convnext.py
+     - src/models/mobilenet.py
+     - src/engines/classification_trainer.py
+     - src/engines/classification_validator.py
+     - src/transforms/image_transform.py
+     - src/transforms/mixup.py
+     - src/transforms/cutmix.py
+    params:
+     - data.dataset_version
+     - train
+     - preprocess
+     - classification
+    outs:
+     - checkpoints/classification
 
 
-train_mobilenet_v3_small_baseline:
-  cmd: python scripts/train_classification.py --model mobilenet_v3_small --augmentation none
-  deps:
-    - data/raw
-    - src
-    - scripts/train_classification.py
-    - params.yaml
-  params:
-    - data.dataset_version
-    - train
-    - preprocess
-    - classification
-  outs:
-    - checkpoints/classification
+  train_mobilenet_v3_small_baseline:
+    cmd: python scripts/train_classification.py --model mobilenet_v3_small --augmentation none
+    deps:
+     - data/raw
+     - scripts/train_classification.py
+     - params.yaml
+     - src/dataset/classification_dataset.py
+     - src/models/resnet18.py
+     - src/models/efficientnet.py
+     - src/models/convnext.py
+     - src/models/mobilenet.py
+     - src/engines/classification_trainer.py
+     - src/engines/classification_validator.py
+     - src/transforms/image_transform.py
+     - src/transforms/mixup.py
+     - src/transforms/cutmix.py
+    params:
+     - data.dataset_version
+     - train
+     - preprocess
+     - classification
+    outs:
+     - checkpoints/classification
 
 
-train_best_backbone_mixup:
-  cmd: python scripts/train_classification.py --model convnext_tiny --augmentation mixup
-  deps:
-    - data/raw
-    - src
-    - scripts/train_classification.py
-    - params.yaml
-  params:
-    - data.dataset_version
-    - train
-    - preprocess
-    - classification
-  outs:
-    - checkpoints/classification
+  train_best_backbone_mixup:
+    cmd: python scripts/train_classification.py --model convnext_tiny --augmentation mixup
+    deps:
+     - data/raw
+     - scripts/train_classification.py
+     - params.yaml
+     - src/dataset/classification_dataset.py
+     - src/models/resnet18.py
+     - src/models/efficientnet.py
+     - src/models/convnext.py
+     - src/models/mobilenet.py
+     - src/engines/classification_trainer.py
+     - src/engines/classification_validator.py
+     - src/transforms/image_transform.py
+     - src/transforms/mixup.py
+     - src/transforms/cutmix.py
+    params:
+     - data.dataset_version
+     - train
+     - preprocess
+     - classification
+    outs:
+     - checkpoints/classification
 
 
-train_best_backbone_cutmix:
-  cmd: python scripts/train_classification.py --model convnext_tiny --augmentation cutmix
-  deps:
-    - data/raw
-    - src
-    - scripts/train_classification.py
-    - params.yaml
-  params:
-    - data.dataset_version
-    - train
-    - preprocess
-    - classification
-  outs:
-    - checkpoints/classification
+  train_best_backbone_cutmix:
+    cmd: python scripts/train_classification.py --model convnext_tiny --augmentation cutmix
+    deps:
+     - data/raw
+     - scripts/train_classification.py
+     - params.yaml
+     - src/dataset/classification_dataset.py
+     - src/models/resnet18.py
+     - src/models/efficientnet.py
+     - src/models/convnext.py
+     - src/models/mobilenet.py
+     - src/engines/classification_trainer.py
+     - src/engines/classification_validator.py
+     - src/transforms/image_transform.py
+     - src/transforms/mixup.py
+     - src/transforms/cutmix.py
+    params:
+     - data.dataset_version
+     - train
+     - preprocess
+     - classification
+    outs:
+     - checkpoints/classification
 
 
 
