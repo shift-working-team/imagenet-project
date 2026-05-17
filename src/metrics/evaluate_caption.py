@@ -9,6 +9,10 @@ def evaluate_caption(
     w2i,
     i2w
     ):
+    device = next(decoder.parameters()).device
+
+    all_feature = all_feature.to(device)
+
     generated_token = decoder.generate(
         all_feature,
         torch.full((all_feature.size(0),), w2i["<sos>"], device=all_feature.device),
