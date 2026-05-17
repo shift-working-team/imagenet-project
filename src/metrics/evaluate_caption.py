@@ -7,17 +7,27 @@ def evaluate_caption(
     all_feature,
     all_reference,
     w2i,
-    i2w
+    i2w,
+    batch_size
     ):
     device = next(decoder.parameters()).device
 
-    all_feature = all_feature.to(device)
+    generated_token = []
+    with torch.no_grad():
+        for i in range(0, all_feature.size(0), batch_size):
+            batch_feature = all_feature[i:i+batch_size].to(device)
 
-    generated_token = decoder.generate(
-        all_feature,
-        torch.full((all_feature.size(0),), w2i["<sos>"], device=all_feature.device),
-        w2i["<eos>"]
-    )
+            batch_generated = decoder.generate(
+                batch_feature,
+                torch.full((batch_feature.size(0),), w2i["<sos>"], device=device),
+                w2i["<eos>"]
+            )
+
+            generated_token.extend(batch_generated)
+
+            del batch_feature
+            torch.cuda.empty_cache()
+
 
     generated_sentence = []
     for sentence in generated_token:

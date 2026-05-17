@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
+import random
 import yaml
 import wandb
 import subprocess
@@ -29,6 +30,15 @@ from metrics.evaluate_caption import evaluate_caption
 # params
 with open("/workspace/params.yaml", "r", encoding="utf-8") as f:
     params = yaml.safe_load(f)
+
+
+# seed
+SEED = params["train"]["seed"]
+random.seed(SEED)
+torch.manual_seed(SEED)
+torch.cuda.manual_seed_all(SEED)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
 
 
 model_name = (
@@ -217,7 +227,8 @@ for epoch in range(params["captioning"]["epochs"]):
             all_feature,
             all_reference,
             w2i,
-            i2w
+            i2w,
+            params["captioning"]["batch_size"]
         )
 
         log_dict.update(metric_result)
