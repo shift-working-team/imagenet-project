@@ -2,8 +2,8 @@ from torchmetrics.classification import (
     MulticlassAccuracy
 )
 
-from utils.mixup import mixup_data
-from utils.cutmix import cutmix_data
+from transforms.mixup import mixup_data
+from transforms.cutmix import cutmix_data
 
 
 def train_one_epoch(
