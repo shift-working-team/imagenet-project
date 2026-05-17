@@ -13,12 +13,12 @@ class PositionalEncoding(nn.Module):
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
 
-        self.pe = pe.unsqueeze(0)
+        pe = pe.unsqueeze(0)
 
         self.register_buffer("pe", pe)
 
     def forward(self, caption):
-        return self.pe[:, :caption.size(1)].to(caption.device) + caption
+        return self.pe[:, :caption.size(1)] + caption
     
 
 class DecoderTransformer(nn.Module):
@@ -43,8 +43,8 @@ class DecoderTransformer(nn.Module):
         input = self.pos_end(input)
 
         T = caption.size(1)
-        mask = torch.triu(torch.ones(T, T), diagonal=1).bool()
-        pad_mask = (caption == pad_inx)
+        mask = torch.triu(torch.ones(T, T, device=input.device), diagonal=1).bool()
+        pad_mask = (caption == pad_inx).to(input.device)
 
         out = self.transformer(tgt=input, memory=memory, tgt_mask=mask, tgt_key_padding_mask=pad_mask)
 
@@ -62,7 +62,7 @@ class DecoderTransformer(nn.Module):
             input = self.pos_end(input)
 
             T = generated.size(1)
-            mask = torch.triu(torch.ones(T, T), diagonal=1).bool()
+            mask = torch.triu(torch.ones(T, T, device=input.device), diagonal=1).bool()
 
             out = self.transformer(tgt=input, memory=memory, tgt_mask=mask)
             logits = self.fc(out)
@@ -78,7 +78,7 @@ class DecoderTransformer(nn.Module):
             if finished.all():
                 break
 
-        return generated[:, 1:].squeeze(0).tolist()
+        return generated[:, 1:].tolist()
 
 
         
