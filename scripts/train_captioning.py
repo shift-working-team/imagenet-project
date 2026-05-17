@@ -217,7 +217,8 @@ for epoch in range(params["captioning"]["epochs"]):
             all_feature,
             all_reference,
             w2i,
-            i2w
+            i2w,
+            params["captioning"]["batch_size"]
         )
 
         log_dict.update(metric_result)
