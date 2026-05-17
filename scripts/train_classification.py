@@ -19,8 +19,8 @@ from models.resnet18 import EncoderResnet18
 from models.efficientnet import get_efficientnet_b0
 from models.convnext import get_convnext_tiny
 from models.mobilenet import get_mobilenet_v3_small
-from engines.Classification_trainer.classification_trainer import train_one_epoch
-from engines.Classification_trainer.classification_validator import validation_one_epoch
+from engines.classification_trainer import train_one_epoch
+from engines.classification_validator import validation_one_epoch
 
 
 
@@ -249,7 +249,8 @@ my_config = {
     "augmentation": augmentation_type,
     "optimizer": params["train"]["optimizer"],
     "device": device.type,
-    "num_classes":num_classes
+    "num_classes":num_classes,
+    "dataset_version": params["data"]["dataset_version"]
 }
 
 

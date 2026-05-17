@@ -84,3 +84,103 @@ stages:
     metrics:
       - outputs/captioning/transformer/metrics/train_metrics.json:
           cache: false
+  
+
+
+  train_resnet18_baseline:
+    cmd: python scripts/train_classification.py --model resnet18 --augmentation none
+    deps:
+      - data/raw
+      - src
+      - scripts/train_classification.py
+      - params.yaml
+    params:
+      - data.dataset_version
+      - train
+      - preprocess
+      - classification
+    outs:
+     - checkpoints/classification
+
+
+train_efficientnet_b0_baseline:
+  cmd: python scripts/train_classification.py --model efficientnet_b0 --augmentation none
+  deps:
+    - data/raw
+    - src
+    - scripts/train_classification.py
+    - params.yaml
+  params:
+    - data.dataset_version
+    - train
+    - preprocess
+    - classification
+  outs:
+    - checkpoints/classification
+
+
+train_convnext_tiny_baseline:
+  cmd: python scripts/train_classification.py --model convnext_tiny --augmentation none
+  deps:
+    - data/raw
+    - src
+    - scripts/train_classification.py
+    - params.yaml
+  params:
+    - data.dataset_version
+    - train
+    - preprocess
+    - classification
+  outs:
+    - checkpoints/classification
+
+
+train_mobilenet_v3_small_baseline:
+  cmd: python scripts/train_classification.py --model mobilenet_v3_small --augmentation none
+  deps:
+    - data/raw
+    - src
+    - scripts/train_classification.py
+    - params.yaml
+  params:
+    - data.dataset_version
+    - train
+    - preprocess
+    - classification
+  outs:
+    - checkpoints/classification
+
+
+train_best_backbone_mixup:
+  cmd: python scripts/train_classification.py --model convnext_tiny --augmentation mixup
+  deps:
+    - data/raw
+    - src
+    - scripts/train_classification.py
+    - params.yaml
+  params:
+    - data.dataset_version
+    - train
+    - preprocess
+    - classification
+  outs:
+    - checkpoints/classification
+
+
+train_best_backbone_cutmix:
+  cmd: python scripts/train_classification.py --model convnext_tiny --augmentation cutmix
+  deps:
+    - data/raw
+    - src
+    - scripts/train_classification.py
+    - params.yaml
+  params:
+    - data.dataset_version
+    - train
+    - preprocess
+    - classification
+  outs:
+    - checkpoints/classification
+
+
+
