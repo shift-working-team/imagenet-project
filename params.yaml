@@ -57,7 +57,7 @@ cnn:
 captioning:
 
   encoder: resnet18
-  decoder: gru # lstm | gru | transformer
+  decoder: transformer # lstm | gru | transformer
   version: v1
 
   epochs: 20
