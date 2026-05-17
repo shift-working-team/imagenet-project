@@ -20,8 +20,8 @@ from models.lstm import DecoderLSTM
 from models.gru import DecoderGRU
 from models.transformer import DecoderTransformer
 
-from engines.Resnet18_Decoder_trainer import train_one_epoch
-from engines.Resnet18_Decoder_validator import validation_one_epoch
+from engines.resnet18_decoder_trainer import train_one_epoch
+from engines.resnet18_decoder_validator import validation_one_epoch
 
 from metrics.evaluate_caption import evaluate_caption
 
@@ -275,10 +275,11 @@ for epoch in range(params["captioning"]["epochs"]):
             train_loss,
             val_loss
         )
-        print(f"Best model updated: {best_val_loss:.4f}")
 
 
     # 4. 지표 기록
     wandb.log(log_dict)
+
+print(f"Best model val loss: {best_val_loss:.4f}")
 
 wandb.finish()
