@@ -1,0 +1,96 @@
+schema: '2.0'
+stages:
+  train_mobilenet_v3_small_baseline:
+    cmd: python scripts/train_classification.py --model mobilenet_v3_small --augmentation
+      none
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: bb2439473a889372951cae9148664123.dir
+      size: 1460217756
+      nfiles: 11000
+    - path: scripts/train_classification.py
+      hash: md5
+      md5: d74ad49871ce4a5aed712d4a10af3275
+      size: 6477
+      isexec: true
+    - path: src/dataset/classification_dataset.py
+      hash: md5
+      md5: a97f04517881b7054dd1fb4350a02343
+      size: 1707
+      isexec: true
+    - path: src/engines/classification_trainer.py
+      hash: md5
+      md5: 061c9fe3ed8ec7f7ca5b79abd03de3c0
+      size: 1526
+      isexec: true
+    - path: src/engines/classification_validator.py
+      hash: md5
+      md5: 465ee1f109ff7d7b65db44842a416122
+      size: 1922
+      isexec: true
+    - path: src/models/convnext.py
+      hash: md5
+      md5: 7dea363932dffd791aff44ea14859d27
+      size: 263
+      isexec: true
+    - path: src/models/efficientnet.py
+      hash: md5
+      md5: adc1fd0d9d04d96e6622573d110283a7
+      size: 265
+      isexec: true
+    - path: src/models/mobilenet.py
+      hash: md5
+      md5: 33f97e2406a3543babaf571b83281f04
+      size: 271
+      isexec: true
+    - path: src/models/resnet18.py
+      hash: md5
+      md5: 3def7aa893dc280e1c6b6c55bc4d7846
+      size: 1136
+      isexec: true
+    - path: src/transforms/cutmix.py
+      hash: md5
+      md5: aa241939540e87f55a016458aa99ac75
+      size: 1157
+      isexec: true
+    - path: src/transforms/image_transform.py
+      hash: md5
+      md5: fa30f5302a175124d5f71df8e1680083
+      size: 1477
+      isexec: true
+    - path: src/transforms/mixup.py
+      hash: md5
+      md5: 1c902be07c22363cbbfe7b52d69d7993
+      size: 546
+      isexec: true
+    params:
+      params.yaml:
+        classification:
+          model_name: resnet18
+          epochs: 50
+          learning_rate: 0.001
+          augmentation:
+            use_aug: false
+            type: none
+          metrics:
+            train:
+            - loss
+            - accuracy
+            validation:
+            - loss
+            - accuracy
+            - macro_f1
+          checkpoint:
+            save_dir: /workspace/checkpoints/classification
+        data.dataset_version: raw-20260509-v1
+        preprocess:
+          image_size: 224
+          normalize: true
+        train:
+          seed: 42
+          epochs: 20
+          batch_size: 32
+          num_workers: 4
+          device: cuda
+          optimizer: adam

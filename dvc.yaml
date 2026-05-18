@@ -2,7 +2,6 @@ stages:
   train_lstm_baseline:
     cmd: python scripts/train_captioning.py --model lstm --augmentation none
     deps:
-     - data/raw
      - data/annotations.json
      - src/dataset/captioning_dataset.py
      - src/dataset/build_vocab.py
@@ -24,7 +23,6 @@ stages:
   train_gru_baseline:
     cmd: python scripts/train_captioning.py --model gru --augmentation none
     deps:
-     - data/raw
      - data/annotations.json
      - src/dataset/captioning_dataset.py
      - src/dataset/build_vocab.py
@@ -46,7 +44,6 @@ stages:
   train_transformer_baseline:
     cmd: python scripts/train_captioning.py --model transformer --augmentation none
     deps:
-     - data/raw
      - data/annotations.json
      - src/dataset/captioning_dataset.py
      - src/dataset/build_vocab.py
@@ -68,7 +65,6 @@ stages:
   train_resnet18_baseline:
     cmd: python scripts/train_classification.py --model resnet18 --augmentation none
     deps:
-     - data/raw
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
@@ -90,7 +86,6 @@ stages:
   train_efficientnet_b0_baseline:
     cmd: python scripts/train_classification.py --model efficientnet_b0 --augmentation none
     deps:
-     - data/raw
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
@@ -112,7 +107,6 @@ stages:
   train_convnext_tiny_baseline:
     cmd: python scripts/train_classification.py --model convnext_tiny --augmentation none
     deps:
-     - data/raw
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
@@ -134,7 +128,6 @@ stages:
   train_mobilenet_v3_small_baseline:
     cmd: python scripts/train_classification.py --model mobilenet_v3_small --augmentation none
     deps:
-     - data/raw
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
@@ -156,7 +149,6 @@ stages:
   train_best_backbone_mixup:
     cmd: python scripts/train_classification.py --model convnext_tiny --augmentation mixup
     deps:
-     - data/raw
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
@@ -178,7 +170,6 @@ stages:
   train_best_backbone_cutmix:
     cmd: python scripts/train_classification.py --model convnext_tiny --augmentation cutmix
     deps:
-     - data/raw
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
