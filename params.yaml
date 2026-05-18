@@ -114,4 +114,4 @@ classification:
       - macro_f1
 
   checkpoint:
-    save_dir: /workspace/checkpoints
+    save_dir: /workspace/checkpoints/classification
