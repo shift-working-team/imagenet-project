@@ -2,7 +2,6 @@ stages:
   train_lstm_baseline:
     cmd: python scripts/train_captioning.py --model lstm --augmentation none
     deps:
-     - params.yaml
      - data/raw
      - data/annotations.json
      - src/dataset/captioning_dataset.py
@@ -20,14 +19,11 @@ stages:
      - train
      - preprocess
      - captioning
-    outs:
-     - checkpoints/captioning
 
 
   train_gru_baseline:
     cmd: python scripts/train_captioning.py --model gru --augmentation none
     deps:
-     - params.yaml
      - data/raw
      - data/annotations.json
      - src/dataset/captioning_dataset.py
@@ -45,14 +41,11 @@ stages:
      - train
      - preprocess
      - captioning
-    outs:
-     - checkpoints/captioning
 
 
   train_transformer_baseline:
     cmd: python scripts/train_captioning.py --model transformer --augmentation none
     deps:
-     - params.yaml
      - data/raw
      - data/annotations.json
      - src/dataset/captioning_dataset.py
@@ -70,8 +63,6 @@ stages:
      - train
      - preprocess
      - captioning
-    outs:
-     - checkpoints/captioning
 
 
   train_resnet18_baseline:
@@ -79,7 +70,6 @@ stages:
     deps:
      - data/raw
      - scripts/train_classification.py
-     - params.yaml
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
      - src/models/efficientnet.py
@@ -95,8 +85,6 @@ stages:
      - train
      - preprocess
      - classification
-    outs:
-     - checkpoints/classification
 
 
   train_efficientnet_b0_baseline:
@@ -104,7 +92,6 @@ stages:
     deps:
      - data/raw
      - scripts/train_classification.py
-     - params.yaml
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
      - src/models/efficientnet.py
@@ -120,8 +107,6 @@ stages:
      - train
      - preprocess
      - classification
-    outs:
-     - checkpoints/classification
 
 
   train_convnext_tiny_baseline:
@@ -129,7 +114,6 @@ stages:
     deps:
      - data/raw
      - scripts/train_classification.py
-     - params.yaml
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
      - src/models/efficientnet.py
@@ -145,8 +129,6 @@ stages:
      - train
      - preprocess
      - classification
-    outs:
-     - checkpoints/classification
 
 
   train_mobilenet_v3_small_baseline:
@@ -154,7 +136,6 @@ stages:
     deps:
      - data/raw
      - scripts/train_classification.py
-     - params.yaml
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
      - src/models/efficientnet.py
@@ -170,8 +151,6 @@ stages:
      - train
      - preprocess
      - classification
-    outs:
-     - checkpoints/classification
 
 
   train_best_backbone_mixup:
@@ -179,7 +158,6 @@ stages:
     deps:
      - data/raw
      - scripts/train_classification.py
-     - params.yaml
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
      - src/models/efficientnet.py
@@ -195,8 +173,6 @@ stages:
      - train
      - preprocess
      - classification
-    outs:
-     - checkpoints/classification
 
 
   train_best_backbone_cutmix:
@@ -204,7 +180,6 @@ stages:
     deps:
      - data/raw
      - scripts/train_classification.py
-     - params.yaml
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
      - src/models/efficientnet.py
@@ -220,8 +195,7 @@ stages:
      - train
      - preprocess
      - classification
-    outs:
-     - checkpoints/classification
+
 
 
 
