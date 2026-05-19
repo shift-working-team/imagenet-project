@@ -5,6 +5,7 @@ import os
 import yaml
 import wandb
 import random
+import argparse
 import numpy as np
 import torch
 import torch.nn as nn
@@ -89,19 +90,20 @@ num_classes = len(classes)
 print(f"num_classes: {num_classes}")
 
 
+# stage cmd
+parser = argparse.ArgumentParser()
+parser.add_argument("--model", type=str, required=True)
+parser.add_argument("--augmentation", type=str, default="none")
+args = parser.parse_args()
 
+# model
+model_name = args.model
 
 # augmentation
-augmentation_type = (
-
-    params["classification"]
-    ["augmentation"]["type"]
-)
+augmentation_type = args.augmentation
 
 if augmentation_type == "none":
     augmentation_type = None
-
-
 
 
 # transform
@@ -160,14 +162,7 @@ val_loader = DataLoader(
 )
 
 
-
-
-# model
-model_name = (
-    params["classification"]["model_name"]
-)
-
-
+# model select
 if model_name == "resnet18":
     model = EncoderResnet18(
         num_classes=num_classes

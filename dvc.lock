@@ -4,15 +4,10 @@ stages:
     cmd: python scripts/train_classification.py --model mobilenet_v3_small --augmentation
       none
     deps:
-    - path: data/raw
-      hash: md5
-      md5: bb2439473a889372951cae9148664123.dir
-      size: 1460217756
-      nfiles: 11000
     - path: scripts/train_classification.py
       hash: md5
-      md5: d74ad49871ce4a5aed712d4a10af3275
-      size: 6477
+      md5: b3da5009541a07be116cccfe340a9790
+      size: 6610
       isexec: true
     - path: src/dataset/classification_dataset.py
       hash: md5
@@ -82,7 +77,7 @@ stages:
             - accuracy
             - macro_f1
           checkpoint:
-            save_dir: /workspace/checkpoints/classification
+            save_dir: /workspace/outputs/classification
         data.dataset_version: raw-20260509-v1
         preprocess:
           image_size: 224
