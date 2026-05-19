@@ -26,6 +26,9 @@ class CaptionDataset(Dataset):
             if item['split'] == split
         ]
 
+        # # 디버깅용
+        # self.data= self.data[:10]
+
 
         if split == "val":
             self.is_val = True

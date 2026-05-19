@@ -1,3 +1,16 @@
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--model", type=str, required=True)
+parser.add_argument("--augmentation", type=str, default="none")
+
+args = parser.parse_args()
+
+print(args.model)
+print(args.augmentation)
+
+
 import sys
 sys.path.append("/workspace/src")
 
@@ -232,7 +245,13 @@ for epoch in range(params["captioning"]["epochs"]):
             params["captioning"]["batch_size"]
         )
 
-        log_dict.update(metric_result)
+        log_dict.update({
+            "BLEU_1": metric_result["bleu1"],
+            "BLEU_2": metric_result["bleu2"],
+            "BLEU_3": metric_result["bleu3"],
+            "BLEU_4": metric_result["bleu4"],
+            "CIDEr": metric_result["cider"],
+        })
 
         sample_idx = 0
 
@@ -244,35 +263,35 @@ for epoch in range(params["captioning"]["epochs"]):
             print(f'Reference {i}: {reference}')
         print("-" * 60)
 
-        print(f'BLEU-1: {metric_result["bleu1"]:.4f}')
-        print(f'BLEU-2: {metric_result["bleu2"]:.4f}')
-        print(f'BLEU-3: {metric_result["bleu3"]:.4f}')
-        print(f'BLEU-4: {metric_result["bleu4"]:.4f}')
+        print(f'BLEU_1: {metric_result["bleu1"]:.4f}')
+        print(f'BLEU_2: {metric_result["bleu2"]:.4f}')
+        print(f'BLEU_3: {metric_result["bleu3"]:.4f}')
+        print(f'BLEU_4: {metric_result["bleu4"]:.4f}')
         print(f'CIDEr: {metric_result["cider"]:.4f}')
 
     print('='*60)
 
-    epoch_path = os.path.join(save_dir, f"{save_prefix}_epoch_{epoch+1}.pt")
-    save_checkpoint(
-        epoch_path,
-        encoder,
-        decoder,
-        optimizer,
-        epoch+1,
-        train_loss,
-        val_loss
-    )
+    # epoch_path = os.path.join(save_dir, f"{save_prefix}_epoch_{epoch+1}.pt")
+    # save_checkpoint(
+    #     epoch_path,
+    #     encoder,
+    #     decoder,
+    #     optimizer,
+    #     epoch+1,
+    #     train_loss,
+    #     val_loss
+    # )
 
-    latest_path = os.path.join(save_dir, f"{save_prefix}_epoch_latest.pt")
-    save_checkpoint(
-        latest_path,
-        encoder,
-        decoder,
-        optimizer,
-        epoch+1,
-        train_loss,
-        val_loss
-    )
+    # latest_path = os.path.join(save_dir, f"{save_prefix}_epoch_latest.pt")
+    # save_checkpoint(
+    #     latest_path,
+    #     encoder,
+    #     decoder,
+    #     optimizer,
+    #     epoch+1,
+    #     train_loss,
+    #     val_loss
+    # )
 
     if val_loss < best_val_loss:
         best_val_loss = val_loss
