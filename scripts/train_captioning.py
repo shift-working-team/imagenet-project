@@ -1,16 +1,4 @@
 import argparse
-
-parser = argparse.ArgumentParser()
-
-parser.add_argument("--model", type=str, required=True)
-parser.add_argument("--augmentation", type=str, default="none")
-
-args = parser.parse_args()
-
-print(args.model)
-print(args.augmentation)
-
-
 import sys
 sys.path.append("/workspace/src")
 
@@ -53,10 +41,17 @@ torch.cuda.manual_seed_all(SEED)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
+# stage cmd
+parser = argparse.ArgumentParser()
+parser.add_argument("--model", type=str, required=True)
+args = parser.parse_args()
+
+encdoer_name = params["captioning"]["encoder"]
+decoder_name = args.model
 
 model_name = (
-    f'{params["captioning"]["encoder"]}-'
-    f'{params["captioning"]["decoder"]}'
+    f'{encdoer_name}-'
+    f'{decoder_name}'
 )
 version = params["captioning"]["version"]
 date = datetime.now().strftime("%Y%m%d")
@@ -118,7 +113,7 @@ val_loader = DataLoader(
 
 # model
 encoder = EncoderResnet18().to(device)
-if params["captioning"]["decoder"] == "transformer":
+if decoder_name == "transformer":
     decoder = DecoderTransformer(
         d_model=params["captioning"]["transformer"]["d_model"],
         nhead=params["captioning"]["transformer"]["nhead"],
@@ -126,14 +121,14 @@ if params["captioning"]["decoder"] == "transformer":
         voca_size=voca_size,
         max_len=params["captioning"]["max_caption_length"]
         ).to(device)
-elif params["captioning"]["decoder"] == "lstm":
+elif decoder_name == "lstm":
     decoder = DecoderLSTM(
         voca_size=voca_size,
         emd_size=params["captioning"]["lstm"]["embed_dim"],
         hidden_size=params["captioning"]["lstm"]["hidden_dim"],
         max_len=params["captioning"]["max_caption_length"]
         ).to(device)
-elif params["captioning"]["decoder"] == "gru":
+elif decoder_name == "gru":
     decoder = DecoderGRU(
         voca_size=voca_size,
         emd_size=params["captioning"]["gru"]["embed_dim"],
@@ -158,7 +153,7 @@ criterion = nn.CrossEntropyLoss(
 
 # 1. 설정값 정의 (yaml 파일에서 읽어오는 것을 추천)
 my_config = {
-    "model_name": f'resnet18-{params["captioning"]["decoder"]}',
+    "model_name": f'{encdoer_name}-{decoder_name}',
     "learning_rate": params["captioning"]["learning_rate"],
     "batch_size": params["captioning"]["batch_size"],
     "image_size": params["preprocess"]["image_size"],

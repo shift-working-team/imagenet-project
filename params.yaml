@@ -85,7 +85,7 @@ captioning:
     weight_decay: 0.0
 
   checkpoint:
-    save_dir: /workspace/checkpoints/captioning
+    save_dir: /workspace/outputs/captioning
 
 
 classification:
@@ -114,4 +114,4 @@ classification:
       - macro_f1
 
   checkpoint:
-    save_dir: /workspace/checkpoints/classification
+    save_dir: /workspace/outputs/classification

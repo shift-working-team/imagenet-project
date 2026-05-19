@@ -1,6 +1,6 @@
 stages:
   train_lstm_baseline:
-    cmd: python scripts/train_captioning.py --model lstm --augmentation none
+    cmd: python scripts/train_captioning.py --model lstm
     deps:
      - data/annotations.json
      - src/dataset/captioning_dataset.py
@@ -21,7 +21,7 @@ stages:
 
 
   train_gru_baseline:
-    cmd: python scripts/train_captioning.py --model gru --augmentation none
+    cmd: python scripts/train_captioning.py --model gru
     deps:
      - data/annotations.json
      - src/dataset/captioning_dataset.py
@@ -42,7 +42,7 @@ stages:
 
 
   train_transformer_baseline:
-    cmd: python scripts/train_captioning.py --model transformer --augmentation none
+    cmd: python scripts/train_captioning.py --model transformer
     deps:
      - data/annotations.json
      - src/dataset/captioning_dataset.py
