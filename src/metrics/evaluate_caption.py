@@ -54,7 +54,7 @@ def evaluate_caption(
         generated_dict
     )
 
-    return {
+    metric_result = {
         "bleu1": bleu_score[0],
         "bleu2": bleu_score[1],
         "bleu3": bleu_score[2],
@@ -63,3 +63,5 @@ def evaluate_caption(
         "generated": generated_dict,
         "references": references_dict
     }
+
+    return metric_result
