@@ -2,21 +2,22 @@ import torch.nn as nn
 from torchvision import models
 
 
-class EncoderConvNextTiny(nn.Module):
+class EncoderSwinTiny(nn.Module):
     def __init__(self, num_classes=50, embed_size=512):
         super().__init__()
 
-        model = models.convnext_tiny(
-            weights=models.ConvNeXt_Tiny_Weights.DEFAULT
+        model = models.swin_t(
+            weights=models.Swin_T_Weights.DEFAULT
         )
 
-        self.backbone = model.features
-        self.pool = nn.AdaptiveAvgPool2d(1)
+        self.backbone = model
 
         for param in self.backbone.parameters():
             param.requires_grad = False
 
-        in_features = model.classifier[2].in_features
+        in_features = model.head.in_features
+
+        self.backbone.head = nn.Identity()
 
         self.classifier = nn.Linear(
             in_features,
@@ -35,7 +36,6 @@ class EncoderConvNextTiny(nn.Module):
     ):
 
         features = self.backbone(images)
-        features = self.pool(features)
 
         features = features.view(
             features.size(0),

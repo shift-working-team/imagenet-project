@@ -68,9 +68,6 @@ stages:
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
      - src/models/resnet18.py
-     - src/models/efficientnet.py
-     - src/models/convnext.py
-     - src/models/mobilenet.py
      - src/engines/classification_trainer.py
      - src/engines/classification_validator.py
      - src/transforms/image_transform.py
@@ -88,10 +85,7 @@ stages:
     deps:
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
-     - src/models/resnet18.py
      - src/models/efficientnet.py
-     - src/models/convnext.py
-     - src/models/mobilenet.py
      - src/engines/classification_trainer.py
      - src/engines/classification_validator.py
      - src/transforms/image_transform.py
@@ -109,10 +103,7 @@ stages:
     deps:
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
-     - src/models/resnet18.py
-     - src/models/efficientnet.py
      - src/models/convnext.py
-     - src/models/mobilenet.py
      - src/engines/classification_trainer.py
      - src/engines/classification_validator.py
      - src/transforms/image_transform.py
@@ -130,10 +121,61 @@ stages:
     deps:
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
-     - src/models/resnet18.py
-     - src/models/efficientnet.py
-     - src/models/convnext.py
      - src/models/mobilenet.py
+     - src/engines/classification_trainer.py
+     - src/engines/classification_validator.py
+     - src/transforms/image_transform.py
+     - src/transforms/mixup.py
+     - src/transforms/cutmix.py
+    params:
+     - data.dataset_version
+     - train
+     - preprocess
+     - classification
+
+
+  train_vit_b_16_baseline:
+    cmd: python scripts/train_classification.py --model vit_b_16 --augmentation none
+    deps:
+     - scripts/train_classification.py
+     - src/dataset/classification_dataset.py
+     - src/models/vit.py
+     - src/engines/classification_trainer.py
+     - src/engines/classification_validator.py
+     - src/transforms/image_transform.py
+     - src/transforms/mixup.py
+     - src/transforms/cutmix.py
+    params:
+     - data.dataset_version
+     - train
+     - preprocess
+     - classification
+
+
+  train_swin_t_baseline:
+    cmd: python scripts/train_classification.py --model swin_t --augmentation none
+    deps:
+     - scripts/train_classification.py
+     - src/dataset/classification_dataset.py
+     - src/models/swin.py
+     - src/engines/classification_trainer.py
+     - src/engines/classification_validator.py
+     - src/transforms/image_transform.py
+     - src/transforms/mixup.py
+     - src/transforms/cutmix.py
+    params:
+     - data.dataset_version
+     - train
+     - preprocess
+     - classification
+
+
+  train_deit_tiny_patch16_224_baseline:
+    cmd: python scripts/train_classification.py --model deit_tiny_patch16_224 --augmentation none
+    deps:
+     - scripts/train_classification.py
+     - src/dataset/classification_dataset.py
+     - src/models/deit.py
      - src/engines/classification_trainer.py
      - src/engines/classification_validator.py
      - src/transforms/image_transform.py
@@ -151,10 +193,7 @@ stages:
     deps:
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
-     - src/models/resnet18.py
-     - src/models/efficientnet.py
      - src/models/convnext.py
-     - src/models/mobilenet.py
      - src/engines/classification_trainer.py
      - src/engines/classification_validator.py
      - src/transforms/image_transform.py
@@ -172,10 +211,7 @@ stages:
     deps:
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
-     - src/models/resnet18.py
-     - src/models/efficientnet.py
      - src/models/convnext.py
-     - src/models/mobilenet.py
      - src/engines/classification_trainer.py
      - src/engines/classification_validator.py
      - src/transforms/image_transform.py
