@@ -305,6 +305,17 @@ for epoch in range(params["captioning"]["epochs"]):
 
     # 4. 지표 기록
     wandb.log(log_dict)
+    
+    if epoch+1 == params["captioning"]["epochs"]:
+        sample_idx = len(metric_result["generated"])
+        for idx in range(0,sample_idx,30):
+            print("-" * 60)
+            print(f' Generated Sentence{idx}: {metric_result["generated"][idx]}')
+            print("-" * 60)
+
+            for i, reference in enumerate(metric_result["references"][idx], start=1):
+                print(f'Reference {i}: {reference}')
+            print("=" * 60)
 
 print(f"Best model val loss: {best_val_loss:.4f}")
 

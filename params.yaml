@@ -58,9 +58,9 @@ captioning:
 
   encoder: resnet18
   decoder: transformer # lstm | gru | transformer
-  version: v1
+  version: epochs50
 
-  epochs: 20
+  epochs: 50
   learning_rate: 0.0001
   batch_size: 32
   optimizer: adam
