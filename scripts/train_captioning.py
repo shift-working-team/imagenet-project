@@ -138,11 +138,21 @@ elif decoder_name == "gru":
 
 
 # optimizer
-optimizer = torch.optim.Adam(
-    list(encoder.projector.parameters()) +
-    list(decoder.parameters()),
-    lr=params["captioning"]["learning_rate"]
-)
+optimizer_name = params["captioning"]["optimizer"].lower()
+if optimizer_name == "adam":
+    optimizer = torch.optim.Adam(
+        list(encoder.projector.parameters()) +
+        list(decoder.parameters()),
+        lr=params["captioning"]["learning_rate"],
+        weight_decay=params["captioning"]["transformer"]["weight_decay"]
+    )
+elif optimizer_name == "adamw":
+    optimizer = torch.optim.AdamW(
+        list(encoder.projector.parameters()) +
+        list(decoder.parameters()),
+        lr=params["captioning"]["learning_rate"],
+        weight_decay=params["captioning"]["transformer"]["weight_decay"]
+    )
 
 
 # loss
