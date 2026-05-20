@@ -181,3 +181,94 @@ stages:
           num_workers: 4
           device: cuda
           optimizer: adam
+  train_transformer_baseline:
+    cmd: python scripts/train_captioning.py --model transformer
+    deps:
+    - path: data/annotations/annotation.json
+      hash: md5
+      md5: d8d6dc29ca53df7b9ce092651e06dd18
+      size: 3467982
+    - path: scripts/train_captioning.py
+      hash: md5
+      md5: 7221feceaaf42c2b048bf15ed0426ce5
+      size: 9062
+    - path: src/dataset/build_vocab.py
+      hash: md5
+      md5: 2ce521b0206576f1c78d96c8712e6238
+      size: 926
+    - path: src/dataset/captioning_dataset.py
+      hash: md5
+      md5: f5bb06d79d60cb3ef2398528494a22ca
+      size: 1929
+      isexec: true
+    - path: src/engines/captioning_trainer.py
+      hash: md5
+      md5: 83d7ed24fd0752fdb58326f6714fbc87
+      size: 801
+      isexec: true
+    - path: src/engines/captioning_validator.py
+      hash: md5
+      md5: eccbe57c48eebaaee4f428fabb5817dc
+      size: 1463
+      isexec: true
+    - path: src/metrics/evaluate_caption.py
+      hash: md5
+      md5: baf7d819f7ca95db42582c535fb7cdf4
+      size: 1849
+      isexec: true
+    - path: src/models/resnet18.py
+      hash: md5
+      md5: 3def7aa893dc280e1c6b6c55bc4d7846
+      size: 1136
+    - path: src/models/transformer.py
+      hash: md5
+      md5: 309d1bce7ec5c131cca18aba3c321765
+      size: 2794
+    - path: src/transforms/image_transform.py
+      hash: md5
+      md5: fa30f5302a175124d5f71df8e1680083
+      size: 1477
+    params:
+      params.yaml:
+        captioning:
+          encoder: resnet18
+          decoder: transformer
+          version: optm_adamw
+          epochs: 50
+          learning_rate: 0.0001
+          batch_size: 32
+          optimizer: adamw
+          max_caption_length: 30
+          lstm:
+            embed_dim: 256
+            hidden_dim: 512
+            num_layers: 1
+          gru:
+            embed_dim: 256
+            hidden_dim: 512
+            num_layers: 1
+          transformer:
+            d_model: 512
+            nhead: 8
+            num_layers: 4
+            dropout: 0.3
+            weight_decay: 0.0001
+          checkpoint:
+            save_dir: /workspace/outputs/captioning
+        data:
+          raw_dir: /workspace/data/raw/
+          captions_file: /workspace/data/annotations/annotation.json
+          dataset_version: raw-20260509-v1
+        preprocess:
+          image_size: 224
+          normalize: true
+        tokenizer:
+          min_freq: 5
+          max_vocab_size: 10000
+        train:
+          seed: 42
+          epochs: 20
+          batch_size: 32
+          num_workers: 4
+          device: cuda
+          optimizer: adam
