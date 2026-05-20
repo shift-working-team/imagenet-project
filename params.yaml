@@ -17,6 +17,9 @@ split:
 
 train:
   seed: 42
+  # repeated experiment
+  # seed: 7
+  # seed: 21
   epochs: 20
   batch_size: 32
   num_workers: 4
@@ -94,16 +97,49 @@ classification:
   # model_name: efficientnet_b0
   # model_name: convnext_tiny
   # model_name: mobilenet_v3_small
+  # model_name: vit_b_16
+  # model_name: swin_t
+  # model_name: deit_tiny_patch16_224
 
   epochs: 50
 
-  learning_rate: 0.001
+  learning_rate:
+
+    # baseline
+    cnn: 0.001
+    transformer: 0.0005
+
+    # hyperparameter tuning
+    # cnn: 0.0005
+    # transformer: 0.0001
+
+  optimizer: adam
+
+  # optimizer: sgd
+  # optimizer: adamw
+
+  scheduler:
+    use: false
+
+    # use: true
+    # name: cosineannealinglr
 
   augmentation:
+
+    # baseline
     use_aug: false
     type: none
 
+    # mixup
+    # use_aug: true
+    # type: mixup
+
+    # cutmix
+    # use_aug: true
+    # type: cutmix
+
   metrics:
+
     train:
       - loss
       - accuracy
@@ -112,6 +148,13 @@ classification:
       - loss
       - accuracy
       - macro_f1
+
+    final_test:
+      - accuracy
+      - macro_f1
+      - precision
+      - recall
+      - confusion_matrix
 
   checkpoint:
     save_dir: /workspace/outputs/classification

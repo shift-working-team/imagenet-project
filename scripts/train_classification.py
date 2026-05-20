@@ -1,3 +1,4 @@
+import argparse
 import sys
 sys.path.append("/workspace/src")
 
@@ -5,7 +6,6 @@ import os
 import yaml
 import wandb
 import random
-import argparse
 import numpy as np
 import torch
 import torch.nn as nn
@@ -17,9 +17,12 @@ from transforms.image_transform import (
     get_classification_aug_transform
 )
 from models.resnet18 import EncoderResnet18
-from models.efficientnet import get_efficientnet_b0
-from models.convnext import get_convnext_tiny
-from models.mobilenet import get_mobilenet_v3_small
+from models.efficientnet import EncoderEfficientNetB0
+from models.convnext import EncoderConvNextTiny
+from models.mobilenet import EncoderMobileNetV3Small
+from models.vit import EncoderViTB16
+from models.swin import EncoderSwinTiny
+from models.deit import EncoderDeiTTiny
 from engines.classification_trainer import train_one_epoch
 from engines.classification_validator import validation_one_epoch
 
@@ -32,7 +35,6 @@ with open(
     "r",
     encoding="utf-8"
 ) as f:
-
     params = yaml.safe_load(f)
 
 
@@ -48,6 +50,12 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 
+# stage cmd
+parser = argparse.ArgumentParser()
+parser.add_argument("--model", type=str, required=True)
+parser.add_argument("--augmentation", type=str, default="none")
+args = parser.parse_args()
+
 
 
 # device
@@ -56,7 +64,6 @@ device = torch.device(
     if torch.cuda.is_available()
     else "cpu"
 )
-
 print(f"device: {device}")
 
 
@@ -64,7 +71,6 @@ print(f"device: {device}")
 
 # class mapping
 classes = sorted(
-
     [
         cls for cls in os.listdir(
             params["data"]["raw_dir"]
@@ -80,41 +86,56 @@ classes = sorted(
 )
 
 class_to_idx = {
-
     cls: idx
     for idx, cls in enumerate(classes)
 }
 
 num_classes = len(classes)
-
 print(f"num_classes: {num_classes}")
 
 
-# stage cmd
-parser = argparse.ArgumentParser()
-parser.add_argument("--model", type=str, required=True)
-parser.add_argument("--augmentation", type=str, default="none")
-args = parser.parse_args()
 
 # model
 model_name = args.model
 
+
+# learning rate
+transformer_models = [
+    "vit_b_16",
+    "swin_t",
+    "deit_tiny_patch16_224"
+]
+
+if model_name in transformer_models:
+    learning_rate = (
+        params["classification"]
+        ["learning_rate"]["transformer"]
+    )
+
+else:
+    learning_rate = (
+        params["classification"]
+        ["learning_rate"]["cnn"]
+    )
+
+
+
+
 # augmentation
 augmentation_type = args.augmentation
-
 if augmentation_type == "none":
     augmentation_type = None
 
 
+
+
 # transform
 if params["classification"]["augmentation"]["use_aug"]:
-
     train_transform = (
         get_classification_aug_transform()
     )
 
 else:
-
     train_transform = (
         get_classification_train_transform()
     )
@@ -162,24 +183,40 @@ val_loader = DataLoader(
 )
 
 
-# model select
+
+# model
 if model_name == "resnet18":
     model = EncoderResnet18(
         num_classes=num_classes
     ).to(device)
 
 elif model_name == "efficientnet_b0":
-    model = get_efficientnet_b0(
+    model = EncoderEfficientNetB0(
         num_classes=num_classes
     ).to(device)
 
 elif model_name == "convnext_tiny":
-    model = get_convnext_tiny(
+    model = EncoderConvNextTiny(
         num_classes=num_classes
     ).to(device)
 
 elif model_name == "mobilenet_v3_small":
-    model = get_mobilenet_v3_small(
+    model = EncoderMobileNetV3Small(
+        num_classes=num_classes
+    ).to(device)
+
+elif model_name == "vit_b_16":
+    model = EncoderViTB16(
+        num_classes=num_classes
+    ).to(device)
+
+elif model_name == "swin_t":
+    model = EncoderSwinTiny(
+        num_classes=num_classes
+    ).to(device)
+
+elif model_name == "deit_tiny_patch16_224":
+    model = EncoderDeiTTiny(
         num_classes=num_classes
     ).to(device)
 
@@ -198,13 +235,61 @@ criterion = nn.CrossEntropyLoss()
 
 
 # optimizer
-optimizer = torch.optim.Adam(
-    filter(
-        lambda p: p.requires_grad,
-        model.parameters()
-    ),
-    lr=params["classification"]["learning_rate"]
+optimizer_name = (
+    params["classification"]["optimizer"]
 )
+
+if optimizer_name == "adam":
+    optimizer = torch.optim.Adam(
+        filter(
+            lambda p: p.requires_grad,
+            model.parameters()
+        ),
+        lr=learning_rate
+    )
+
+elif optimizer_name == "sgd":
+    optimizer = torch.optim.SGD(
+        filter(
+            lambda p: p.requires_grad,
+            model.parameters()
+        ),
+        lr=learning_rate,
+        momentum=0.9
+    )
+
+elif optimizer_name == "adamw":
+    optimizer = torch.optim.AdamW(
+        filter(
+            lambda p: p.requires_grad,
+            model.parameters()
+        ),
+        lr=learning_rate
+    )
+
+else:
+    raise ValueError(
+        f"Unsupported optimizer: {optimizer_name}"
+    )
+
+
+
+
+# scheduler
+scheduler = None
+if params["classification"]["scheduler"]["use"]:
+    scheduler_name = (
+        params["classification"]
+        ["scheduler"]["name"]
+    )
+
+    if scheduler_name == "cosineannealinglr":
+        scheduler = (
+            torch.optim.lr_scheduler.CosineAnnealingLR(
+                optimizer,
+                T_max=params["classification"]["epochs"]
+            )
+        )
 
 
 
@@ -224,34 +309,124 @@ os.makedirs(
 
 
 # wandb name
-wandb_name = (
-    f"{model_name}-baseline"
+model_tag = model_name.replace("_","-")
+
+augmentation_tag = (
+    "base"
     if augmentation_type is None
-    else f"{model_name}-{augmentation_type}"
+    else augmentation_type
+)
+
+wandb_name_parts = [
+    "cls",
+    model_tag,
+    augmentation_tag
+]
+
+
+
+
+# step 4 tuning
+optimizer_name = (params["classification"]["optimizer"])
+batch_size = (params["train"]["batch_size"])
+
+
+
+
+# learning rate
+if model_name in transformer_models:
+    baseline_lr = (
+        params["classification"]
+        ["learning_rate"]["transformer"]
+    )
+
+else:
+    baseline_lr = (
+        params["classification"]
+        ["learning_rate"]["cnn"]
+    )
+
+if learning_rate != baseline_lr:
+    lr_tag = str(learning_rate).replace(
+        "0.",
+        ""
+    )
+
+    wandb_name_parts.append(
+        f"lr-{lr_tag}"
+    )
+
+
+
+
+# batch size
+if batch_size != 32:
+    wandb_name_parts.append(
+        f"bs-{batch_size}"
+    )
+
+
+
+
+# optimizer
+if optimizer_name != "adam":
+    wandb_name_parts.append(
+        optimizer_name
+    )
+
+
+
+
+# scheduler
+if (
+    params["classification"]
+    ["scheduler"]["use"]
+):
+
+    scheduler_name = (
+        params["classification"]
+        ["scheduler"]["name"]
+    )
+
+    if scheduler_name == "cosineannealinglr":
+        wandb_name_parts.append(
+            "cosine"
+        )
+
+
+wandb_name = "_".join(
+    wandb_name_parts
 )
 
 
 
 
-# 1. 설정값 정의
+# config
 my_config = {
     "model_name": model_name,
-    "learning_rate": params["classification"]["learning_rate"],
+    "learning_rate": learning_rate,
     "batch_size": params["train"]["batch_size"],
     "image_size": params["preprocess"]["image_size"],
     "seed": params["train"]["seed"],
     "epochs": params["classification"]["epochs"],
     "augmentation": augmentation_type,
-    "optimizer": params["train"]["optimizer"],
+    "optimizer": optimizer_name,
+    "scheduler": (
+        params["classification"]["scheduler"]["name"]
+        if params["classification"]["scheduler"]["use"]
+        else None
+    ),
     "device": device.type,
-    "num_classes":num_classes,
-    "dataset_version": params["data"]["dataset_version"]
+    "num_classes": num_classes,
+    "dataset_version": (
+        params["data"]["dataset_version"]
+    )
 }
 
 
 
 
-# 2. W&B 초기화
+# wandb
 wandb.init(
     project=params["logging"]["project_name"],
     entity="super-shift-working",
@@ -265,11 +440,9 @@ wandb.init(
 
 # train
 best_f1 = 0.0
-
 for epoch in range(
     params["classification"]["epochs"]
 ):
-
     train_loss, train_acc = train_one_epoch(
         model,
         train_loader,
@@ -288,6 +461,7 @@ for epoch in range(
         # val_recall
 
     ) = validation_one_epoch(
+
         model,
         val_loader,
         criterion,
@@ -298,10 +472,16 @@ for epoch in range(
 
 
 
+    # scheduler step
+    if scheduler is not None:
+        scheduler.step()
+
+
+
+
     # checkpoint save
     if val_f1 > best_f1:
         best_f1 = val_f1
-
         save_path = os.path.join(
             checkpoint_dir,
             f"{model_name}_best.pth"
@@ -321,7 +501,7 @@ for epoch in range(
 
 
     # wandb log
-    wandb.log({
+    log_dict = {
         "train/loss": train_loss,
         "train/accuracy": train_acc,
         "val/loss": val_loss,
@@ -329,18 +509,24 @@ for epoch in range(
         "val/macro_f1": val_f1,
         # "val/precision": val_precision,
         # "val/recall": val_recall
-    })
+    }
+
+    if scheduler is not None:
+        log_dict["learning_rate"] = (
+            optimizer.param_groups[0]["lr"]
+        )
+    wandb.log(log_dict)
 
 
 
 
     # print log
     print(
-        f"Epoch {epoch+1} | "
-        f"Train Loss: {train_loss:.4f} | "
-        f"Train Acc: {train_acc:.4f} | "
-        f"Val Loss: {val_loss:.4f} | "
-        f"Val Acc: {val_acc:.4f} | "
+        f"Epoch {epoch+1}"
+        f"Train Loss: {train_loss:.4f}"
+        f"Train Acc: {train_acc:.4f}"
+        f"Val Loss: {val_loss:.4f}"
+        f"Val Acc: {val_acc:.4f}"
         f"Val Macro F1: {val_f1:.4f}"
     )
 
