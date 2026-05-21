@@ -180,7 +180,7 @@ wandb.init(
     project=params["logging"]["project_name"],
     entity="super-shift-working", # 팀 계정이 있다면 작성
     config=my_config,
-    name=f'{model_name}-{date}-{version}',
+    name=f'cap_{model_name}-{version}',
     tags=["captioning"]
 )
 
