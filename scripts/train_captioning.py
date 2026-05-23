@@ -146,7 +146,7 @@ if optimizer_name == "adam":
         list(encoder.projector.parameters()) +
         list(decoder.parameters()),
         lr=params["captioning"]["learning_rate"],
-        weight_decay=params["captioning"]["transformer"]["weight_decay"]
+        # weight_decay=params["captioning"]["transformer"]["weight_decay"]
     )
 elif optimizer_name == "adamw":
     optimizer = torch.optim.AdamW(
