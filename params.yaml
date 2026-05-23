@@ -61,12 +61,12 @@ captioning:
 
   encoder: resnet18
   decoder: transformer # lstm | gru | transformer
-  version: weight_decay0.001
+  version: d_model256
 
   epochs: 50
   learning_rate: 0.0001
   batch_size: 32
-  optimizer: adamw
+  optimizer: adam
 
   max_caption_length: 30
 
@@ -81,7 +81,7 @@ captioning:
     num_layers: 1
 
   transformer:
-    d_model: 512
+    d_model: 256
     nhead: 8
     num_layers: 4
     dropout: 0.3
@@ -89,6 +89,7 @@ captioning:
 
   checkpoint:
     save_dir: /workspace/outputs/captioning
+    resume: True
 
 
 classification:

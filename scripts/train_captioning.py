@@ -27,6 +27,8 @@ from engines.captioning_validator import validation_one_epoch
 
 from metrics.evaluate_caption import evaluate_caption
 
+from utils.checkpoint_manager import save_checkpoint, load_checkpoint
+
 
 # params
 with open("/workspace/params.yaml", "r", encoding="utf-8") as f:
@@ -187,33 +189,22 @@ wandb.init(
 
 # checkpoint setting
 save_dir = params["captioning"]["checkpoint"]["save_dir"]
+save_prefix = f"{model_name}_{version}"
+best_path = os.path.join(save_dir, f"{save_prefix}_best.pt")
 os.makedirs(save_dir, exist_ok=True)
 
-save_prefix = f"{model_name}_{date}_{version}"
-
-best_val_loss = float("inf")
-
-def save_checkpoint(
-    path,
-    encoder,
-    decoder,
-    optimizer,
-    epoch,
-    train_loss,
-    val_loss
-):
-    torch.save({
-        "epoch": epoch,
-        "encoder_state_dict": encoder.state_dict(),
-        "decoder_state_dict": decoder.state_dict(),
-        "optimizer_state_dict": optimizer.state_dict(),
-        "train_loss": train_loss,
-        "val_loss": val_loss
-    }, path)
+start_epoch, best_val_loss = load_checkpoint(
+        params["captioning"]["checkpoint"]["resume"],
+        best_path,
+        encoder,
+        decoder,
+        optimizer,
+        device
+        )
 
 
 # train
-for epoch in range(params["captioning"]["epochs"]):
+for epoch in range(start_epoch, params["captioning"]["epochs"]):
     train_loss = train_one_epoch(
         encoder,
         decoder,
@@ -276,38 +267,15 @@ for epoch in range(params["captioning"]["epochs"]):
 
     print('='*60)
 
-    # epoch_path = os.path.join(save_dir, f"{save_prefix}_epoch_{epoch+1}.pt")
-    # save_checkpoint(
-    #     epoch_path,
-    #     encoder,
-    #     decoder,
-    #     optimizer,
-    #     epoch+1,
-    #     train_loss,
-    #     val_loss
-    # )
-
-    # latest_path = os.path.join(save_dir, f"{save_prefix}_epoch_latest.pt")
-    # save_checkpoint(
-    #     latest_path,
-    #     encoder,
-    #     decoder,
-    #     optimizer,
-    #     epoch+1,
-    #     train_loss,
-    #     val_loss
-    # )
-
     if val_loss < best_val_loss:
         best_val_loss = val_loss
 
-        best_path = os.path.join(save_dir, f"{save_prefix}_best.pt")
         save_checkpoint(
             best_path,
             encoder,
             decoder,
             optimizer,
-            epoch+1,
+            epoch,
             train_loss,
             val_loss
         )
