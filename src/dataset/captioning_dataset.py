@@ -17,19 +17,14 @@ class CaptionDataset(Dataset):
         split='train',
         transform=None,
         max_len=30,
+        train_num_caption=1
     ):
 
         with open(json_path, 'r') as f:
             self.data = json.load(f)
 
-        # self.data = [
-        #     item for item in data
-        #     if item['split'] == split
-        # ]
-
-        # # 디버깅용
-        # self.data= self.data[:10]
-
+        # 디버깅용
+        self.data= self.data[:10]
 
         if split == "val":
             self.is_val = True
@@ -41,47 +36,61 @@ class CaptionDataset(Dataset):
         self.transform = transform
         self.max_len = max_len
         self.tokenizer = tokenizer
+        self.train_num_caption = train_num_caption
 
     def __len__(self):
         return len(self.data)
+    
+    def encode_caption(self, caption):
+
+        words = self.tokenizer(caption)
+
+        tokens = (
+            [self.w2i["<sos>"]] +
+            [self.w2i.get(w, self.w2i["<unk>"]) for w in words]
+            )
+        
+        # truncation
+        if len(tokens) > self.max_len:
+            tokens = (tokens[:self.max_len - 1])
+            tokens.append(self.w2i["<eos>"])
+        else:
+            tokens += ([self.w2i["<pad>"]] * (self.max_len - len(tokens)))
+
+        return torch.tensor(tokens, dtype=torch.long)
 
     def __getitem__(self, index):
 
         data = self.data[index]
 
-        image_path = os.path.join(self.image_dir, + data["file_name"])
+        image_path = os.path.join(self.image_dir, data["file_name"])
 
         image = Image.open(image_path).convert('RGB')
 
         if self.transform:
             image = self.transform(image)
 
+        captions = (data["captions"])
+
+        # validation
         if self.is_val:
-            references_caption = data["captions"]
+            caption = random.choice(captions)
 
-        caption = random.choice(data["captions"])
+            tokens = (self.encode_caption(caption))
 
-        words = self.tokenizer(caption)
+            return image, tokens, captions
 
-        tokens = (
-            [self.w2i["<sos>"]]
-            + [self.w2i.get(w, self.w2i["<unk>"]) for w in words]
-        )
+        # train
+        selected_captions = (random.sample(captions, k=self.train_num_caption))
 
-        if len(tokens) < self.max_len:
+        images = []
+        token_list = []
+        for caption in selected_captions:
+            images.append(image)
+            token_list.append(self.encode_caption(caption))
 
-            tokens += (
-                [self.w2i["<pad>"]]
-                * (self.max_len - len(tokens))
-            )
+        images = torch.stack(images)
+        tokens = torch.stack(token_list)
 
-        else:
-            tokens = tokens[:self.max_len - 1]
-            tokens.append(self.w2i["<eos>"])
+        return images, tokens
 
-        tokens = torch.tensor(tokens)
-
-        if self.is_val:
-            return image, tokens, references_caption
-        else:
-            return image, tokens
