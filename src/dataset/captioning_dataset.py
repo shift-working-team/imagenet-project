@@ -17,14 +17,16 @@ class CaptionDataset(Dataset):
         split='train',
         transform=None,
         max_len=30,
-        train_num_caption=1
+        train_num_caption=1,
+        debug=False
     ):
 
         with open(json_path, 'r') as f:
             self.data = json.load(f)
 
         # 디버깅용
-        self.data= self.data[:10]
+        if debug:
+            self.data= self.data[:10]
 
         if split == "val":
             self.is_val = True
