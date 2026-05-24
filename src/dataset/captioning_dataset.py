@@ -49,7 +49,8 @@ class CaptionDataset(Dataset):
 
         tokens = (
             [self.w2i["<sos>"]] +
-            [self.w2i.get(w, self.w2i["<unk>"]) for w in words]
+            [self.w2i.get(w, self.w2i["<unk>"]) for w in words] +
+            [self.w2i["<eos>"]]
             )
         
         # truncation
