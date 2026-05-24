@@ -4,12 +4,12 @@ import re
 
 def tokenizer(captions):
     text = captions.lower()
-    text = re.sub(r"[^a-z0-9\s]", "", text)  # 특수문자 제거
+    text = re.sub(r"([.,!?])", r" \1 ", text)  # 특수문자 제거
     tokens = text.split()
     
     return tokens
 
-def build_vocab(json_path, min_freq=5, max_size=10000):
+def build_vocab(json_path, min_freq=3, max_size=10000):
     w2i = dict()
     i2w = dict()
 
@@ -27,7 +27,7 @@ def build_vocab(json_path, min_freq=5, max_size=10000):
     words = [w for w, freq in counter.most_common() if freq >= min_freq]
 
     voca = ["<pad>", "<sos>", "<eos>", "<unk>"]
-    voca.extend(words[:max_size])
+    voca.extend(words[:max_size-4])
     voca_size = len(voca)
 
     for i, w in enumerate(voca):

@@ -1,3 +1,4 @@
+import os
 import json
 import random
 from PIL import Image
@@ -19,12 +20,12 @@ class CaptionDataset(Dataset):
     ):
 
         with open(json_path, 'r') as f:
-            data = json.load(f)
+            self.data = json.load(f)
 
-        self.data = [
-            item for item in data
-            if item['split'] == split
-        ]
+        # self.data = [
+        #     item for item in data
+        #     if item['split'] == split
+        # ]
 
         # # 디버깅용
         # self.data= self.data[:10]
@@ -48,7 +49,7 @@ class CaptionDataset(Dataset):
 
         data = self.data[index]
 
-        image_path = self.image_dir + data["image"]
+        image_path = os.path.join(self.image_dir, + data["file_name"])
 
         image = Image.open(image_path).convert('RGB')
 
@@ -65,7 +66,6 @@ class CaptionDataset(Dataset):
         tokens = (
             [self.w2i["<sos>"]]
             + [self.w2i.get(w, self.w2i["<unk>"]) for w in words]
-            + [self.w2i["<eos>"]]
         )
 
         if len(tokens) < self.max_len:
@@ -76,7 +76,8 @@ class CaptionDataset(Dataset):
             )
 
         else:
-            tokens = tokens[:self.max_len]
+            tokens = tokens[:self.max_len - 1]
+            tokens.append(self.w2i["<eos>"])
 
         tokens = torch.tensor(tokens)
 
