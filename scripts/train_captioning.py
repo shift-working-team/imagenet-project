@@ -45,9 +45,9 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 # stage cmd
-parser = argparse.ArgumentParser()
-parser.add_argument("--model", type=str, required=True)
-args = parser.parse_args()
+# parser = argparse.ArgumentParser()
+# parser.add_argument("--model", type=str, required=True)
+# args = parser.parse_args()
 
 encdoer_name = params["captioning"]["encoder"]
 decoder_name = params["captioning"]["decoder"]
@@ -207,7 +207,6 @@ start_epoch, best_val_loss = load_checkpoint(
         optimizer,
         device
         )
-
 
 # train
 for epoch in range(start_epoch, params["captioning"]["epochs"]):

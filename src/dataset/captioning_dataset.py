@@ -72,7 +72,13 @@ class CaptionDataset(Dataset):
         if self.transform:
             image = self.transform(image)
 
-        captions = (data["captions"])
+
+        captions = data["captions"]
+
+        captions = captions[:5] # 캡션 5개 초과시 5개까지만 씀
+
+        while len(captions) < 5: # 캡션 5개 보다 부족할 시 마지막 캡션 복제해서 씀
+            captions.append(captions[-1])
 
         # validation
         if self.is_val:
