@@ -50,8 +50,8 @@ parser.add_argument("--model", type=str, required=True)
 args = parser.parse_args()
 
 encdoer_name = params["captioning"]["encoder"]
-decoder_name = params["captioning"]["decoder"]
-# decoder_name = args.model
+# decoder_name = params["captioning"]["decoder"]
+decoder_name = args.model
 
 model_name = (
     f'{encdoer_name}-'
@@ -207,7 +207,6 @@ start_epoch, best_val_loss = load_checkpoint(
         optimizer,
         device
         )
-
 
 # train
 for epoch in range(start_epoch, params["captioning"]["epochs"]):
