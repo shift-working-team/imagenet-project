@@ -2,9 +2,12 @@ stages:
   train_lstm_baseline:
     cmd: python scripts/train_captioning.py --model lstm
     deps:
-     - data/annotations/annotation.json
+     - data/captioning/annotations/train.json
+     - data/captioning/annotations/val.json
+     - data/captioning/annotations/test.json
      - src/dataset/captioning_dataset.py
      - src/dataset/build_vocab.py
+     - src/dataset/collate_caption.py
      - src/engines/captioning_trainer.py
      - src/engines/captioning_validator.py
      - src/metrics/evaluate_caption.py
@@ -23,9 +26,12 @@ stages:
   train_gru_baseline:
     cmd: python scripts/train_captioning.py --model gru
     deps:
-     - data/annotations/annotation.json
+     - data/captioning/annotations/train.json
+     - data/captioning/annotations/val.json
+     - data/captioning/annotations/test.json
      - src/dataset/captioning_dataset.py
      - src/dataset/build_vocab.py
+     - src/dataset/collate_caption.py
      - src/engines/captioning_trainer.py
      - src/engines/captioning_validator.py
      - src/metrics/evaluate_caption.py
@@ -44,9 +50,12 @@ stages:
   train_transformer_baseline:
     cmd: python scripts/train_captioning.py --model transformer
     deps:
-     - data/annotations/annotation.json
+     - data/captioning/annotations/train.json
+     - data/captioning/annotations/val.json
+     - data/captioning/annotations/test.json
      - src/dataset/captioning_dataset.py
      - src/dataset/build_vocab.py
+     - src/dataset/collate_caption.py
      - src/engines/captioning_trainer.py
      - src/engines/captioning_validator.py
      - src/metrics/evaluate_caption.py
