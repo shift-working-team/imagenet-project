@@ -9,12 +9,13 @@ from torch.utils.data import DataLoader
 import random
 import yaml
 import wandb
-import subprocess
 import os
 from datetime import datetime
 
 from dataset.build_vocab import build_vocab, tokenizer
 from dataset.captioning_dataset import CaptionDataset
+from dataset.collate_caption import collate_caption
+
 from transforms.image_transform import get_caption_transform
 
 from models.resnet18 import EncoderResnet18
@@ -49,7 +50,8 @@ parser.add_argument("--model", type=str, required=True)
 args = parser.parse_args()
 
 encdoer_name = params["captioning"]["encoder"]
-decoder_name = args.model
+decoder_name = params["captioning"]["decoder"]
+# decoder_name = args.model
 
 model_name = (
     f'{encdoer_name}-'
@@ -67,9 +69,9 @@ device = torch.device(
 
 # vocab
 w2i, i2w, voca_size = build_vocab(
-    params["data"]["captions_file"],
-    min_freq=params["tokenizer"]["min_freq"],
-    max_size=params["tokenizer"]["max_vocab_size"]
+    params["captioning"]["data"]["train_caption"],
+    min_freq=params["captioning"]["tokenizer"]["min_freq"],
+    max_size=params["captioning"]["tokenizer"]["max_vocab_size"]
 )
 
 
@@ -79,19 +81,20 @@ transform = get_caption_transform()
 
 # train dataset
 train_dataset = CaptionDataset(
-    json_path=params["data"]["captions_file"],
-    image_dir=params["data"]["raw_dir"],
+    json_path=params["captioning"]["data"]["train_caption"],
+    image_dir=params["captioning"]["data"]["train_img"],
     w2i=w2i,
     tokenizer=tokenizer,
     split="train",
     transform=transform,
-    max_len=params["captioning"]["max_caption_length"]
+    max_len=params["captioning"]["max_caption_length"],
+    train_num_caption=params["captioning"]["train_num_caption"]
 )
 
 # validation dataset
 val_dataset = CaptionDataset(
-    json_path=params["data"]["captions_file"],
-    image_dir=params["data"]["raw_dir"],
+    json_path=params["captioning"]["data"]["val_caption"],
+    image_dir=params["captioning"]["data"]["val_img"],
     w2i=w2i,
     tokenizer=tokenizer,
     split="val",
@@ -103,7 +106,8 @@ val_dataset = CaptionDataset(
 train_loader = DataLoader(
     train_dataset,
     batch_size=params["captioning"]["batch_size"],
-    shuffle=True
+    shuffle=True,
+    collate_fn=collate_caption
 )
 
 val_loader = DataLoader(
@@ -146,7 +150,6 @@ if optimizer_name == "adam":
         list(encoder.projector.parameters()) +
         list(decoder.parameters()),
         lr=params["captioning"]["learning_rate"],
-        # weight_decay=params["captioning"]["transformer"]["weight_decay"]
     )
 elif optimizer_name == "adamw":
     optimizer = torch.optim.AdamW(
@@ -162,16 +165,17 @@ criterion = nn.CrossEntropyLoss(
     ignore_index=w2i["<pad>"]
 )
 
+start_epoch = 0
 
 # 1. 설정값 정의 (yaml 파일에서 읽어오는 것을 추천)
 my_config = {
-    "model_name": f'{encdoer_name}-{decoder_name}',
+    "model_name": model_name,
     "learning_rate": params["captioning"]["learning_rate"],
     "batch_size": params["captioning"]["batch_size"],
     "image_size": params["preprocess"]["image_size"],
     "seed": params["train"]["seed"],
     "epochs" : params["captioning"]["epochs"],
-    "dataset_version": params["data"]["dataset_version"],
+    "dataset_version": params["captioning"]["data"]["dataset_version"],
     "optimizer": params["captioning"]["optimizer"],
     "device": device.type,
 }
@@ -281,7 +285,7 @@ for epoch in range(start_epoch, params["captioning"]["epochs"]):
         )
 
 
-    # 4. 지표 기록
+    #4. 지표 기록
     wandb.log(log_dict)
     
     if epoch+1 == params["captioning"]["epochs"]:

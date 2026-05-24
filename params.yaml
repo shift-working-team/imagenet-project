@@ -3,12 +3,8 @@ project:
 
 data:
   raw_dir: /workspace/data/raw/
-  captions_file: /workspace/data/annotations/annotation.json
+  captions_file: /workspace/data/captioning/annotations/train.json
   dataset_version: raw-20260509-v1
-
-tokenizer:
-  min_freq: 5
-  max_vocab_size: 10000
 
 split:
   train_ratio: 0.7
@@ -60,15 +56,17 @@ cnn:
 captioning:
 
   encoder: resnet18
-  decoder: transformer # lstm | gru | transformer
-  version: d_model256
+  decoder: transformer
+  # decoder: lstm
+  # decoder: gru
+  version: baseline
 
   epochs: 50
   learning_rate: 0.0001
   batch_size: 32
   optimizer: adam
-
   max_caption_length: 30
+  train_num_caption: 2
 
   lstm:
     embed_dim: 256
@@ -81,11 +79,24 @@ captioning:
     num_layers: 1
 
   transformer:
-    d_model: 256
+    d_model: 512
     nhead: 8
     num_layers: 4
     # dropout: 0.3
     # weight_decay: 0.001
+
+  data:
+    dataset_version: cap_raw-20260524-v1
+    train_img: /workspace/data/captioning/raw/train/
+    train_caption: /workspace/data/captioning/annotations/train.json
+    val_img: /workspace/data/captioning/raw/val/
+    val_caption: /workspace/data/captioning/annotations/val.json
+    test_img: /workspace/data/captioning/raw/test/
+    test_caption: /workspace/data/captioning/annotations/test.json
+    
+  tokenizer:
+    min_freq: 3
+    max_vocab_size: 10000
 
   checkpoint:
     save_dir: /workspace/outputs/captioning
