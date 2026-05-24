@@ -16,8 +16,6 @@ stages:
      - src/transforms/image_transform.py
      - scripts/train_captioning.py
     params:
-     - data
-     - tokenizer
      - train
      - preprocess
      - captioning
@@ -40,8 +38,6 @@ stages:
      - src/transforms/image_transform.py
      - scripts/train_captioning.py
     params:
-     - data
-     - tokenizer
      - train
      - preprocess
      - captioning
@@ -64,8 +60,6 @@ stages:
      - src/transforms/image_transform.py
      - scripts/train_captioning.py
     params:
-     - data
-     - tokenizer
      - train
      - preprocess
      - captioning
