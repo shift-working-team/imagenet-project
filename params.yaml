@@ -68,6 +68,8 @@ captioning:
   max_caption_length: 30
   train_num_caption: 2
 
+  debug: False
+
   lstm:
     embed_dim: 256
     hidden_dim: 512
@@ -101,6 +103,7 @@ captioning:
   checkpoint:
     save_dir: /workspace/outputs/captioning
     resume: False
+    
 
 
 classification:

@@ -88,7 +88,8 @@ train_dataset = CaptionDataset(
     split="train",
     transform=transform,
     max_len=params["captioning"]["max_caption_length"],
-    train_num_caption=params["captioning"]["train_num_caption"]
+    train_num_caption=params["captioning"]["train_num_caption"],
+    debug=params["captioning"]["debug"]
 )
 
 # validation dataset
@@ -99,7 +100,8 @@ val_dataset = CaptionDataset(
     tokenizer=tokenizer,
     split="val",
     transform=transform,
-    max_len=params["captioning"]["max_caption_length"]
+    max_len=params["captioning"]["max_caption_length"],
+    debug=params["captioning"]["debug"]
 )
 
 
