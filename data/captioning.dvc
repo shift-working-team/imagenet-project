@@ -1,0 +1,6 @@
+outs:
+- md5: 0f348b492096f63216faae95538066a8.dir
+  size: 1780602008
+  nfiles: 11067
+  hash: md5
+  path: captioning
