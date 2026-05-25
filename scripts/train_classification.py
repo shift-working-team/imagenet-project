@@ -130,7 +130,7 @@ if augmentation_type == "none":
 
 
 # transform
-if params["classification"]["augmentation"]["use_aug"]:
+if augmentation_type is not None:
     train_transform = (
         get_classification_aug_transform()
     )

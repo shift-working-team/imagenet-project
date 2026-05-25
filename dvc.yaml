@@ -209,11 +209,11 @@ stages:
      - classification
 
   train_best_backbone_mixup:
-    cmd: python scripts/train_classification.py --model convnext_tiny --augmentation mixup
+    cmd: python scripts/train_classification.py --model swin_t --augmentation mixup
     deps:
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
-     - src/models/convnext.py
+     - src/models/swin.py
      - src/engines/classification_trainer.py
      - src/engines/classification_validator.py
      - src/transforms/image_transform.py
@@ -227,11 +227,11 @@ stages:
 
 
   train_best_backbone_cutmix:
-    cmd: python scripts/train_classification.py --model convnext_tiny --augmentation cutmix
+    cmd: python scripts/train_classification.py --model swin_t --augmentation cutmix
     deps:
      - scripts/train_classification.py
      - src/dataset/classification_dataset.py
-     - src/models/convnext.py
+     - src/models/swin.py
      - src/engines/classification_trainer.py
      - src/engines/classification_validator.py
      - src/transforms/image_transform.py
