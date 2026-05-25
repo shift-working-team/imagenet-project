@@ -29,7 +29,7 @@ def load_checkpoint(
         device
 ):
 
-    if resume and os.path.exists(best_path):
+    if resume:
         print(f"Loading checkpoint: {best_path}")
 
         checkpoint = torch.load(
