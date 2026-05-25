@@ -122,12 +122,12 @@ classification:
   learning_rate:
 
     # baseline
-    cnn: 0.001
-    transformer: 0.0005
+    # cnn: 0.001
+    # transformer: 0.0005
 
     # hyperparameter tuning
-    # cnn: 0.0005
-    # transformer: 0.0001
+    cnn: 0.0005
+    transformer: 0.0001
 
   optimizer: adam
 
