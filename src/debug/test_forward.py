@@ -8,9 +8,12 @@ from lstm import DecoderLSTM
 from gru import DecoderGRU
 from transformer import DecoderTransformer
 from resnet18 import EncoderResnet18
-from efficientnet import get_efficientnet_b0
-from convnext import get_convnext_tiny
-from mobilenet import get_mobilenet_v3_small
+from efficientnet import EncoderEfficientNetB0
+from convnext import EncoderConvNextTiny
+from mobilenet import EncoderMobileNetV3Small
+from vit import EncoderViTB16
+from swin import EncoderSwinTiny
+from deit import EncoderDeiTTiny
 
 
 
@@ -90,7 +93,7 @@ print(f"ResNet18 features: {features.shape}")
 
 
 ### EfficientNet-B0 Forward ###
-efficientnet_model = get_efficientnet_b0(
+efficientnet_model = EncoderEfficientNetB0(
     num_classes=NUM_CLASSES
 ).to(device)
 
@@ -109,7 +112,7 @@ print(
 
 
 ### ConvNeXt-Tiny Forward ###
-convnext_model = get_convnext_tiny(
+convnext_model = EncoderConvNextTiny(
     num_classes=NUM_CLASSES
 ).to(device)
 
@@ -128,7 +131,7 @@ print(
 
 
 ### MobileNetV3 Small Forward ###
-mobilenet_model = get_mobilenet_v3_small(
+mobilenet_model = EncoderMobileNetV3Small(
     num_classes=NUM_CLASSES
 ).to(device)
 
@@ -139,6 +142,63 @@ mobilenet_out = mobilenet_model(
 print(
     f"MobileNetV3 Small: "
     f"{mobilenet_out.shape}"
+)
+
+# expected:
+# torch.Size([8, 50])
+
+
+
+### ViT-B/16 Forward ###
+vit_model = EncoderViTB16(
+    num_classes=NUM_CLASSES
+).to(device)
+
+vit_out = vit_model(
+    dummy_images
+)
+
+print(
+    f"ViT-B/16: "
+    f"{vit_out.shape}"
+)
+
+# expected:
+# torch.Size([8, 50])
+
+
+
+### Swin-T Forward ###
+swin_model = EncoderSwinTiny(
+    num_classes=NUM_CLASSES
+).to(device)
+
+swin_out = swin_model(
+    dummy_images
+)
+
+print(
+    f"Swin-T: "
+    f"{swin_out.shape}"
+)
+
+# expected:
+# torch.Size([8, 50])
+
+
+
+### DeiT-Tiny Forward ###
+deit_model = EncoderDeiTTiny(
+    num_classes=NUM_CLASSES
+).to(device)
+
+deit_out = deit_model(
+    dummy_images
+)
+
+print(
+    f"DeiT-Tiny: "
+    f"{deit_out.shape}"
 )
 
 # expected:
