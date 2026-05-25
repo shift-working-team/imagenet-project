@@ -4,7 +4,7 @@ import os
 # 0. 설정
 # ================================
 TARGET_COUNT = 60
-MIN_RES = 128  # 해상도 128
+MIN_RES = 256  # 해상도 256
 PREFIX = "kg"
 BASE_DIR = "./data/raw"
 
@@ -30,7 +30,7 @@ CLASS_LIST = [
     "steak","cup_cake","sandwich","waffle","dumpling",
 
     # 동물
-    "golden_retriever","bulldog","siamese_cat",
+    "golden-retriever","bulldog","siamese_cat",
     "persian_cat","elephant","sheep","horse",
     "penguin","butterfly","squirrel",
 
@@ -46,7 +46,7 @@ CLASS_LIST = [
     "car","bicycle","motorcycle","airplane","bus",
 
     # 패션 및 잡화
-    "t_shirt","sneakers","earrings","glasses",
+    "t-shirt","sneakers","earrings","glasses",
     "pants","bracelet","necklace"
 ]
 
