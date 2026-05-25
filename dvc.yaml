@@ -244,5 +244,23 @@ stages:
      - classification
 
 
+  train_swin_t_hyp_lr_0001:
+    cmd: python scripts/train_classification.py --model swin_t --augmentation none
+    deps:
+     - scripts/train_classification.py
+     - src/dataset/classification_dataset.py
+     - src/models/swin.py
+     - src/engines/classification_trainer.py
+     - src/engines/classification_validator.py
+     - src/transforms/image_transform.py
+     - src/transforms/mixup.py
+     - src/transforms/cutmix.py
+    params:
+     - data.dataset_version
+     - train
+     - preprocess
+     - classification
+
+
 
 
