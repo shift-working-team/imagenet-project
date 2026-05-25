@@ -317,10 +317,15 @@ augmentation_tag = (
     else augmentation_type
 )
 
+dataset_version_tag = (
+    params["data"]["dataset_version"]
+)
+
 wandb_name_parts = [
     "cls",
     model_tag,
-    augmentation_tag
+    augmentation_tag,
+    dataset_version_tag
 ]
 
 
@@ -482,9 +487,14 @@ for epoch in range(
     # checkpoint save
     if val_f1 > best_f1:
         best_f1 = val_f1
+
+        dataset_version = (
+            params["data"]["dataset_version"]
+        )
+
         save_path = os.path.join(
             checkpoint_dir,
-            f"{model_name}_best.pth"
+            f"{model_name}_{dataset_version}_best.pth"
         )
 
         torch.save(

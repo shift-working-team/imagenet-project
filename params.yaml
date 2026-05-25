@@ -4,7 +4,8 @@ project:
 data:
   raw_dir: /workspace/data/raw/
   captions_file: /workspace/data/captioning/annotations/train.json
-  dataset_version: raw-20260509-v1
+  dataset_version: cls_raw-20260525-v2
+  # dataset_version: raw-20260509-v1
 
 split:
   train_ratio: 0.7
