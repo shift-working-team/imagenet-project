@@ -175,7 +175,8 @@ elif optimizer_name == "adamw":
 
 # loss
 criterion = nn.CrossEntropyLoss(
-    ignore_index=w2i["<pad>"]
+    ignore_index=w2i["<pad>"],
+    label_smoothing=params["captioning"]["transformer"]["label_smoothing"]
 )
 
 start_epoch = 0
