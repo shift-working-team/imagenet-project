@@ -56,7 +56,29 @@ stages:
      - src/engines/captioning_validator.py
      - src/metrics/evaluate_caption.py
      - src/models/resnet18.py
-     - src/models/transformer.py
+     - src/models/transformer_.py
+     - src/transforms/image_transform.py
+     - scripts/train_captioning.py
+    params:
+     - train
+     - preprocess
+     - captioning
+
+
+  train_transformer_scratch_baseline:
+    cmd: python scripts/train_captioning.py --model transformer_scratch
+    deps:
+     - data/captioning/annotations/train.json
+     - data/captioning/annotations/val.json
+     - data/captioning/annotations/test.json
+     - src/dataset/captioning_dataset.py
+     - src/dataset/build_vocab.py
+     - src/dataset/collate_caption.py
+     - src/engines/captioning_trainer.py
+     - src/engines/captioning_validator.py
+     - src/metrics/evaluate_caption.py
+     - src/models/resnet18.py
+     - src/models/transformer_scratch.py
      - src/transforms/image_transform.py
      - scripts/train_captioning.py
     params:

@@ -327,3 +327,4 @@ zstandard @ file:///croot/zstandard_1677013143055/work
 
 # 5/25 추가필요
 notebook==7.5.0
+einops==0.8.2

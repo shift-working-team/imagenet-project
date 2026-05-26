@@ -8,19 +8,21 @@ class EncoderResnet18(nn.Module):
         model = models.resnet18(
             weights=models.ResNet18_Weights.DEFAULT
         )
+
         modules = list(model.children())[:-1]
         self.backbone = nn.Sequential(*modules)
         for param in self.backbone.parameters():
             param.requires_grad = False
+
         self.classifier = nn.Linear(
             model.fc.in_features,
             num_classes
         )
 
-        self.projector = nn.Linear(
-            model.fc.in_features,
-            embed_size
-        )
+        cap_modules = list(model.children())[:-2]
+        self.cap_backbone = nn.Sequential(*cap_modules)
+        for param in self.cap_backbone.parameters():
+            param.requires_grad = False
 
     def forward(
         self,
@@ -35,11 +37,14 @@ class EncoderResnet18(nn.Module):
         )
 
         logits = self.classifier(features)
-        features = self.projector(features)
+
+        cap_features = self.cap_backbone(images)
+        cap_features = cap_features.flatten(2)
+        cap_features = cap_features.permute(0, 2, 1)
 
         # classification
         if not return_features:
             return logits
 
         # captioning
-        return features
+        return cap_features

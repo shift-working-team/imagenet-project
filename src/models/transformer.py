@@ -22,7 +22,7 @@ class PositionalEncoding(nn.Module):
     
 
 class DecoderTransformer(nn.Module):
-    def __init__(self, d_model=512, nhead=8, num_layers=4, voca_size=10000, max_len=30):
+    def __init__(self, d_model=512, nhead=8, n_layers=4, voca_size=10000, max_len=30):
         super().__init__()
 
         self.d_model = d_model
@@ -33,7 +33,7 @@ class DecoderTransformer(nn.Module):
         self.pos_end = PositionalEncoding(d_model, max_len)
 
         decoder_layer = nn.TransformerDecoderLayer(d_model=d_model, nhead=nhead, batch_first=True)
-        self.transformer = nn.TransformerDecoder(decoder_layer, num_layers=num_layers)
+        self.transformer = nn.TransformerDecoder(decoder_layer, num_layers=n_layers)
 
         self.fc = nn.Linear(d_model, voca_size)
 
