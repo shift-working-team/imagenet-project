@@ -62,7 +62,7 @@ class MHA(nn.Module):
         return x, attention_weights
 
 class FeedForward(nn.Module):
-    def __init__(self, d_model, d_ff):
+    def __init__(self, d_model, d_ff, drop_p):
         super().__init__()
         self.d_model = d_model
         self.d_ff = d_ff
@@ -70,7 +70,7 @@ class FeedForward(nn.Module):
         self.linear = nn.Sequential(
                             nn.Linear(d_model, d_ff),
                             nn.ReLU(),
-                            # nn.Dropout(),
+                            nn.Dropout(drop_p),
                             nn.Linear(d_ff, d_model)
                         )
         
@@ -88,7 +88,7 @@ class DecoderLayer(nn.Module):
         self.Cross_MHA = MHA(d_model, nhead, drop_p)
         self.Cross_MHA_LN = nn.LayerNorm(d_model)
 
-        self.FFN = FeedForward(d_model, d_ff)
+        self.FFN = FeedForward(d_model, d_ff, drop_p)
         self.FFN_LN = nn.LayerNorm(d_model)
 
         self.drop = nn.Dropout(drop_p)

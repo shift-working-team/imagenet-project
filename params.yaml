@@ -87,6 +87,7 @@ captioning:
     nhead: 8
     d_model: 512
     drop_p: 0.1
+    label_smoothing: 0
     # weight_decay: 0.001
 
   data:
