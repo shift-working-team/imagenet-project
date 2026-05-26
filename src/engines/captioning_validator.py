@@ -15,6 +15,7 @@ def validation_one_epoch(
     decoder.eval()
 
     with torch.no_grad():
+        first = True
         total_loss = 0
         if (epoch+1) >= 5 and ((epoch+1) % 5 == 0 or (epoch+1) == epochs):
             all_references = []
@@ -24,6 +25,10 @@ def validation_one_epoch(
             all_feature = None
 
         for images, captions, batch_references in loader:
+            if first:
+                firstbatch_image_0 = images[0]
+                first = False
+
             images = images.to(device) # B, 3, 224, 224
             captions = captions.to(device) # B, seq_len
 
@@ -46,6 +51,6 @@ def validation_one_epoch(
             total_loss += loss.item()
 
     if (epoch+1) >= 5 and ((epoch+1) % 5 == 0 or (epoch+1) == epochs):
-        return total_loss / len(loader), torch.cat(all_feature, dim=0), all_references, images[0]
+        return total_loss / len(loader), torch.cat(all_feature, dim=0), all_references, firstbatch_image_0
     else:
         return total_loss / len(loader), all_feature, all_references, None
