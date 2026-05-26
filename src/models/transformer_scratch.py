@@ -129,9 +129,9 @@ class DecoderTransformerScratch(nn.Module):
 
         return mask
     
-    def show_dec_atten(self, atten, generated_caption, n_layer, save_path): # all_B/B, layers, nhead, seq_len, seq_len)        
-        atten = atten.mean(dim=2) # all_B/B, layers, seq_len, seq_len)
-        atten = atten[0][n_layer-1] # seq_len, seq_len
+    def show_dec_atten(self, atten, generated_caption, n_layer, save_path): # layers, nhead, seq_len, seq_len)        
+        atten = atten.mean(dim=1) # layers, seq_len, seq_len)
+        atten = atten[n_layer-1] # seq_len, seq_len
         atten = atten.detach().cpu().numpy()
 
         seq_len = len(generated_caption)
@@ -158,17 +158,15 @@ class DecoderTransformerScratch(nn.Module):
 
         plt.close()
     
-    def show_cross_atten(self, atten, generated_caption, n_layer, image, save_path): # all_B/B, layers, nhead, seq_len, 49)
+    def show_cross_atten(self, atten, generated_caption, n_layer, image, save_path): # layers, nhead, seq_len, 49)
         import cv2
         import numpy as np
 
         # ------------------------
         # attention 전처리
         # ------------------------
-        atten = atten.mean(dim=2)
-
-        # 첫 번째 샘플, 선택한 layer
-        atten = atten[0, n_layer - 1]
+        atten = atten.mean(dim=1) # layers, seq_len, seq_len)
+        atten = atten[n_layer-1] # seq_len, seq_len
 
         atten = atten.detach().cpu().numpy()
 

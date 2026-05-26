@@ -61,16 +61,16 @@ captioning:
   # decoder: transformer
   # decoder: lstm
   # decoder: gru
-  version: baseline
+  version: dropout
 
-  epochs: 10
+  epochs: 20
   learning_rate: 0.0001
   batch_size: 32
   optimizer: adam
   max_caption_length: 30
   train_num_caption: 2
 
-  debug: True
+  debug: False
 
   lstm:
     embed_dim: 256
@@ -105,7 +105,7 @@ captioning:
 
   checkpoint:
     save_dir: /workspace/outputs/captioning
-    resume: False
+    resume: True
     
 
 
