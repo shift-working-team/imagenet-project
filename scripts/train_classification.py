@@ -1,4 +1,3 @@
-import argparse
 import sys
 sys.path.append("/workspace/src")
 
@@ -50,12 +49,6 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 
-# stage cmd
-parser = argparse.ArgumentParser()
-parser.add_argument("--model", type=str, required=True)
-parser.add_argument("--augmentation", type=str, default="none")
-args = parser.parse_args()
-
 
 
 # device
@@ -95,8 +88,13 @@ print(f"num_classes: {num_classes}")
 
 
 
+
 # model
-model_name = args.model
+model_name = (
+    params["classification"]["model_name"]
+)
+
+
 
 
 # learning rate
@@ -122,7 +120,10 @@ else:
 
 
 # augmentation
-augmentation_type = args.augmentation
+augmentation_type = (
+    params["classification"]
+    ["augmentation"]["type"]
+)
 if augmentation_type == "none":
     augmentation_type = None
 
@@ -277,6 +278,8 @@ else:
 
 # scheduler
 scheduler = None
+scheduler_name = None
+
 if params["classification"]["scheduler"]["use"]:
     scheduler_name = (
         params["classification"]
@@ -308,95 +311,120 @@ os.makedirs(
 
 
 
-# wandb name
-model_tag = model_name.replace("_","-")
-
-augmentation_tag = (
-    "base"
-    if augmentation_type is None
-    else augmentation_type
+# common tags
+batch_size = (
+    params["train"]["batch_size"]
 )
 
 dataset_version_tag = (
     params["data"]["dataset_version"]
 )
 
+
+
+
+# augmentation tag
+augmentation_tag = (
+    "base"
+    if augmentation_type is None
+    else augmentation_type
+)
+
+
+
+
+# learning rate tag
+lr_tag = (
+    str(learning_rate)
+    .replace("0.", "")
+)
+
+
+
+
+# scheduler tag
+scheduler_tag = (
+    "none"
+    if scheduler_name is None
+    else scheduler_name
+)
+
+
+
+
+# wandb name
+model_tag = model_name.replace("_","-")
+
 wandb_name_parts = [
     "cls",
-    model_tag,
-    augmentation_tag,
-    dataset_version_tag
+    model_tag
 ]
 
 
 
 
-# step 4 tuning
-optimizer_name = (params["classification"]["optimizer"])
-batch_size = (params["train"]["batch_size"])
+# dataset refinement step
+if dataset_version_tag != "raw-20260509-v1":
 
-
-
-
-# learning rate
-if model_name in transformer_models:
-    baseline_lr = (
-        params["classification"]
-        ["learning_rate"]["transformer"]
+    wandb_name_parts.append(
+        augmentation_tag
     )
+
+    wandb_name_parts.append(
+        dataset_version_tag
+    )
+
+
+
+
+# hyperparameter tuning step
+baseline_transformer_lr = 0.0005
+baseline_cnn_lr = 0.001
+
+is_hyperparameter_tuning = False
+
+if model_name in transformer_models:
+
+    if learning_rate != baseline_transformer_lr:
+        is_hyperparameter_tuning = True
 
 else:
-    baseline_lr = (
-        params["classification"]
-        ["learning_rate"]["cnn"]
-    )
 
-if learning_rate != baseline_lr:
-    lr_tag = str(learning_rate).replace(
-        "0.",
-        ""
-    )
+    if learning_rate != baseline_cnn_lr:
+        is_hyperparameter_tuning = True
+
+if batch_size != 32:
+    is_hyperparameter_tuning = True
+
+if optimizer_name != "adam":
+    is_hyperparameter_tuning = True
+
+if scheduler_name is not None:
+    is_hyperparameter_tuning = True
+
+
+
+
+# add tuning info only in step 5
+if is_hyperparameter_tuning:
 
     wandb_name_parts.append(
         f"lr-{lr_tag}"
     )
 
-
-
-
-# batch size
-if batch_size != 32:
     wandb_name_parts.append(
         f"bs-{batch_size}"
     )
 
-
-
-
-# optimizer
-if optimizer_name != "adam":
     wandb_name_parts.append(
         optimizer_name
     )
 
-
-
-
-# scheduler
-if (
-    params["classification"]
-    ["scheduler"]["use"]
-):
-
-    scheduler_name = (
-        params["classification"]
-        ["scheduler"]["name"]
+    wandb_name_parts.append(
+        scheduler_tag
     )
 
-    if scheduler_name == "cosineannealinglr":
-        wandb_name_parts.append(
-            "cosine"
-        )
+
 
 
 wandb_name = "_".join(
@@ -416,11 +444,7 @@ my_config = {
     "epochs": params["classification"]["epochs"],
     "augmentation": augmentation_type,
     "optimizer": optimizer_name,
-    "scheduler": (
-        params["classification"]["scheduler"]["name"]
-        if params["classification"]["scheduler"]["use"]
-        else None
-    ),
+    "scheduler": scheduler_name,
     "device": device.type,
     "num_classes": num_classes,
     "dataset_version": (
@@ -437,7 +461,44 @@ wandb.init(
     entity="super-shift-working",
     config=my_config,
     name=wandb_name,
-    tags=["classification"]
+    tags=[
+        "classification",
+        f"model:{model_name}",
+        f"augmentation:{augmentation_tag}",
+        f"dataset:{dataset_version_tag}",
+        f"lr:{learning_rate}",
+        f"batch_size:{batch_size}",
+        f"optimizer:{optimizer_name}",
+        f"scheduler:{scheduler_tag}"
+    ]
+)
+
+
+
+
+# wandb summary
+wandb.run.summary["learning_rate"] = (
+    learning_rate
+)
+
+wandb.run.summary["batch_size"] = (
+    batch_size
+)
+
+wandb.run.summary["optimizer"] = (
+    optimizer_name
+)
+
+wandb.run.summary["scheduler"] = (
+    scheduler_tag
+)
+
+wandb.run.summary["augmentation"] = (
+    augmentation_tag
+)
+
+wandb.run.summary["dataset_version"] = (
+    dataset_version_tag
 )
 
 
@@ -445,6 +506,8 @@ wandb.init(
 
 # train
 best_f1 = 0.0
+best_epoch = 0
+
 for epoch in range(
     params["classification"]["epochs"]
 ):
@@ -487,6 +550,7 @@ for epoch in range(
     # checkpoint save
     if val_f1 > best_f1:
         best_f1 = val_f1
+        best_epoch = epoch + 1
 
         dataset_version = (
             params["data"]["dataset_version"]
@@ -518,13 +582,13 @@ for epoch in range(
         "val/accuracy": val_acc,
         "val/macro_f1": val_f1,
         # "val/precision": val_precision,
-        # "val/recall": val_recall
+        # "val/recal": val_recall
     }
 
-    if scheduler is not None:
-        log_dict["learning_rate"] = (
-            optimizer.param_groups[0]["lr"]
-        )
+    log_dict["learning_rate"] = (
+        optimizer.param_groups[0]["lr"]
+    )
+
     wandb.log(log_dict)
 
 
@@ -539,6 +603,18 @@ for epoch in range(
         f"Val Acc: {val_acc:.4f}"
         f"Val Macro F1: {val_f1:.4f}"
     )
+
+
+
+
+# final summary
+wandb.run.summary["best_val_macro_f1"] = (
+    best_f1
+)
+
+wandb.run.summary["best_epoch"] = (
+    best_epoch
+)
 
 
 
