@@ -8,26 +8,34 @@ def evaluate_caption(
     all_reference,
     w2i,
     i2w,
-    batch_size
+    batch_size,
+    image_0,
+    save_atten
     ):
     device = next(decoder.parameters()).device
 
     generated_token = []
+    all_dec_atten = []
+    all_enc_dec_atten = []
     with torch.no_grad():
         for i in range(0, all_feature.size(0), batch_size):
             batch_feature = all_feature[i:i+batch_size].to(device)
-
-            batch_generated = decoder.generate(
-                batch_feature,
-                torch.full((batch_feature.size(0),), w2i["<sos>"], device=device),
-                w2i["<eos>"]
+            
+            # (B, seq_len-1), (layers, nhead, seq_len, seq_len), (layers, nhead, seq_len, 49)
+            batch_generated, dec_atten, enc_dec_atten = decoder.generate(
+                batch_feature, # B, 49, 512
+                torch.full((batch_feature.size(0),), w2i["<sos>"], device=device), # all_B,
+                w2i["<eos>"],
+                save_atten
             )
 
             generated_token.extend(batch_generated)
+            all_dec_atten.append(dec_atten) # all_B/B, layers, nhead, seq_len, seq_len
+            all_enc_dec_atten.append(enc_dec_atten) # all_B/B, layers, nhead, seq_len, 49
 
             del batch_feature
-            torch.cuda.empty_cache()
-
+            del dec_atten
+            del enc_dec_atten
 
     generated_sentence = []
     for sentence in generated_token:
@@ -63,5 +71,11 @@ def evaluate_caption(
         "generated": generated_dict,
         "references": references_dict
     }
+    if save_atten:
+        all_dec_atten = torch.stack(all_dec_atten, dim=0) # all_B/B, layers, nhead, seq_len, seq_len)
+        all_enc_dec_atten = torch.stack(all_enc_dec_atten, dim=0) # all_B/B, layers, nhead, seq_len, 49)
+
+        decoder.show_dec_atten(all_dec_atten, generated_sentence[0].split(), 4, '/workspace/outputs/captioning/heatmap/dec_atten.jpg')
+        decoder.show_cross_atten(all_enc_dec_atten, generated_sentence[0].split(), 4, image_0, '/workspace/outputs/captioning/heatmap/cross_atten.jpg')
 
     return metric_result

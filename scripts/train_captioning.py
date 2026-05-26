@@ -22,6 +22,7 @@ from models.resnet18 import EncoderResnet18
 from models.lstm import DecoderLSTM
 from models.gru import DecoderGRU
 from models.transformer import DecoderTransformer
+from models.transformer_scratch import DecoderTransformerScratch
 
 from engines.captioning_trainer import train_one_epoch
 from engines.captioning_validator import validation_one_epoch
@@ -125,10 +126,20 @@ if decoder_name == "transformer":
     decoder = DecoderTransformer(
         d_model=params["captioning"]["transformer"]["d_model"],
         nhead=params["captioning"]["transformer"]["nhead"],
-        num_layers=params["captioning"]["transformer"]["num_layers"],
+        n_layers=params["captioning"]["transformer"]["n_layers"],
         voca_size=voca_size,
         max_len=params["captioning"]["max_caption_length"]
         ).to(device)
+elif decoder_name == "transformer_scratch":
+    decoder = DecoderTransformerScratch(
+        n_layers=params["captioning"]["transformer"]["n_layers"],
+        nhead=params["captioning"]["transformer"]["nhead"],
+        d_model=params["captioning"]["transformer"]["d_model"],
+        d_ff=params["captioning"]["transformer"]["d_model"]*4,
+        voca_size=voca_size,
+        max_len=params["captioning"]["max_caption_length"],
+        drop_p=params["captioning"]["transformer"]["drop_p"]
+    ).to(device)
 elif decoder_name == "lstm":
     decoder = DecoderLSTM(
         voca_size=voca_size,
@@ -149,7 +160,7 @@ elif decoder_name == "gru":
 optimizer_name = params["captioning"]["optimizer"].lower()
 if optimizer_name == "adam":
     optimizer = torch.optim.Adam(
-        list(encoder.projector.parameters()) +
+        # list(encoder.projector.parameters()) +
         list(decoder.parameters()),
         lr=params["captioning"]["learning_rate"],
     )
@@ -208,8 +219,13 @@ start_epoch, best_val_loss = load_checkpoint(
         device
         )
 
+
 # train
+save_atten = False
 for epoch in range(start_epoch, params["captioning"]["epochs"]):
+    if epoch+1 == params["captioning"]["epochs"]:
+        save_atten = True
+
     train_loss = train_one_epoch(
         encoder,
         decoder,
@@ -219,7 +235,7 @@ for epoch in range(start_epoch, params["captioning"]["epochs"]):
         device
     )
 
-    val_loss, all_feature, all_reference = validation_one_epoch(
+    val_loss, all_feature, all_reference, image_0 = validation_one_epoch(
         encoder,
         decoder,
         val_loader,
@@ -243,7 +259,9 @@ for epoch in range(start_epoch, params["captioning"]["epochs"]):
             all_reference,
             w2i,
             i2w,
-            params["captioning"]["batch_size"]
+            params["captioning"]["batch_size"],
+            image_0,
+            save_atten
         )
 
         log_dict.update({

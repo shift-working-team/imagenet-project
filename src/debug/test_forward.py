@@ -7,6 +7,8 @@ import torch
 from lstm import DecoderLSTM
 from gru import DecoderGRU
 from transformer import DecoderTransformer
+# from transformer_scratch import DecoderTransformer
+
 from resnet18 import EncoderResnet18
 from efficientnet import EncoderEfficientNetB0
 from convnext import EncoderConvNextTiny
@@ -28,6 +30,7 @@ print(f"device: {device}")
 
 # caption model dummy input
 feature = torch.randn(1, 512).to(device)
+# feature = torch.randn(1, 49, 512).to(device)
 
 caption = torch.tensor(
     [[0, 1, 2, 3, 4]]
@@ -62,9 +65,9 @@ print(f"GRU: {gru_out.shape}")
 ### Transformer Forward ###
 transformer_model = DecoderTransformer().to(device)
 
-transformer_out = transformer_model(
-    feature,
+transformer_out, map, map = transformer_model(
     caption,
+    feature,
     0
 )
 
