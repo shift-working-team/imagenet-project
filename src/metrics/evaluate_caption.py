@@ -15,8 +15,11 @@ def evaluate_caption(
     device = next(decoder.parameters()).device
 
     generated_token = []
-    all_dec_atten = []
-    all_enc_dec_atten = []
+
+    if save_atten:
+        all_dec_atten = []
+        all_enc_dec_atten = []
+        
     with torch.no_grad():
         for i in range(0, all_feature.size(0), batch_size):
             batch_feature = all_feature[i:i+batch_size].to(device)
@@ -30,12 +33,11 @@ def evaluate_caption(
             )
 
             generated_token.extend(batch_generated)
-            all_dec_atten.append(dec_atten) # all_B/B, layers, nhead, seq_len, seq_len
-            all_enc_dec_atten.append(enc_dec_atten) # all_B/B, layers, nhead, seq_len, 49
+            if save_atten:
+                all_dec_atten.append(dec_atten) # all_B/B, layers, nhead, seq_len, seq_len
+                all_enc_dec_atten.append(enc_dec_atten) # all_B/B, layers, nhead, seq_len, 49
 
             del batch_feature
-            del dec_atten
-            del enc_dec_atten
 
     generated_sentence = []
     for sentence in generated_token:
@@ -72,10 +74,7 @@ def evaluate_caption(
         "references": references_dict
     }
     if save_atten:
-        all_dec_atten = torch.stack(all_dec_atten, dim=0) # all_B/B, layers, nhead, seq_len, seq_len)
-        all_enc_dec_atten = torch.stack(all_enc_dec_atten, dim=0) # all_B/B, layers, nhead, seq_len, 49)
-
-        decoder.show_dec_atten(all_dec_atten, generated_sentence[0].split(), 4, '/workspace/outputs/captioning/heatmap/dec_atten.jpg')
-        decoder.show_cross_atten(all_enc_dec_atten, generated_sentence[0].split(), 4, image_0, '/workspace/outputs/captioning/heatmap/cross_atten.jpg')
+        decoder.show_dec_atten(all_dec_atten[0], generated_sentence[0].split(), 4, '/workspace/outputs/captioning/heatmap/dec_atten.jpg')
+        decoder.show_cross_atten(all_enc_dec_atten[0], generated_sentence[0].split(), 4, image_0, '/workspace/outputs/captioning/heatmap/cross_atten.jpg')
 
     return metric_result
