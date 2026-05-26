@@ -23,6 +23,11 @@ class EncoderResnet18(nn.Module):
         self.cap_backbone = nn.Sequential(*cap_modules)
         for param in self.cap_backbone.parameters():
             param.requires_grad = False
+        
+        self.projector = nn.Linear(
+            model.fc.in_features,
+            embed_size
+        )
 
     def forward(
         self,
@@ -35,12 +40,13 @@ class EncoderResnet18(nn.Module):
             features.size(0),
             -1
         )
-
         logits = self.classifier(features)
+
 
         cap_features = self.cap_backbone(images)
         cap_features = cap_features.flatten(2)
         cap_features = cap_features.permute(0, 2, 1)
+        cap_features = self.projector(cap_features)
 
         # classification
         if not return_features:

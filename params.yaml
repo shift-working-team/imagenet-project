@@ -61,7 +61,7 @@ captioning:
   # decoder: transformer
   # decoder: lstm
   # decoder: gru
-  version: dropout
+  version: all_generated_test
 
   epochs: 20
   learning_rate: 0.0001
@@ -105,7 +105,15 @@ captioning:
 
   checkpoint:
     save_dir: /workspace/outputs/captioning
-    resume: True
+    resume: False
+
+  heatmap:
+    dec_atten_dir: /workspace/outputs/captioning/heatmap/dec_atten.jpg
+    enc_dec_atten_dir: /workspace/outputs/captioning/heatmap/cross_atten.jpg
+    layer: 4 # 몇번째 층
+    n_sample: 0 # 몇번째 샘플(batch)
+
+
     
 
 

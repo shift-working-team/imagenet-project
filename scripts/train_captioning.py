@@ -28,6 +28,7 @@ from engines.captioning_trainer import train_one_epoch
 from engines.captioning_validator import validation_one_epoch
 
 from metrics.evaluate_caption import evaluate_caption
+from metrics.make_show_all_caption import make_show_all_caption
 
 from utils.checkpoint_manager import save_checkpoint, load_checkpoint
 
@@ -121,7 +122,7 @@ val_loader = DataLoader(
 
 
 # model
-encoder = EncoderResnet18().to(device)
+encoder = EncoderResnet18(embed_size=params["captioning"]["transformer"]["d_model"]).to(device)
 if decoder_name == "transformer":
     decoder = DecoderTransformer(
         d_model=params["captioning"]["transformer"]["d_model"],
@@ -160,7 +161,7 @@ elif decoder_name == "gru":
 optimizer_name = params["captioning"]["optimizer"].lower()
 if optimizer_name == "adam":
     optimizer = torch.optim.Adam(
-        # list(encoder.projector.parameters()) +
+        list(encoder.projector.parameters()) +
         list(decoder.parameters()),
         lr=params["captioning"]["learning_rate"],
     )
@@ -211,21 +212,20 @@ save_prefix = f"{model_name}_{version}"
 best_path = os.path.join(save_dir, f"{save_prefix}_best.pt")
 os.makedirs(save_dir, exist_ok=True)
 
-start_epoch, best_val_loss = load_checkpoint(
-        params["captioning"]["checkpoint"]["resume"],
-        best_path,
-        encoder,
-        decoder,
-        optimizer,
-        device
-        )
+start_epoch = 0
+best_val_loss = float("inf")
+if params["captioning"]["checkpoint"]["resume"]:
+    start_epoch, best_val_loss = load_checkpoint(
+            best_path,
+            encoder,
+            decoder,
+            optimizer,
+            device
+            )
 
 
 # train
-save_atten = False
 for epoch in range(start_epoch, params["captioning"]["epochs"]):
-    if epoch+1 == params["captioning"]["epochs"]:
-        save_atten = True
 
     train_loss = train_one_epoch(
         encoder,
@@ -236,14 +236,12 @@ for epoch in range(start_epoch, params["captioning"]["epochs"]):
         device
     )
 
-    val_loss, all_feature, all_reference, image_0 = validation_one_epoch(
+    val_loss = validation_one_epoch(
         encoder,
         decoder,
         val_loader,
         criterion,
         device,
-        epoch,
-        params["captioning"]["epochs"]
     )
 
     print(f"Epoch {epoch+1} Train_Loss: {train_loss:.4f} Val_Loss: {val_loss:.4f}")
@@ -253,47 +251,10 @@ for epoch in range(start_epoch, params["captioning"]["epochs"]):
         "val/loss": val_loss
     }
 
-    if (epoch+1) >= 5 and ((epoch+1) % 5 == 0 or (epoch+1) == params["captioning"]["epochs"]):
-        metric_result = evaluate_caption(
-            decoder,
-            all_feature,
-            all_reference,
-            w2i,
-            i2w,
-            params["captioning"]["batch_size"],
-            image_0,
-            save_atten
-        )
-
-        log_dict.update({
-            "BLEU_1": metric_result["bleu1"],
-            "BLEU_2": metric_result["bleu2"],
-            "BLEU_3": metric_result["bleu3"],
-            "BLEU_4": metric_result["bleu4"],
-            "CIDEr": metric_result["cider"],
-        })
-
-        sample_idx = 0
-
-        print("-" * 60)
-        print(f' Generated Sentence: {metric_result["generated"][sample_idx]}')
-        print("-" * 60)
-
-        for i, reference in enumerate(metric_result["references"][sample_idx], start=1):
-            print(f'Reference {i}: {reference}')
-        print("-" * 60)
-
-        print(f'BLEU_1: {metric_result["bleu1"]:.4f}')
-        print(f'BLEU_2: {metric_result["bleu2"]:.4f}')
-        print(f'BLEU_3: {metric_result["bleu3"]:.4f}')
-        print(f'BLEU_4: {metric_result["bleu4"]:.4f}')
-        print(f'CIDEr: {metric_result["cider"]:.4f}')
-
     print('='*60)
 
     if val_loss < best_val_loss:
         best_val_loss = val_loss
-
         save_checkpoint(
             best_path,
             encoder,
@@ -304,21 +265,34 @@ for epoch in range(start_epoch, params["captioning"]["epochs"]):
             val_loss
         )
 
-
-    #4. 지표 기록
-    wandb.log(log_dict)
+    # 지표 기록
+    if epoch+1 < params["captioning"]["epochs"]:
+        wandb.log(log_dict)
     
-    if epoch+1 == params["captioning"]["epochs"]:
-        sample_idx = len(metric_result["generated"])
-        for idx in range(0,sample_idx,30):
-            print("-" * 60)
-            print(f' Generated Sentence{idx}: {metric_result["generated"][idx]}')
-            print("-" * 60)
+all_generated_sentence, all_references = make_show_all_caption(
+        val_loader,
+        encoder,
+        decoder,
+        optimizer,
+        w2i,
+        i2w,
+        best_path,
+        params["captioning"]["heatmap"]["dec_atten_dir"],
+        params["captioning"]["heatmap"]["enc_dec_atten_dir"],
+        params["captioning"]["heatmap"]["n_sample"],
+        params["captioning"]["heatmap"]["layer"],
+        device
+    )
 
-            for i, reference in enumerate(metric_result["references"][idx], start=1):
-                print(f'Reference {i}: {reference}')
-            print("=" * 60)
+metric_result = evaluate_caption(all_generated_sentence, all_references)
+log_dict.update({
+            "BLEU_1": metric_result["bleu1"],
+            "BLEU_2": metric_result["bleu2"],
+            "BLEU_3": metric_result["bleu3"],
+            "BLEU_4": metric_result["bleu4"],
+            "CIDEr": metric_result["cider"],
+        })
 
-print(f"Best model val loss: {best_val_loss:.4f}")
+wandb.log(log_dict)
 
 wandb.finish()

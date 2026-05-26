@@ -21,7 +21,6 @@ def save_checkpoint(
 
 
 def load_checkpoint(
-        resume,
         best_path,
         encoder,
         decoder,
@@ -29,31 +28,26 @@ def load_checkpoint(
         device
 ):
 
-    if resume:
-        print(f"Loading checkpoint: {best_path}")
+    print(f"Loading checkpoint: {best_path}")
 
-        checkpoint = torch.load(
-            best_path,
-            map_location=device
-        )
+    checkpoint = torch.load(
+        best_path,
+        map_location=device
+    )
 
-        encoder.load_state_dict(checkpoint["encoder_state_dict"])
+    encoder.load_state_dict(checkpoint["encoder_state_dict"])
 
-        decoder.load_state_dict(checkpoint["decoder_state_dict"])
+    decoder.load_state_dict(checkpoint["decoder_state_dict"])
 
-        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+    optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
 
-        start_epoch = checkpoint["epoch"]
+    start_epoch = checkpoint["epoch"]
 
-        best_val_loss = checkpoint["val_loss"]
+    best_val_loss = checkpoint["val_loss"]
 
-        print(
-            f"Resume from Epoch {start_epoch} | "
-            f"Best Val Loss: {best_val_loss:.4f}"
-        )
+    print(
+        f"Resume from Epoch {start_epoch} | "
+        f"Best Val Loss: {best_val_loss:.4f}"
+    )
 
-        return start_epoch, best_val_loss
-    else:
-        print(f"Resume: {resume}")
-        
-        return 0, float("inf")
+    return start_epoch, best_val_loss

@@ -251,7 +251,7 @@ class DecoderTransformerScratch(nn.Module):
 
         return x
     
-    def generate(self, features, start_token, end_token, save_atten):
+    def generate(self, features, start_token, end_token):
         generated = start_token.unsqueeze(1) # B, 1
         finished = torch.zeros(generated.size(0), dtype=torch.bool, device=features.device) # B,
         
@@ -267,13 +267,11 @@ class DecoderTransformerScratch(nn.Module):
             for layer in self.layers:
                 x, dec_weights, enc_dec_weights = layer(x, features, mask)
 
-                if save_atten:
-                    dec_atten.append(dec_weights[0].detach().cpu()) #  layers*[nhead, seq_len, seq_len]
-                    enc_dec_atten.append(enc_dec_weights[0].detach().cpu()) # layers*[nhead, seq_len, 49]
+                dec_atten.append(dec_weights.detach().cpu()) #  layers*[B, nhead, seq_len, seq_len]
+                enc_dec_atten.append(enc_dec_weights.detach().cpu()) # layers*[B, nhead, seq_len, 49]
 
-            if save_atten:
-                dec_atten = torch.stack(dec_atten, dim=0)
-                enc_dec_atten = torch.stack(enc_dec_atten, dim=0)
+            dec_atten = torch.stack(dec_atten, dim=1)
+            enc_dec_atten = torch.stack(enc_dec_atten, dim=1)
 
             logits = self.fc_out(x) # B, 1, voca_size
             pred = torch.argmax(logits[:,-1,:], dim=-1) # B,
@@ -287,6 +285,6 @@ class DecoderTransformerScratch(nn.Module):
             if finished.all():
                 break
 
-                # (B, seq_len-1), (layers, nhead, seq_len, seq_len), (layers, nhead, seq_len, 49)
+                # (B, seq_len-1), (B, layers, nhead, seq_len, seq_len), (B, layers, nhead, seq_len, 49)
         return generated[:,1:].tolist(), dec_atten, enc_dec_atten
     
