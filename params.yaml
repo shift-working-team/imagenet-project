@@ -121,12 +121,12 @@ captioning:
 
 classification:
 
-  model_name: resnet18
+  # model_name: resnet18
   # model_name: efficientnet_b0
   # model_name: convnext_tiny
   # model_name: mobilenet_v3_small
   # model_name: vit_b_16
-  # model_name: swin_t
+  model_name: swin_t
   # model_name: deit_tiny_patch16_224
 
   epochs: 50
@@ -134,17 +134,22 @@ classification:
   learning_rate:
 
     # baseline
-    # cnn: 0.001
-    # transformer: 0.0005
+    cnn: 0.001
+    transformer: 0.0005
 
     # hyperparameter tuning
-    cnn: 0.0005
-    transformer: 0.0001
+    # cnn: 0.0005
+    # transformer: 0.0001
 
-  optimizer: adam
-
+  # optimizer: adam
   # optimizer: sgd
-  # optimizer: adamw
+  optimizer: adamw
+
+  # default
+  # weight_decay: 0.01
+
+  # tuning
+  weight_decay: 0.05
 
   scheduler:
     use: false

@@ -265,7 +265,10 @@ elif optimizer_name == "adamw":
             lambda p: p.requires_grad,
             model.parameters()
         ),
-        lr=learning_rate
+        lr=learning_rate,
+        weight_decay=(
+            params["classification"]["weight_decay"]
+        )
     )
 
 else:
