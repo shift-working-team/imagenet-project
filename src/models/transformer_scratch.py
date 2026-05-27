@@ -207,7 +207,10 @@ class DecoderTransformerScratch(nn.Module):
         for i in range(seq_len):
 
             # 49 -> 7x7
-            heatmap = atten[i].reshape(7, 7)
+            num_patch = atten.shape[-1]
+            side = int(math.sqrt(num_patch))
+
+            heatmap = atten[i].reshape(side, side)
 
             # resize
             heatmap = cv2.resize(heatmap, (W, H), interpolation=cv2.INTER_CUBIC)

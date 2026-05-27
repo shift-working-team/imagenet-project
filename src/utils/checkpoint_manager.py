@@ -46,7 +46,7 @@ def load_checkpoint(
     best_val_loss = checkpoint["val_loss"]
 
     print(
-        f"Resume from Epoch {start_epoch} | "
+        f"Resume from Epoch {start_epoch+1} | "
         f"Best Val Loss: {best_val_loss:.4f}"
     )
 

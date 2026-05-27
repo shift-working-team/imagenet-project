@@ -19,6 +19,8 @@ from dataset.collate_caption import collate_caption
 from transforms.image_transform import get_caption_transform
 
 from models.resnet18 import EncoderResnet18
+from models.swin import EncoderSwinTiny
+from models.vit import EncoderViTB16
 from models.lstm import DecoderLSTM
 from models.gru import DecoderGRU
 from models.transformer import DecoderTransformer
@@ -47,16 +49,16 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 # stage cmd
-parser = argparse.ArgumentParser()
-parser.add_argument("--model", type=str, required=True)
-args = parser.parse_args()
+# parser = argparse.ArgumentParser()
+# parser.add_argument("--model", type=str, required=True)
+# args = parser.parse_args()
 
-encdoer_name = params["captioning"]["encoder"]
-# decoder_name = params["captioning"]["decoder"]
-decoder_name = args.model
+encoder_name = params["captioning"]["encoder"]
+decoder_name = params["captioning"]["decoder"]
+# decoder_name = args.model
 
 model_name = (
-    f'{encdoer_name}-'
+    f'{encoder_name}-'
     f'{decoder_name}'
 )
 version = params["captioning"]["version"]
@@ -122,7 +124,13 @@ val_loader = DataLoader(
 
 
 # model
-encoder = EncoderResnet18(embed_size=params["captioning"]["transformer"]["d_model"]).to(device)
+if encoder_name == "resnet18":
+    encoder = EncoderResnet18(embed_size=params["captioning"]["transformer"]["d_model"]).to(device)
+elif encoder_name == "swin":
+    encoder = EncoderSwinTiny(embed_size=params["captioning"]["transformer"]["d_model"]).to(device)
+elif encoder_name == "vit":
+    encoder = EncoderViTB16(embed_size=params["captioning"]["transformer"]["d_model"]).to(device)
+
 if decoder_name == "transformer":
     decoder = DecoderTransformer(
         d_model=params["captioning"]["transformer"]["d_model"],

@@ -40,9 +40,9 @@ def make_show_all_caption(
                 torch.full((features.size(0),), w2i["<sos>"], device=device), # B,
                 w2i["<eos>"],
             )
-        all_dec_atten.append(dec_atten) # all_B, layers, nhead, seq_len, seq_len
-        all_enc_dec_atten.append(enc_dec_atten) # all_B, layers, nhead, seq_len, 49
-        all_images.append(images.cpu())
+        all_dec_atten.extend(dec_atten) # all_B, layers, nhead, seq_len, seq_len
+        all_enc_dec_atten.extend(enc_dec_atten) # all_B, layers, nhead, seq_len, 49
+        all_images.extend(images.cpu())
         all_references.extend(list(zip(*batch_references)))
         all_generated_token.append(generated_token) # all_B, seq_len-1
 
@@ -57,9 +57,7 @@ def make_show_all_caption(
         
         all_generated_sentence.append(' '.join(words)) # all_B, 1(문장)
 
-    all_dec_atten = torch.cat(all_dec_atten, dim=0)
-    all_enc_dec_atten = torch.cat(all_enc_dec_atten, dim=0)
-    all_images = torch.cat(all_images, dim=0)
+
     decoder.show_dec_atten(all_dec_atten[heatmap_sample], all_generated_sentence[heatmap_sample].split(), layer, dec_atten_dir)
     decoder.show_cross_atten(all_enc_dec_atten[heatmap_sample], all_generated_sentence[heatmap_sample].split(), layer, all_images[heatmap_sample], enc_dec_atten_dir)
 
