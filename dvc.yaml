@@ -77,7 +77,10 @@ stages:
      - src/engines/captioning_trainer.py
      - src/engines/captioning_validator.py
      - src/metrics/evaluate_caption.py
+     - src/metrics/make_show_all_caption.py
      - src/models/resnet18.py
+     - src/models/vit.py
+     - src/models/swin.py
      - src/models/transformer_scratch.py
      - src/transforms/image_transform.py
      - scripts/train_captioning.py
