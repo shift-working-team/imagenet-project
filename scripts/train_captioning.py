@@ -231,8 +231,8 @@ if params["captioning"]["checkpoint"]["resume"]:
             device
             )
 
-
 # train
+log_dict = {}
 for epoch in range(start_epoch, params["captioning"]["epochs"]):
 
     train_loss = train_one_epoch(
@@ -254,10 +254,10 @@ for epoch in range(start_epoch, params["captioning"]["epochs"]):
 
     print(f"Epoch {epoch+1} Train_Loss: {train_loss:.4f} Val_Loss: {val_loss:.4f}")
 
-    log_dict = {
+    log_dict.update({
         "train/loss": train_loss,
         "val/loss": val_loss
-    }
+    })
 
     print('='*60)
 
