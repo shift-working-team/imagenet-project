@@ -50,4 +50,4 @@ def load_checkpoint(
         f"Best Val Loss: {best_val_loss:.4f}"
     )
 
-    return start_epoch, best_val_loss
+    return start_epoch+1, best_val_loss
