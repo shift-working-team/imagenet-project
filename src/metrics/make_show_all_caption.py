@@ -44,11 +44,11 @@ def make_show_all_caption(
         all_enc_dec_atten.extend(enc_dec_atten) # all_B, layers, nhead, seq_len, 49
         all_images.extend(images.cpu())
         all_references.extend(list(zip(*batch_references)))
-        all_generated_token.append(generated_token) # all_B, seq_len-1
+        all_generated_token.extend(generated_token.cpu()) # all_B, seq_len-1
 
     
     all_generated_sentence = []
-    for sentence_token in generated_token:
+    for sentence_token in all_generated_token:
         if w2i["<eos>"] in sentence_token:
             end_inx = sentence_token.index(w2i["<eos>"])
             sentence_token = sentence_token[:end_inx]
