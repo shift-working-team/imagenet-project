@@ -49,13 +49,13 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 # stage cmd
-# parser = argparse.ArgumentParser()
-# parser.add_argument("--model", type=str, required=True)
-# args = parser.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument("--model", type=str, required=True)
+args = parser.parse_args()
 
 encoder_name = params["captioning"]["encoder"]
-decoder_name = params["captioning"]["decoder"]
-# decoder_name = args.model
+# decoder_name = params["captioning"]["decoder"]
+decoder_name = args.model
 
 model_name = (
     f'{encoder_name}-'
