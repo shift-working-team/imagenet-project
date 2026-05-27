@@ -24,8 +24,12 @@ class EncoderSwinTiny(nn.Module):
             num_classes
         )
 
+
+        self.cap_backbone = model.features # B, 7*7, 768
+        for param in self.cap_backbone.parameters():
+            param.requires_grad = False
         self.projector = nn.Linear(
-            in_features,
+            in_features, # 768
             embed_size
         )
 
@@ -43,11 +47,15 @@ class EncoderSwinTiny(nn.Module):
         )
 
         logits = self.classifier(features)
-        features = self.projector(features)
+
+        # 특성 추출
+        cap_features = self.cap_backbone(images) # B, 7*7, 768
+        cap_features = cap_features.flatten(1, 2) # B, 49, 768
+        cap_features = self.projector(cap_features) # B, 49, embedding
 
         # classification
         if not return_features:
             return logits
 
         # captioning
-        return features
+        return cap_features

@@ -47,11 +47,18 @@ class EncoderViTB16(nn.Module):
         )
 
         logits = self.classifier(features)
-        features = self.projector(features)
+
+        # 특성 추출
+        cap_features = self.backbone._process_input(images)
+        cap_features = cap_features + self.backbone.encoder.pos_embedding[:, 1:, :]
+        for layer in self.backbone.encoder.layers:
+            cap_features = layer(cap_features)
+        cap_features = self.backbone.encoder.ln(cap_features)
+        cap_features = self.projector(cap_features)
 
         # classification
         if not return_features:
             return logits
 
         # captioning
-        return features
+        return cap_features
