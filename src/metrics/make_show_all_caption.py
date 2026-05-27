@@ -44,7 +44,7 @@ def make_show_all_caption(
         all_enc_dec_atten.extend(enc_dec_atten) # all_B, layers, nhead, seq_len, 49
         all_images.extend(images.cpu())
         all_references.extend(list(zip(*batch_references)))
-        all_generated_token.extend(generated_token.cpu()) # all_B, seq_len-1
+        all_generated_token.extend(generated_token) # all_B, seq_len-1
 
     
     all_generated_sentence = []
