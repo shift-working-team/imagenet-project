@@ -228,10 +228,15 @@ else:
 
 
 
+# Label smoothing
+label_smoothing = (
+    params["classification"]["label_smoothing"]
+)
+
+
 
 # loss
-criterion = nn.CrossEntropyLoss()
-
+criterion = nn.CrossEntropyLoss(label_smoothing=label_smoothing)
 
 
 
@@ -405,6 +410,9 @@ if optimizer_name != "adam":
 if scheduler_name is not None:
     is_hyperparameter_tuning = True
 
+if label_smoothing > 0:
+    is_hyperparameter_tuning = True
+
 
 
 
@@ -425,6 +433,14 @@ if is_hyperparameter_tuning:
 
     wandb_name_parts.append(
         scheduler_tag
+    )
+
+    wandb_name_parts.append(
+        f"wdc-{params['classification']['weight_decay']}"
+    )
+
+    wandb_name_parts.append(
+        f"ls-{label_smoothing}"
     )
 
 
@@ -452,7 +468,11 @@ my_config = {
     "num_classes": num_classes,
     "dataset_version": (
         params["data"]["dataset_version"]
-    )
+    ),
+    "weight_decay": (
+        params["classification"]["weight_decay"]
+    ),
+    "label_smoothing": label_smoothing
 }
 
 
@@ -472,7 +492,9 @@ wandb.init(
         f"lr:{learning_rate}",
         f"batch_size:{batch_size}",
         f"optimizer:{optimizer_name}",
-        f"scheduler:{scheduler_tag}"
+        f"scheduler:{scheduler_tag}",
+        f"weight_decay:{params['classification']['weight_decay']}",
+        f"label_smoothing:{label_smoothing}"
     ]
 )
 
@@ -504,6 +526,13 @@ wandb.run.summary["dataset_version"] = (
     dataset_version_tag
 )
 
+wandb.run.summary["weight_decay"] = (
+    params["classification"]["weight_decay"]
+)
+
+wandb.run.summary["label_smoothing"] = (
+    label_smoothing
+)
 
 
 
@@ -561,7 +590,7 @@ for epoch in range(
 
         save_path = os.path.join(
             checkpoint_dir,
-            f"{model_name}_{dataset_version}_best.pth"
+            f"{wandb_name}_best.pth"
         )
 
         torch.save(
