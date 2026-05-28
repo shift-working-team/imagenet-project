@@ -154,10 +154,10 @@ classification:
   weight_decay: 0.05
 
   scheduler:
-    use: false
+    # use: false
 
-    # use: true
-    # name: cosineannealinglr
+    use: true
+    name: cosineannealinglr
 
   augmentation:
 
@@ -172,6 +172,13 @@ classification:
     # cutmix
     # use_aug: true
     # type: cutmix
+
+  label_smoothing: 0.0
+
+  # label smoothing experiment
+  # label_smoothing: 0.05
+  # label_smoothing: 0.1
+
 
   metrics:
 
