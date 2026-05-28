@@ -56,11 +56,10 @@ cnn:
 
 captioning:
 
-  # encoder: resnet18
-  encoder: swin
+  encoder: resnet18
+  # encoder: swin
   # encoder: vit
-  decoder: transformer_scratch
-  # decoder: transformer
+  decoder: transformer
   # decoder: lstm
   # decoder: gru
   version: encoder_test
@@ -104,14 +103,17 @@ captioning:
   tokenizer:
     min_freq: 3
     max_vocab_size: 10000
+    sp_vocab_size: 2000
+    use_subword: Ture
+    sp_model_path: /workspace/src/dataset/sub_tokenizer.model
 
   checkpoint:
     save_dir: /workspace/outputs/captioning
     resume: False
 
   heatmap:
-    dec_atten_dir: /workspace/outputs/captioning/heatmap/dec_atten.jpg
-    enc_dec_atten_dir: /workspace/outputs/captioning/heatmap/cross_atten.jpg
+    dec_atten_dir: /workspace/outputs/captioning/heatmap/
+    enc_dec_atten_dir: /workspace/outputs/captioning/heatmap/
     layer: 4 # 몇번째 층
     n_sample: 0 # 몇번째 샘플(batch)
 

@@ -24,7 +24,6 @@ from models.vit import EncoderViTB16
 from models.lstm import DecoderLSTM
 from models.gru import DecoderGRU
 from models.transformer import DecoderTransformer
-from models.transformer_scratch import DecoderTransformerScratch
 
 from engines.captioning_trainer import train_one_epoch
 from engines.captioning_validator import validation_one_epoch
@@ -48,19 +47,10 @@ torch.cuda.manual_seed_all(SEED)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-# stage cmd
-parser = argparse.ArgumentParser()
-parser.add_argument("--model", type=str, required=True)
-args = parser.parse_args()
-
 encoder_name = params["captioning"]["encoder"]
-# decoder_name = params["captioning"]["decoder"]
-decoder_name = args.model
+decoder_name = params["captioning"]["decoder"]
 
-model_name = (
-    f'{encoder_name}-'
-    f'{decoder_name}'
-)
+model_name = (f'{encoder_name}-{decoder_name}')
 version = params["captioning"]["version"]
 date = datetime.now().strftime("%Y%m%d")
 
@@ -75,7 +65,9 @@ device = torch.device(
 w2i, i2w, voca_size = build_vocab(
     params["captioning"]["data"]["train_caption"],
     min_freq=params["captioning"]["tokenizer"]["min_freq"],
-    max_size=params["captioning"]["tokenizer"]["max_vocab_size"]
+    max_size=params["captioning"]["tokenizer"]["max_vocab_size"],
+    use_subword=params["captioning"]["tokenizer"]["use_subword"],
+    sp_model_path=params["captioning"]["tokenizer"]["sp_model_path"]
 )
 
 
@@ -93,7 +85,9 @@ train_dataset = CaptionDataset(
     transform=transform,
     max_len=params["captioning"]["max_caption_length"],
     train_num_caption=params["captioning"]["train_num_caption"],
-    debug=params["captioning"]["debug"]
+    debug=params["captioning"]["debug"],
+    use_subword=params["captioning"]["tokenizer"]["use_subword"],
+    sp_model_path=params["captioning"]["tokenizer"]["sp_model_path"]
 )
 
 # validation dataset
@@ -105,7 +99,9 @@ val_dataset = CaptionDataset(
     split="val",
     transform=transform,
     max_len=params["captioning"]["max_caption_length"],
-    debug=params["captioning"]["debug"]
+    debug=params["captioning"]["debug"],
+    use_subword=params["captioning"]["tokenizer"]["use_subword"],
+    sp_model_path=params["captioning"]["tokenizer"]["sp_model_path"]
 )
 
 
@@ -133,14 +129,6 @@ elif encoder_name == "vit":
 
 if decoder_name == "transformer":
     decoder = DecoderTransformer(
-        d_model=params["captioning"]["transformer"]["d_model"],
-        nhead=params["captioning"]["transformer"]["nhead"],
-        n_layers=params["captioning"]["transformer"]["n_layers"],
-        voca_size=voca_size,
-        max_len=params["captioning"]["max_caption_length"]
-        ).to(device)
-elif decoder_name == "transformer_scratch":
-    decoder = DecoderTransformerScratch(
         n_layers=params["captioning"]["transformer"]["n_layers"],
         nhead=params["captioning"]["transformer"]["nhead"],
         d_model=params["captioning"]["transformer"]["d_model"],
@@ -276,7 +264,9 @@ for epoch in range(start_epoch, params["captioning"]["epochs"]):
     # 지표 기록
     if epoch+1 < params["captioning"]["epochs"]:
         wandb.log(log_dict)
-    
+
+dec_atten_dir = os.path.join(params["captioning"]["heatmap"]["dec_atten_dir"], f"{model_name}_dec_atten.jpg")
+enc_dec_atten_dir = os.path.join(params["captioning"]["heatmap"]["enc_dec_atten_dir"], f"{model_name}_cross_atten.jpg")
 all_generated_sentence, all_references = make_show_all_caption(
         val_loader,
         encoder,
@@ -285,8 +275,8 @@ all_generated_sentence, all_references = make_show_all_caption(
         w2i,
         i2w,
         best_path,
-        params["captioning"]["heatmap"]["dec_atten_dir"],
-        params["captioning"]["heatmap"]["enc_dec_atten_dir"],
+        dec_atten_dir,
+        enc_dec_atten_dir,
         params["captioning"]["heatmap"]["n_sample"],
         params["captioning"]["heatmap"]["layer"],
         device

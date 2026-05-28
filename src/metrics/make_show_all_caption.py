@@ -1,5 +1,6 @@
 ###### best val loss 지점에서 모든 생성 캡션 출력 및 반환, heatmap 저장 #####
 import torch
+import random
 from utils.checkpoint_manager import load_checkpoint
 
 def make_show_all_caption(
@@ -30,7 +31,8 @@ def make_show_all_caption(
     all_dec_atten = []
     all_enc_dec_atten = []
     all_images = []
-    for images, _, batch_references in loader:
+    all_file_name = []
+    for images, _, batch_references, file_name in loader:
         images = images.to(device)
 
         features = encoder(images, return_features=True)
@@ -45,6 +47,7 @@ def make_show_all_caption(
         all_images.extend(images.cpu())
         all_references.extend(list(zip(*batch_references)))
         all_generated_token.extend(generated_token) # all_B, seq_len-1
+        all_file_name.extend(file_name)
 
     
     all_generated_sentence = []
@@ -62,9 +65,10 @@ def make_show_all_caption(
     decoder.show_cross_atten(all_enc_dec_atten[heatmap_sample], all_generated_sentence[heatmap_sample].split(), layer, all_images[heatmap_sample], enc_dec_atten_dir)
 
     all_B = len(all_generated_sentence)
-    for i in range(0,all_B,30):
+    sample = random.sample(range(0, all_B), 5)
+    for i in sample:
         print("-" * 60)
-        print(f' Generated Sentence {i}: {all_generated_sentence[i]}')
+        print(f' {all_file_name[i]}: {all_generated_sentence[i]}')
         print("-" * 60)
 
         for inx, reference in enumerate(all_references[i], start=1):

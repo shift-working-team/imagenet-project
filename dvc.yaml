@@ -1,6 +1,6 @@
 stages:
-  train_lstm_baseline:
-    cmd: python scripts/train_captioning.py --model lstm
+  train_captioning:
+    cmd: python scripts/train_captioning.py
     deps:
      - data/captioning/annotations/train.json
      - data/captioning/annotations/val.json
@@ -8,72 +8,9 @@ stages:
      - src/dataset/captioning_dataset.py
      - src/dataset/build_vocab.py
      - src/dataset/collate_caption.py
-     - src/engines/captioning_trainer.py
-     - src/engines/captioning_validator.py
-     - src/metrics/evaluate_caption.py
-     - src/models/resnet18.py
-     - src/models/lstm.py
-     - src/transforms/image_transform.py
-     - scripts/train_captioning.py
-    params:
-     - train
-     - preprocess
-     - captioning
-
-
-  train_gru_baseline:
-    cmd: python scripts/train_captioning.py --model gru
-    deps:
-     - data/captioning/annotations/train.json
-     - data/captioning/annotations/val.json
-     - data/captioning/annotations/test.json
-     - src/dataset/captioning_dataset.py
-     - src/dataset/build_vocab.py
-     - src/dataset/collate_caption.py
-     - src/engines/captioning_trainer.py
-     - src/engines/captioning_validator.py
-     - src/metrics/evaluate_caption.py
-     - src/models/resnet18.py
-     - src/models/gru.py
-     - src/transforms/image_transform.py
-     - scripts/train_captioning.py
-    params:
-     - train
-     - preprocess
-     - captioning
-
-
-  train_transformer_baseline:
-    cmd: python scripts/train_captioning.py --model transformer
-    deps:
-     - data/captioning/annotations/train.json
-     - data/captioning/annotations/val.json
-     - data/captioning/annotations/test.json
-     - src/dataset/captioning_dataset.py
-     - src/dataset/build_vocab.py
-     - src/dataset/collate_caption.py
-     - src/engines/captioning_trainer.py
-     - src/engines/captioning_validator.py
-     - src/metrics/evaluate_caption.py
-     - src/models/resnet18.py
-     - src/models/transformer_.py
-     - src/transforms/image_transform.py
-     - scripts/train_captioning.py
-    params:
-     - train
-     - preprocess
-     - captioning
-
-
-  train_transformer_scratch_baseline:
-    cmd: python scripts/train_captioning.py --model transformer_scratch
-    deps:
-     - data/captioning/annotations/train.json
-     - data/captioning/annotations/val.json
-     - data/captioning/annotations/test.json
-     - src/dataset/captioning_dataset.py
-     - src/dataset/build_vocab.py
-     - src/dataset/collate_caption.py
+     - src/dataset/train_sub_tokenizer.py
+     - src/dataset/sub_tokenizer.vocab
+     - src/dataset/sub_tokenizer.model
      - src/engines/captioning_trainer.py
      - src/engines/captioning_validator.py
      - src/metrics/evaluate_caption.py
@@ -81,7 +18,9 @@ stages:
      - src/models/resnet18.py
      - src/models/vit.py
      - src/models/swin.py
-     - src/models/transformer_scratch.py
+     - src/models/transformer.py
+     - src/models/lstm.py
+     - src/models/gru.py
      - src/transforms/image_transform.py
      - scripts/train_captioning.py
     params:

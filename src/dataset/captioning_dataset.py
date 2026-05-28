@@ -18,7 +18,9 @@ class CaptionDataset(Dataset):
         transform=None,
         max_len=30,
         train_num_caption=1,
-        debug=False
+        debug=False,
+        use_subword=False,
+        sp_model_path="tokenizer.model"
     ):
 
         with open(json_path, 'r') as f:
@@ -39,19 +41,35 @@ class CaptionDataset(Dataset):
         self.max_len = max_len
         self.tokenizer = tokenizer
         self.train_num_caption = train_num_caption
+        self.use_subword = use_subword
+        if self.use_subword:
+            import sentencepiece as spm
+
+            self.sp = spm.SentencePieceProcessor()
+            self.sp.load(sp_model_path)
+        
 
     def __len__(self):
         return len(self.data)
     
     def encode_caption(self, caption):
 
-        words = self.tokenizer(caption)
+        if self.use_subword:
+            words = self.sp.encode(caption, out_type=str)
 
-        tokens = (
-            [self.w2i["<sos>"]] +
-            [self.w2i.get(w, self.w2i["<unk>"]) for w in words] +
-            [self.w2i["<eos>"]]
+            tokens = (
+                [self.w2i["<sos>"]] +
+                [self.w2i.get(w, self.w2i["<unk>"]) for w in words] +
+                [self.w2i["<eos>"]]
             )
+        else:
+            words = self.tokenizer(caption)
+
+            tokens = (
+                [self.w2i["<sos>"]] +
+                [self.w2i.get(w, self.w2i["<unk>"]) for w in words] +
+                [self.w2i["<eos>"]]
+                )
         
         # truncation
         if len(tokens) > self.max_len:
@@ -65,8 +83,9 @@ class CaptionDataset(Dataset):
     def __getitem__(self, index):
 
         data = self.data[index]
+        file_name = data["file_name"]
 
-        image_path = os.path.join(self.image_dir, data["file_name"])
+        image_path = os.path.join(self.image_dir, file_name)
 
         image = Image.open(image_path).convert('RGB')
 
@@ -87,7 +106,7 @@ class CaptionDataset(Dataset):
 
             tokens = (self.encode_caption(caption))
 
-            return image, tokens, captions
+            return image, tokens, captions, file_name
 
         # train
         selected_captions = (random.sample(captions, k=self.train_num_caption))
