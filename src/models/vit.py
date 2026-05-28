@@ -49,12 +49,12 @@ class EncoderViTB16(nn.Module):
         logits = self.classifier(features)
 
         # 특성 추출
-        cap_features = self.backbone._process_input(images)
-        cap_features = cap_features + self.backbone.encoder.pos_embedding[:, 1:, :]
-        for layer in self.backbone.encoder.layers:
+        cap_features = self.backbone._process_input(images) # B, 196, 768
+        cap_features = cap_features + self.backbone.encoder.pos_embedding[:, 1:, :] # 위치 임베딩
+        for layer in self.backbone.encoder.layers: # B, 196, 768
             cap_features = layer(cap_features)
-        cap_features = self.backbone.encoder.ln(cap_features)
-        cap_features = self.projector(cap_features)
+        cap_features = self.backbone.encoder.ln(cap_features) # LayerNorm
+        cap_features = self.projector(cap_features) # B, 196, d_model
 
         # classification
         if not return_features:

@@ -1,6 +1,7 @@
 import json
 from collections import Counter
 import re
+import sentencepiece as spm
 
 def tokenizer(captions):
     text = captions.lower()
@@ -9,30 +10,52 @@ def tokenizer(captions):
     
     return tokens
 
-def build_vocab(json_path, min_freq=3, max_size=10000):
+def sub_tokenizer(caption, sp):
+    tokens = sp.encode(caption, out_type=str)
+
+    return tokens
+
+
+def build_vocab(json_path, min_freq=3, max_size=10000, use_subword=False, sp_model_path="/workspace/src/dataset/sub_tokenizer.model"):
     w2i = dict()
     i2w = dict()
 
-    with open(json_path, 'r') as f:
-        data = json.load(f)
+    # ==================================================
+    # SentencePiece tokenizer 사용
+    # ==================================================
+    if use_subword:
 
-    counter = Counter()
+        sp = spm.SentencePieceProcessor()
+        sp.load(sp_model_path)
 
-    for item in data:
-        captions = item["captions"]
-        for caption in captions:
-            tokens = tokenizer(caption)
-            counter.update(tokens)
-        
-    words = [w for w, freq in counter.most_common() if freq >= min_freq]
+        voca_size = sp.get_piece_size()
 
-    voca = ["<pad>", "<sos>", "<eos>", "<unk>"]
-    voca.extend(words[:max_size-4])
-    voca_size = len(voca)
+        for i in range(voca_size):
+            token = sp.id_to_piece(i)
 
-    for i, w in enumerate(voca):
-        w2i[w] = i
-        i2w[i] = w
+            w2i[token] = i
+            i2w[i] = token
+    else:
+        with open(json_path, 'r') as f:
+            data = json.load(f)
+
+        counter = Counter()
+
+        for item in data:
+            captions = item["captions"]
+            for caption in captions:
+                tokens = tokenizer(caption)
+                counter.update(tokens)
+            
+        words = [w for w, freq in counter.most_common() if freq >= min_freq]
+
+        voca = ["<pad>", "<sos>", "<eos>", "<unk>"]
+        voca.extend(words[:max_size-4])
+        voca_size = len(voca)
+
+        for i, w in enumerate(voca):
+            w2i[w] = i
+            i2w[i] = w
 
     print(voca_size)
 

@@ -14,7 +14,7 @@ def validation_one_epoch(
 
     with torch.no_grad():
         total_loss = 0
-        for images, captions, batch_references in loader:
+        for images, captions, _, __ in loader:
 
             images = images.to(device) # B, 3, 224, 224
             captions = captions.to(device) # B, seq_len
