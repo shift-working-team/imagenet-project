@@ -279,7 +279,9 @@ all_generated_sentence, all_references = make_show_all_caption(
         enc_dec_atten_dir,
         params["captioning"]["heatmap"]["n_sample"],
         params["captioning"]["heatmap"]["layer"],
-        device
+        device,
+        use_subword=params["captioning"]["tokenizer"]["use_subword"],
+        sp_model_path=params["captioning"]["tokenizer"]["sp_model_path"]
     )
 
 metric_result = evaluate_caption(all_generated_sentence, all_references)

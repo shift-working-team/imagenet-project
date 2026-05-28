@@ -15,7 +15,9 @@ def make_show_all_caption(
         enc_dec_atten_dir,
         heatmap_sample,
         layer,
-        device
+        device,
+        use_subword,
+        sp_model_path
 ):
     
     _, best_val_loss = load_checkpoint(
@@ -55,10 +57,30 @@ def make_show_all_caption(
         if w2i["<eos>"] in sentence_token:
             end_inx = sentence_token.index(w2i["<eos>"])
             sentence_token = sentence_token[:end_inx]
-
-        words = [i2w[i] for i in sentence_token]
         
-        all_generated_sentence.append(' '.join(words)) # all_B, 1(문장)
+        # ==================================
+        # SentencePiece tokenizer
+        # ==================================
+        if use_subword:
+            import sentencepiece as spm
+
+            sp = spm.SentencePieceProcessor()
+            sp.load(sp_model_path)
+            # special token 제거
+            sentence_token = [token for token in sentence_token
+                if token not in [
+                    w2i["<pad>"],
+                    w2i["<sos>"],
+                    w2i["<eos>"]
+                ]
+            ]
+            sentence = sp.decode(sentence_token)
+
+        else:
+            words = [i2w[i] for i in sentence_token]
+            sentence = ' '.join(words)
+        
+        all_generated_sentence.append(sentence) # all_B, 1(문장)
 
 
     decoder.show_dec_atten(all_dec_atten[heatmap_sample], all_generated_sentence[heatmap_sample].split(), layer, dec_atten_dir)
