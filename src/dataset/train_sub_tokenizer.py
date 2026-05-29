@@ -1,4 +1,5 @@
 import json
+import os
 import sentencepiece as spm
 import yaml
 
@@ -25,7 +26,7 @@ def train_sentencepiece(
 
             for caption in captions:
                 f.write(caption.lower() + "\n")
-
+                
     spm.SentencePieceTrainer.train(
         input=txt_path,
         model_prefix=model_prefix,
@@ -45,11 +46,10 @@ def train_sentencepiece(
 
     print("tokenizer training done")
 
-
 if __name__ == "__main__":
     train_sentencepiece(
         json_path="/workspace/data/captioning/annotations/train.json",
-        model_prefix="/workspace/src/dataset/sub_tokenizer",
+        model_prefix="/workspace/src/dataset/sub_tokenizer2000",
         vocab_size=params["captioning"]["tokenizer"]["sp_vocab_size"],
         model_type="unigram"
     )
