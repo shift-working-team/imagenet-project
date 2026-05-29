@@ -9,8 +9,12 @@ stages:
      - src/dataset/build_vocab.py
      - src/dataset/collate_caption.py
      - src/dataset/train_sub_tokenizer.py
-     - src/dataset/sub_tokenizer.vocab
-     - src/dataset/sub_tokenizer.model
+     - src/dataset/sub_tokenizer1000.vocab
+     - src/dataset/sub_tokenizer1000.model
+     - src/dataset/sub_tokenizer1500.vocab
+     - src/dataset/sub_tokenizer1500.model
+     - src/dataset/sub_tokenizer2000.vocab
+     - src/dataset/sub_tokenizer2000.model
      - src/engines/captioning_trainer.py
      - src/engines/captioning_validator.py
      - src/metrics/evaluate_caption.py
