@@ -105,7 +105,7 @@ captioning:
     max_vocab_size: 10000
     sp_vocab_size: 2000
     use_subword: Ture
-    sp_model_path: /workspace/src/dataset/sub_tokenizer.model
+    sp_model_path: /workspace/src/dataset/sub_tokenizer2000.model
 
   checkpoint:
     save_dir: /workspace/outputs/captioning

@@ -55,7 +55,7 @@ class CaptionDataset(Dataset):
     def encode_caption(self, caption):
 
         if self.use_subword:
-            words = self.sp.encode(caption, out_type=str)
+            words = self.sp.encode(caption.lower(), out_type=str)
 
             tokens = (
                 [self.w2i["<sos>"]] +
