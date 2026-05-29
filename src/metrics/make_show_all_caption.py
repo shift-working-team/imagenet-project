@@ -13,6 +13,7 @@ def make_show_all_caption(
         best_path,
         dec_atten_dir,
         enc_dec_atten_dir,
+        SEED,
         heatmap_sample,
         layer,
         device,
@@ -86,6 +87,7 @@ def make_show_all_caption(
     decoder.show_dec_atten(all_dec_atten[heatmap_sample], all_generated_sentence[heatmap_sample].split(), layer, dec_atten_dir)
     decoder.show_cross_atten(all_enc_dec_atten[heatmap_sample], all_generated_sentence[heatmap_sample].split(), layer, all_images[heatmap_sample], enc_dec_atten_dir)
 
+    random.seed(SEED)
     all_B = len(all_generated_sentence)
     sample = random.sample(range(0, all_B), 5)
     for i in sample:
