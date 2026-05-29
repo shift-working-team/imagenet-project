@@ -277,6 +277,7 @@ all_generated_sentence, all_references = make_show_all_caption(
         best_path,
         dec_atten_dir,
         enc_dec_atten_dir,
+        SEED,
         params["captioning"]["heatmap"]["n_sample"],
         params["captioning"]["heatmap"]["layer"],
         device,
