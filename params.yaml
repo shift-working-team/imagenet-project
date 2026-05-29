@@ -103,7 +103,7 @@ captioning:
   tokenizer:
     min_freq: 3
     max_vocab_size: 10000
-    sp_vocab_size: 1000
+    sp_vocab_size: 2000
     use_subword: Ture
     sp_model_path: /workspace/src/dataset/sub_tokenizer.model
 
