@@ -265,8 +265,9 @@ for epoch in range(start_epoch, params["captioning"]["epochs"]):
     if epoch+1 < params["captioning"]["epochs"]:
         wandb.log(log_dict)
 
+
 dec_atten_dir = os.path.join(params["captioning"]["heatmap"]["dec_atten_dir"], f"{model_name}_{version}_dec_atten.jpg")
-enc_dec_atten_dir = os.path.join(params["captioning"]["heatmap"]["enc_dec_atten_dir"], f"{model_name}_{version}_cross_atten.jpg")
+
 all_generated_sentence, all_references = make_show_all_caption(
         val_loader,
         encoder,
@@ -275,10 +276,10 @@ all_generated_sentence, all_references = make_show_all_caption(
         w2i,
         i2w,
         best_path,
-        dec_atten_dir,
-        enc_dec_atten_dir,
-        SEED,
-        params["captioning"]["heatmap"]["n_sample"],
+        params["captioning"]["heatmap"]["dec_atten_dir"],
+        params["captioning"]["heatmap"]["enc_dec_atten_dir"],
+        save_prefix,
+        params["captioning"]["heatmap"]["sample"],
         params["captioning"]["heatmap"]["layer"],
         device,
         use_subword=params["captioning"]["tokenizer"]["use_subword"],

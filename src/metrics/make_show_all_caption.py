@@ -1,6 +1,6 @@
 ###### best val loss 지점에서 모든 생성 캡션 출력 및 반환, heatmap 저장 #####
+import os
 import torch
-import random
 from utils.checkpoint_manager import load_checkpoint
 
 def make_show_all_caption(
@@ -13,8 +13,8 @@ def make_show_all_caption(
         best_path,
         dec_atten_dir,
         enc_dec_atten_dir,
-        SEED,
-        heatmap_sample,
+        save_prefix,
+        sample,
         layer,
         device,
         use_subword,
@@ -84,13 +84,12 @@ def make_show_all_caption(
         all_generated_sentence.append(sentence) # all_B, 1(문장)
 
 
-    decoder.show_dec_atten(all_dec_atten[heatmap_sample], all_generated_sentence[heatmap_sample].split(), layer, dec_atten_dir)
-    decoder.show_cross_atten(all_enc_dec_atten[heatmap_sample], all_generated_sentence[heatmap_sample].split(), layer, all_images[heatmap_sample], enc_dec_atten_dir)
-
-    random.seed(SEED)
-    all_B = len(all_generated_sentence)
-    sample = random.sample(range(0, all_B), 5)
     for i in sample:
+        dec_atten_name = os.path.join(dec_atten_dir, f"{save_prefix}_{i}")
+        cross_atten_name = os.path.join(enc_dec_atten_dir, f"{save_prefix}_{i}")
+        decoder.show_dec_atten(all_dec_atten[i], all_generated_sentence[i].split(), layer, dec_atten_name)
+        decoder.show_cross_atten(all_enc_dec_atten[i], all_generated_sentence[i].split(), layer, all_images[i], cross_atten_name)
+
         print("-" * 60)
         print(f' {all_file_name[i]}: {all_generated_sentence[i]}')
         print("-" * 60)

@@ -56,13 +56,13 @@ cnn:
 
 captioning:
 
-  encoder: resnet18
-  # encoder: swin
+  # encoder: resnet18
+  encoder: swin
   # encoder: vit
   decoder: transformer
   # decoder: lstm
   # decoder: gru
-  version: encoder_test
+  version: test
 
   epochs: 5
   learning_rate: 0.0001
@@ -115,7 +115,7 @@ captioning:
     dec_atten_dir: /workspace/outputs/captioning/heatmap/
     enc_dec_atten_dir: /workspace/outputs/captioning/heatmap/
     layer: 4 # 몇번째 층
-    n_sample: 0 # 몇번째 샘플(batch)
+    sample: [0, 410, 820, 1230, 1640] # caption & heatmap 몇번째 샘플(batch)
 
 
     
