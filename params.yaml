@@ -62,7 +62,7 @@ captioning:
   decoder: transformer
   # decoder: lstm
   # decoder: gru
-  version: layers
+  version: dmodel768
 
   epochs: 25
   learning_rate: 0.0001
@@ -84,9 +84,9 @@ captioning:
     num_layers: 1
 
   transformer:
-    n_layers: 4
+    n_layers: 6
     nhead: 8
-    d_model: 512
+    d_model: 256
     drop_p: 0.1
     label_smoothing: 0
     # weight_decay: 0.001
@@ -114,7 +114,7 @@ captioning:
   heatmap:
     dec_atten_dir: /workspace/outputs/captioning/heatmap/
     enc_dec_atten_dir: /workspace/outputs/captioning/heatmap/
-    layer: 4 # 몇번째 층
+    layer: 6 # 몇번째 층
     sample: [0, 410, 820, 1230, 1640] # caption & heatmap 몇번째 샘플(batch)
 
 
@@ -200,3 +200,20 @@ classification:
 
   checkpoint:
     save_dir: /workspace/outputs/classification
+
+
+latent_space:
+  data_dir: /workspace/data/raw
+  checkpoint: /workspace/outputs/classification/cls_swin-t_base_cls_raw-20260525-v2_lr-0005_bs-32_adamw_none_wdc-0.05_ls-0.0_best.pth
+  output_dir: /workspace/outputs/latent_space
+  split: all
+  batch_size: 32
+  num_workers: 4
+  device: cuda
+  seed: 42
+  save_meta: true
+
+  umap:
+    n_neighbors: 15
+    min_dist: 0.1
+    metric: cosine
