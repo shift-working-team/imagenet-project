@@ -62,16 +62,16 @@ captioning:
   decoder: transformer
   # decoder: lstm
   # decoder: gru
-  version: test
+  version: layers
 
-  epochs: 5
+  epochs: 25
   learning_rate: 0.0001
   batch_size: 32
   optimizer: adam
   max_caption_length: 30
   train_num_caption: 2
 
-  debug: Ture
+  debug: False
 
   lstm:
     embed_dim: 256
@@ -104,7 +104,7 @@ captioning:
     min_freq: 3
     max_vocab_size: 10000
     sp_vocab_size: 2000
-    use_subword: Ture
+    use_subword: False
     sp_model_path: /workspace/src/dataset/sub_tokenizer2000.model
 
   checkpoint:
@@ -154,10 +154,10 @@ classification:
   weight_decay: 0.05
 
   scheduler:
-    # use: false
+    use: false
 
-    use: true
-    name: cosineannealinglr
+    # use: true
+    # name: cosineannealinglr
 
   augmentation:
 
