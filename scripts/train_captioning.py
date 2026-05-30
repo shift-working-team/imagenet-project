@@ -181,14 +181,24 @@ start_epoch = 0
 # 1. 설정값 정의 (yaml 파일에서 읽어오는 것을 추천)
 my_config = {
     "model_name": model_name,
+    "n_layers" : params["captioning"]["transformer"]["n_layers"],
+    "nhead": params["captioning"]["transformer"]["nhead"],
+    "d_model": params["captioning"]["transformer"]["d_model"],
+    "drop_p": params["captioning"]["transformer"]["drop_p"],
+    "label_smoothing": params["captioning"]["transformer"]["label_smoothing"],
+
+    "epochs" : params["captioning"]["epochs"],
     "learning_rate": params["captioning"]["learning_rate"],
     "batch_size": params["captioning"]["batch_size"],
+    "optimizer": params["captioning"]["optimizer"],
+    "max_caption_length": params["captioning"]["max_caption_length"],
+    "train_num_caption": params["captioning"]["train_num_caption"],
+    
     "image_size": params["preprocess"]["image_size"],
     "seed": params["train"]["seed"],
-    "epochs" : params["captioning"]["epochs"],
+
     "dataset_version": params["captioning"]["data"]["dataset_version"],
-    "optimizer": params["captioning"]["optimizer"],
-    "device": device.type,
+    "device": device.type
 }
 
 
