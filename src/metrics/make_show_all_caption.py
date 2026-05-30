@@ -85,8 +85,8 @@ def make_show_all_caption(
 
 
     for i in sample:
-        dec_atten_name = os.path.join(dec_atten_dir, f"{save_prefix}_{i}")
-        cross_atten_name = os.path.join(enc_dec_atten_dir, f"{save_prefix}_{i}")
+        dec_atten_name = os.path.join(dec_atten_dir, f"{save_prefix}_dec_atten_{all_file_name[i]}")
+        cross_atten_name = os.path.join(enc_dec_atten_dir, f"{save_prefix}_cross_atten_{all_file_name[i]}")
         decoder.show_dec_atten(all_dec_atten[i], all_generated_sentence[i].split(), layer, dec_atten_name)
         decoder.show_cross_atten(all_enc_dec_atten[i], all_generated_sentence[i].split(), layer, all_images[i], cross_atten_name)
 
