@@ -12,6 +12,7 @@ from matplotlib.colors import BoundaryNorm, ListedColormap
 import numpy as np
 import torch
 import torch.nn as nn
+import wandb
 import yaml
 from torch.utils.data import DataLoader
 from torchvision import models
@@ -62,6 +63,7 @@ def get_classes(data_dir):
         for class_name in os.listdir(data_dir)
         if os.path.isdir(os.path.join(data_dir, class_name))
     )
+
 
 # split 설정에 맞는 classification dataset을 생성
 # split이 all이면 train, val, test를 모두 합쳐 latent 분석 대상으로 사용
@@ -211,6 +213,8 @@ def save_scatter(points, labels, classes, output_path, title):
     plt.savefig(output_path, dpi=200)
     plt.close()
 
+    return output_path
+
 
 # 추출된 latent feature를 UMAP으로 2차원 좌표로 축소
 def run_umap(features, params):
@@ -225,6 +229,43 @@ def run_umap(features, params):
     return reducer.fit_transform(features)
 
 
+
+# W&B run을 초기화
+def init_wandb(params):
+    latent_params = params["latent_space"]
+
+    init_kwargs = {
+        "project":params["logging"]["project_name"],
+        "entity":"super-shift-working",
+        "name": latent_params.get("wandb_name", "latent_space_umap"),
+        "config": {
+            "task": "latent_space",
+            "checkpoint": latent_params["checkpoint"],
+            "data_dir": latent_params["data_dir"],
+            "split": latent_params["split"],
+            "batch_size": latent_params["batch_size"],
+            "umap": latent_params["umap"]
+        },
+        "tags": [
+            "latent_space",
+            "classification",
+            "swin_t",
+            "umap"
+        ]
+    }
+
+    wandb.init(**init_kwargs)
+
+
+# save_scatter가 저장한 결과 이미지를 W&B에 업로드
+def log_scatter_to_wandb(scatter_path):
+    wandb.log(
+        {
+            "latent_space/umap_scatter": wandb.Image(str(scatter_path))
+        }
+    )
+
+
 def main():
     # device
     device = torch.device(
@@ -232,6 +273,9 @@ def main():
         if torch.cuda.is_available()
         else "cpu"
     )
+
+    if params["latent_space"]["use_wandb"]:
+        init_wandb(params)
 
     # 1. 출력 위치 지정
     output_dir = Path(params["latent_space"]["output_dir"])
@@ -287,13 +331,17 @@ def main():
     # 8. umap 실행 및 저장
     umap_points = run_umap(features, params)
     np.save(output_dir / f'{params["latent_space"]["output_umap_npy"]}.npy', umap_points)
-    save_scatter(
+    scatter_path = save_scatter(
         umap_points,
         labels,
         classes,
         output_dir / f'{params["latent_space"]["output_umap_png"]}.png',
         "Swin-T Latent Space UMAP"
     )
+
+    if params["latent_space"]["use_wandb"]:
+        log_scatter_to_wandb(scatter_path)
+        wandb.finish()
 
     print(f"saved latent outputs to: {output_dir}")
     print(f'data_dir: {params["latent_space"]["data_dir"]}')
