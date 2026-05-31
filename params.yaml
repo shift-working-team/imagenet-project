@@ -62,7 +62,7 @@ captioning:
   decoder: transformer
   # decoder: lstm
   # decoder: gru
-  version: dmodel768
+  version: nhead12
 
   epochs: 25
   learning_rate: 0.0001
@@ -85,8 +85,8 @@ captioning:
 
   transformer:
     n_layers: 6
-    nhead: 8
-    d_model: 256
+    nhead: 12
+    d_model: 512
     drop_p: 0.1
     label_smoothing: 0
     # weight_decay: 0.001
@@ -206,6 +206,9 @@ latent_space:
   data_dir: /workspace/data/raw
   checkpoint: /workspace/outputs/classification/cls_swin-t_base_cls_raw-20260525-v2_lr-0005_bs-32_adamw_none_wdc-0.05_ls-0.0_best.pth
   output_dir: /workspace/outputs/latent_space
+  output_umap_npy: cls_swin-t_best_umap_2d
+  output_umap_png: cls_swin-t_best_umap_by_label
+  output_meta_csv: cls_swin-t_best_metadata
   split: all
   batch_size: 32
   num_workers: 4

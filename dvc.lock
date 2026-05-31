@@ -272,3 +272,211 @@ stages:
           num_workers: 4
           device: cuda
           optimizer: adam
+  train_captioning:
+    cmd: python scripts/train_captioning.py
+    deps:
+    - path: data/captioning/annotations/test.json
+      hash: md5
+      md5: 5dc6afe519492ff144b44b675e9a2c3e
+      size: 902492
+    - path: data/captioning/annotations/train.json
+      hash: md5
+      md5: cf230c6570333161d839c3509dc0a197
+      size: 4210232
+    - path: data/captioning/annotations/val.json
+      hash: md5
+      md5: 1120bc627cd300b9f6e17c3435ade99a
+      size: 901585
+    - path: scripts/train_captioning.py
+      hash: md5
+      md5: 78b32cc0c0168a8a21b6603054f9a422
+      size: 9201
+    - path: src/dataset/build_vocab.py
+      hash: md5
+      md5: 9f2820a0bfe62d4950989a98703b0481
+      size: 1587
+    - path: src/dataset/captioning_dataset.py
+      hash: md5
+      md5: 2e3d7d057f3a413c05cb5f9e5b8adde1
+      size: 3202
+    - path: src/dataset/collate_caption.py
+      hash: md5
+      md5: fa50ca0089b1c3070fdd310e96af5073
+      size: 267
+    - path: src/dataset/sub_tokenizer1000.model
+      hash: md5
+      md5: 1473042fce0203030cd266beb81013cd
+      size: 254104
+    - path: src/dataset/sub_tokenizer1000.vocab
+      hash: md5
+      md5: 45a21ae50d34a96021f512fd4d581277
+      size: 17237
+    - path: src/dataset/sub_tokenizer1500.model
+      hash: md5
+      md5: be19b7a331b07dada5862ea135ff3862
+      size: 262628
+    - path: src/dataset/sub_tokenizer1500.vocab
+      hash: md5
+      md5: 7fcbaf55b80e5b8a934fe49a8832e984
+      size: 26240
+    - path: src/dataset/sub_tokenizer2000.model
+      hash: md5
+      md5: 6fb4dcef9805333e55c58ec56402bbf2
+      size: 271282
+    - path: src/dataset/sub_tokenizer2000.vocab
+      hash: md5
+      md5: 4b52041e01d001a052303e8fa6607102
+      size: 35310
+    - path: src/dataset/train_sub_tokenizer.py
+      hash: md5
+      md5: 8d68b4f2a8d36371eba7bd969319295b
+      size: 1353
+    - path: src/engines/captioning_trainer.py
+      hash: md5
+      md5: 2b6228739297df0d847444518bd7b3f3
+      size: 761
+    - path: src/engines/captioning_validator.py
+      hash: md5
+      md5: 23904d5c41366c26f885530a4a1d9df8
+      size: 906
+    - path: src/metrics/evaluate_caption.py
+      hash: md5
+      md5: a7c988e25e614e34b677baffcd89d4ff
+      size: 903
+    - path: src/metrics/make_show_all_caption.py
+      hash: md5
+      md5: 70254420534865090fe4aba4bf36fe70
+      size: 3369
+    - path: src/models/gru.py
+      hash: md5
+      md5: 02955b1bb902f02c5c858c76544015cd
+      size: 1586
+    - path: src/models/lstm.py
+      hash: md5
+      md5: ca28dd54d37297447eefaf19ca77c98e
+      size: 1752
+    - path: src/models/resnet18.py
+      hash: md5
+      md5: 4acff39d94591ec3845a1634760f5c60
+      size: 1464
+    - path: src/models/swin.py
+      hash: md5
+      md5: 4403eb31ef07e28bb90e4fa2b57d7853
+      size: 1440
+    - path: src/models/transformer.py
+      hash: md5
+      md5: 2abcb3a9416da3e6d858317d70a6036a
+      size: 9359
+    - path: src/models/vit.py
+      hash: md5
+      md5: 05d360d2eb30832eca756d0d537b3058
+      size: 1617
+    - path: src/transforms/image_transform.py
+      hash: md5
+      md5: 93b06d258e8886241529228a9006d936
+      size: 1416
+    params:
+      params.yaml:
+        captioning:
+          encoder: swin
+          decoder: transformer
+          version: dmodel256
+          epochs: 25
+          learning_rate: 0.0001
+          batch_size: 32
+          optimizer: adam
+          max_caption_length: 30
+          train_num_caption: 2
+          debug: false
+          lstm:
+            embed_dim: 256
+            hidden_dim: 512
+            num_layers: 1
+          gru:
+            embed_dim: 256
+            hidden_dim: 512
+            num_layers: 1
+          transformer:
+            n_layers: 6
+            nhead: 8
+            d_model: 256
+            drop_p: 0.1
+            label_smoothing: 0
+          data:
+            dataset_version: cap_raw-20260524-v1
+            train_img: /workspace/data/captioning/raw/train/
+            train_caption: /workspace/data/captioning/annotations/train.json
+            val_img: /workspace/data/captioning/raw/val/
+            val_caption: /workspace/data/captioning/annotations/val.json
+            test_img: /workspace/data/captioning/raw/test/
+            test_caption: /workspace/data/captioning/annotations/test.json
+          tokenizer:
+            min_freq: 3
+            max_vocab_size: 10000
+            sp_vocab_size: 2000
+            use_subword: false
+            sp_model_path: /workspace/src/dataset/sub_tokenizer2000.model
+          checkpoint:
+            save_dir: /workspace/outputs/captioning
+            resume: false
+          heatmap:
+            dec_atten_dir: /workspace/outputs/captioning/heatmap/
+            enc_dec_atten_dir: /workspace/outputs/captioning/heatmap/
+            layer: 6
+            sample:
+            - 0
+            - 410
+            - 820
+            - 1230
+            - 1640
+        preprocess:
+          image_size: 224
+          normalize: true
+        train:
+          seed: 42
+          epochs: 20
+          batch_size: 32
+          num_workers: 4
+          device: cuda
+          optimizer: adam
+  latent_space:
+    cmd: python scripts/analyze_latent_space.py
+    deps:
+    - path: scripts/analyze_latent_space.py
+      hash: md5
+      md5: ef8989ea26b48153caeeb0093a72c83a
+      size: 9368
+    - path: src/dataset/classification_dataset.py
+      hash: md5
+      md5: 4b816989da79f4a749c9e470850babd1
+      size: 1639
+    - path: src/transforms/image_transform.py
+      hash: md5
+      md5: 93b06d258e8886241529228a9006d936
+      size: 1416
+    params:
+      params.yaml:
+        classification.checkpoint:
+          save_dir: /workspace/outputs/classification
+        data.raw_dir: /workspace/data/raw/
+        latent_space:
+          data_dir: /workspace/data/raw
+          checkpoint: /workspace/outputs/classification/cls_swin-t_base_cls_raw-20260525-v2_lr-0005_bs-32_adamw_none_wdc-0.05_ls-0.0_best.pth
+          output_dir: /workspace/outputs/latent_space
+          split: all
+          batch_size: 32
+          num_workers: 4
+          device: cuda
+          seed: 42
+          save_meta: true
+          umap:
+            n_neighbors: 15
+            min_dist: 0.1
+            metric: cosine
+        train:
+          seed: 42
+          epochs: 20
+          batch_size: 32
+          num_workers: 4
+          device: cuda
+          optimizer: adam

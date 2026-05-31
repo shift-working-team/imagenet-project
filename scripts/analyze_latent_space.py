@@ -8,6 +8,7 @@ sys.path.append("/workspace/src")
 
 import umap
 import matplotlib.pyplot as plt
+from matplotlib.colors import BoundaryNorm, ListedColormap
 import numpy as np
 import torch
 import torch.nn as nn
@@ -137,7 +138,7 @@ def extract_features(model, loader, samples, device):
 
 # 이미지별 경로, 실제 클래스, 예측 클래스, 정답 여부를 csv로 저장
 def save_metadata(output_dir, paths, labels, preds, classes):
-    metadata_path = output_dir / "metadata.csv"
+    metadata_path = output_dir / f'{params["latent_space"]["output_meta_csv"]}.csv'
 
     with metadata_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
@@ -167,19 +168,45 @@ def save_metadata(output_dir, paths, labels, preds, classes):
 
 # UMAP으로 축소한 2D 좌표를 클래스 label 색상 기준 scatter plot으로 저장
 def save_scatter(points, labels, classes, output_path, title):
+    # 커스텀 컬러맵 제작
+    num_classes = len(classes)
+
+    base_cmap = plt.colormaps["turbo"]
+    class_colors = base_cmap(
+        np.linspace(0, 1, num_classes)
+    )
+    cmap = ListedColormap(class_colors)
+
+    # 색상 경계선 구분
+    norm = BoundaryNorm(
+        boundaries=np.arange(num_classes + 1) - 0.5,
+        ncolors=num_classes
+    )
+
+    # 도화지 세팅 및 산점도 입력
     plt.figure(figsize=(14, 10))
+
     scatter = plt.scatter(
         points[:, 0],
         points[:, 1],
         c=labels,
-        cmap="tab20",
+        cmap=cmap,
+        norm=norm,
         s=14,
         alpha=0.75
     )
+
     plt.title(title)
     plt.xlabel("component 1")
     plt.ylabel("component 2")
-    plt.colorbar(scatter, ticks=range(len(classes)))
+
+    # 우측 색상 막대
+    cbar = plt.colorbar(
+        scatter,
+        ticks=np.arange(num_classes)
+    )
+    cbar.ax.set_yticklabels(classes)
+
     plt.tight_layout()
     plt.savefig(output_path, dpi=200)
     plt.close()
@@ -199,16 +226,25 @@ def run_umap(features, params):
 
 
 def main():
+    # device
+    device = torch.device(
+        params["latent_space"]["device"]
+        if torch.cuda.is_available()
+        else "cpu"
+    )
 
+    # 1. 출력 위치 지정
     output_dir = Path(params["latent_space"]["output_dir"])
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    # 2. 클래스 추출
     classes = get_classes(params["latent_space"]["data_dir"])
     class_to_idx = {
         class_name: idx
         for idx, class_name in enumerate(classes)
     }
 
+    # 3. 전처리 데이터
     transform = get_classification_valid_transform()
     dataset = build_dataset(
         params["latent_space"]["data_dir"],
@@ -217,13 +253,7 @@ def main():
         transform
     )
 
-    # device
-    device = torch.device(
-        params["latent_space"]["device"]
-        if torch.cuda.is_available()
-        else "cpu"
-    )
-
+    # 4. 데이터 Load
     loader = DataLoader(
         dataset,
         batch_size=params["latent_space"]["batch_size"],
@@ -232,12 +262,14 @@ def main():
         pin_memory= device == "cuda"
     )
 
+    # 5. 모델 선언(swin-t)
     model = load_model(
         params["latent_space"]["checkpoint"],
         num_classes=len(classes),
         device=device
     )
 
+    # 6. 이미지 특징 추출
     features, labels, preds, paths = extract_features(
         model,
         loader,
@@ -245,19 +277,21 @@ def main():
         device
     )
 
+    # 7. 분석용 meta 데이터 저장
     # np.save(output_dir / "features.npy", features)
     # np.save(output_dir / "labels.npy", labels)
     # np.save(output_dir / "preds.npy", preds)
     if params["latent_space"]["save_meta"]:
         save_metadata(output_dir, paths, labels, preds, classes)
 
+    # 8. umap 실행 및 저장
     umap_points = run_umap(features, params)
-    np.save(output_dir / "umap_2d.npy", umap_points)
+    np.save(output_dir / f'{params["latent_space"]["output_umap_npy"]}.npy', umap_points)
     save_scatter(
         umap_points,
         labels,
         classes,
-        output_dir / "umap_by_label.png",
+        output_dir / f'{params["latent_space"]["output_umap_png"]}.png',
         "Swin-T Latent Space UMAP"
     )
 
