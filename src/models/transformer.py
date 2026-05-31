@@ -69,8 +69,8 @@ class FeedForward(nn.Module):
 
         self.linear = nn.Sequential(
                             nn.Linear(d_model, d_ff),
-                            # nn.ReLU(),
-                            nn.GELU(),
+                            nn.ReLU(),
+                            # nn.GELU(),
                             nn.Dropout(drop_p),
                             nn.Linear(d_ff, d_model)
                         )
@@ -117,8 +117,8 @@ class DecoderTransformer(nn.Module):
         self.max_len = max_len
 
         self.embedding = nn.Embedding(voca_size, d_model)
-        self.pos_enc = PositionalEncoding(d_model, max_len)
-        # self.pos_enc = nn.Embedding(max_len, d_model)
+        # self.pos_enc = PositionalEncoding(d_model, max_len)
+        self.pos_enc = nn.Embedding(max_len, d_model)
 
         self.layers = nn.ModuleList([DecoderLayer(d_model, nhead, d_ff, drop_p) for _ in range(n_layers)])
 
@@ -245,11 +245,11 @@ class DecoderTransformer(nn.Module):
 
     def forward(self, features, x):
         mask = self.make_mask(x.shape[1], x.device)
-        # pos = torch.arange(x.shape[1], device=x.device).expand_as(x) # expand_as(x) = x의 shape에 맞춰서 view해줌 (x.shape[1],) -> (B,x.shape[1])
+        pos = torch.arange(x.shape[1], device=x.device).expand_as(x) # expand_as(x) = x의 shape에 맞춰서 view해줌 (x.shape[1],) -> (B,x.shape[1])
 
         x = self.embedding(x)
-        # x = x + self.pos_enc(pos)
-        x = self.pos_enc(x)
+        x = x + self.pos_enc(pos)
+        # x = self.pos_enc(x)
 
         for layer in self.layers:
             x, dec_weights, enc_dec_weights = layer(x, features, mask)
@@ -263,11 +263,11 @@ class DecoderTransformer(nn.Module):
         finished = torch.zeros(generated.size(0), dtype=torch.bool, device=features.device) # B,
         
         for _ in range(self.max_len - 1):
-            # pos = torch.arange(generated.shape[1], device=generated.device).expand_as(generated) # expand_as(x) = x의 shape에 맞춰서 view해줌 (x.shape[1],) -> (B,x.shape[1])
+            pos = torch.arange(generated.shape[1], device=generated.device).expand_as(generated) # expand_as(x) = x의 shape에 맞춰서 view해줌 (x.shape[1],) -> (B,x.shape[1])
 
             x = self.embedding(generated) # B, 1, d_model
-            # x = x + self.pos_enc(pos)
-            x = self.pos_enc(x) # B, 1, d_model
+            x = x + self.pos_enc(pos)
+            # x = self.pos_enc(x) # B, 1, d_model
 
             mask = self.make_mask(generated.shape[1], generated.device)
 
