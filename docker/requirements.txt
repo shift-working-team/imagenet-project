@@ -329,5 +329,12 @@ zstandard @ file:///croot/zstandard_1677013143055/work
 notebook==7.5.0
 einops==0.8.2
 
+
 # 5/30 추가
 umap-learn==0.5.12
+
+# 5/31 가인 (추가 필요)
+grad-cam==1.5.5
+opencv-python==4.11.0.86
+ttach==0.0.3
+

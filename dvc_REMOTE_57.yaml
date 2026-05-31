@@ -57,17 +57,6 @@ stages:
      - preprocess
      - classification
 
-  latent_space:
-    cmd: python scripts/analyze_latent_space.py
-    deps:
-     - scripts/analyze_latent_space.py
-     - src/dataset/classification_dataset.py
-     - src/transforms/image_transform.py
-    params:
-     - data.raw_dir
-     - train
-     - classification.checkpoint
-     - latent_space
 
   evaluate_classification:
     cmd: python scripts/evaluate_classification.py

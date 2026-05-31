@@ -2,8 +2,8 @@ project:
   name: imagenet-project
 
 data:
-  raw_dir: /workspace/data/raw/
-  captions_file: /workspace/data/captioning/annotations/train.json
+  raw_dir: ./data/raw/
+  captions_file: ./data/captioning/annotations/train.json
   dataset_version: cls_raw-20260525-v2
   # dataset_version: raw-20260509-v1
 
@@ -93,22 +93,22 @@ captioning:
 
   data:
     dataset_version: cap_raw-20260524-v1
-    train_img: /workspace/data/captioning/raw/train/
-    train_caption: /workspace/data/captioning/annotations/train.json
-    val_img: /workspace/data/captioning/raw/val/
-    val_caption: /workspace/data/captioning/annotations/val.json
-    test_img: /workspace/data/captioning/raw/test/
-    test_caption: /workspace/data/captioning/annotations/test.json
+    train_img: ./data/captioning/raw/train/
+    train_caption: ./data/captioning/annotations/train.json
+    val_img: ./data/captioning/raw/val/
+    val_caption: ./data/captioning/annotations/val.json
+    test_img: ./data/captioning/raw/test/
+    test_caption: ./data/captioning/annotations/test.json
     
   tokenizer:
     min_freq: 3
     max_vocab_size: 10000
     sp_vocab_size: 2000
-    use_subword: False
-    sp_model_path: /workspace/src/dataset/sub_tokenizer2000.model
+    use_subword: True
+    sp_model_path: ./src/dataset/sub_tokenizer2000.model
 
   checkpoint:
-    save_dir: /workspace/outputs/captioning
+    save_dir: ./outputs/captioning
     resume: False
 
   heatmap:
@@ -130,6 +130,8 @@ classification:
   # model_name: vit_b_16
   model_name: swin_t
   # model_name: deit_tiny_patch16_224
+
+  final_checkpoint: ./outputs/classification/cls_swin-t_base_cls_raw-20260525-v2_lr-0005_bs-32_adamw_none_wdc-0.05_ls-0.0_best.pth
 
   epochs: 50
 
