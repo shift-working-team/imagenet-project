@@ -208,17 +208,19 @@ latent_space:
   data_dir: /workspace/data/raw
   checkpoint: /workspace/outputs/classification/cls_swin-t_base_cls_raw-20260525-v2_lr-0005_bs-32_adamw_none_wdc-0.05_ls-0.0_best.pth
   output_dir: /workspace/outputs/latent_space
-  output_umap_npy: cls_swin-t_best_umap_2d
-  output_umap_png: cls_swin-t_best_umap_by_label
-  output_meta_csv: cls_swin-t_best_metadata
-  split: all
+  output_umap_npy: cls_swin-t_best_umap_2d_test_nb10_md05
+  output_umap_png: cls_swin-t_best_umap_plt_test_nb10_md05
+  output_meta_csv: cls_swin-t_best_metadata_test_nb10_md05
+  split: test
   batch_size: 32
   num_workers: 4
   device: cuda
   seed: 42
   save_meta: true
+  use_wandb: true
+  wandb_name: latent_space_umap
 
   umap:
-    n_neighbors: 15
-    min_dist: 0.1
+    n_neighbors: 10
+    min_dist: 0.5
     metric: cosine
