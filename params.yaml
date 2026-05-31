@@ -62,7 +62,7 @@ captioning:
   decoder: transformer
   # decoder: lstm
   # decoder: gru
-  version: nhead12
+  version: dropout
 
   epochs: 25
   learning_rate: 0.0001
@@ -85,7 +85,7 @@ captioning:
 
   transformer:
     n_layers: 6
-    nhead: 12
+    nhead: 8
     d_model: 512
     drop_p: 0.1
     label_smoothing: 0
