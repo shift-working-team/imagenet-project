@@ -57,6 +57,7 @@ stages:
      - preprocess
      - classification
 
+<<<<<<< HEAD
   latent_space:
     cmd: python scripts/analyze_latent_space.py
     deps:
@@ -68,6 +69,7 @@ stages:
      - train
      - classification.checkpoint
      - latent_space
+=======
 
   evaluate_classification:
     cmd: python scripts/evaluate_classification.py
@@ -91,4 +93,5 @@ stages:
      - outputs/classification/correct_examples
      - outputs/classification/incorrect_examples
 
+>>>>>>> a79cf16 (feat: 분류 최종 모델 평가를 위한 코드 추가/수정)
 
