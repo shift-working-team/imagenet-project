@@ -46,6 +46,13 @@ logging:
 outputs:
   base_dir: outputs
 
+demo:
+  host: 0.0.0.0
+  port: 7860
+  share: false
+  top_k: 5
+  show_gradcam: true
+
 cnn:
   backbone: resnet18
   pretrained: true

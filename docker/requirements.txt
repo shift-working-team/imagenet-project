@@ -337,4 +337,6 @@ umap-learn==0.5.12
 grad-cam==1.5.5
 opencv-python==4.11.0.86
 ttach==0.0.3
-
+gradio==4.44.1
+fastapi==0.112.4
+starlette==0.38.6
