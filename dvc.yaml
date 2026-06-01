@@ -26,6 +26,8 @@ stages:
      - src/models/lstm.py
      - src/models/gru.py
      - src/transforms/image_transform.py
+     - src/utils/checkpoint_manager.py
+     - src/utils/noam_scheduler.py
      - scripts/train_captioning.py
     params:
      - train
