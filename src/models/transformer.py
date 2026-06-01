@@ -298,3 +298,62 @@ class DecoderTransformer(nn.Module):
                 # (B, seq_len-1), (B, layers, nhead, seq_len, seq_len), (B, layers, nhead, seq_len, 49)
         return generated[:,1:].tolist(), dec_atten, enc_dec_atten
     
+
+    def generate_beam(self, features, start_token, end_token, beam_size):
+        all_generated = []
+        all_dec_atten = []
+        all_enc_dec_atten = []
+        for b in range(len(features)):
+            feature = features[b].unsqueeze(0) # 1, seq, dim
+            beams = [([start_token[b].item()], 0.0, None, None)] # seq, score
+
+            for _ in range(self.max_len - 1):
+                candidates = []
+                for seq, score, prev_dec, prev_enc_dec in beams:
+                    if seq[-1] == end_token:
+                        candidates.append((seq, score, prev_dec, prev_enc_dec))
+                        continue
+                        
+                    input_seq = torch.tensor(seq, device=feature.device).unsqueeze(0) # 1, seq
+
+                    x = self.embedding(input_seq) # 1, seq, d_model
+                    x = self.pos_enc(x) # 1, seq, d_model
+
+                    mask = self.make_mask(input_seq.shape[1], input_seq.device)
+
+                    dec_atten = []
+                    enc_dec_atten = []
+                    # x->(1, 1, d_model), dec_weights->(1, nhead, seq_len, seq_len), enc_dec_weights->(1, nhead, seq_len, 49)
+                    for layer in self.layers:
+                        x, dec_weights, enc_dec_weights = layer(x, feature, mask)
+
+                        dec_atten.append(dec_weights.detach().cpu()) #  layers*[1, nhead, seq_len, seq_len]
+                        enc_dec_atten.append(enc_dec_weights.detach().cpu()) #  layers*[1, nhead, seq_len, seq_len]
+
+                    dec_atten = torch.stack(dec_atten, dim=1) # 1, layers, nhead, seq_len, seq_len
+                    enc_dec_atten = torch.stack(enc_dec_atten, dim=1) # 1, layers, nhead, seq_len, 49
+
+                    logits = self.fc_out(x) # 1, 1, voca_size
+
+                    log_probs = torch.log_softmax(logits[:, -1, :], dim=-1)
+
+                    topk_probs, topk_ids = torch.topk(log_probs, beam_size, dim=-1)
+
+                    for k in range(beam_size):
+                        token = topk_ids[0, k].item()
+                        token_score = topk_probs[0, k].item()
+
+                        candidates.append((seq + [token], score + token_score, dec_atten, enc_dec_atten))
+
+                beams = sorted(candidates, key=lambda x: x[1], reverse=True)[:beam_size]
+
+                if all(seq[-1] == end_token for seq, _, _, _ in beams):
+                    break
+            
+            best_seq, _, best_dec_atten, best_enc_dec_atten = beams[0]
+
+            all_generated.append(best_seq[1:]) # sos 제거
+            all_dec_atten.append(best_dec_atten.squeeze(0))
+            all_enc_dec_atten.append(best_enc_dec_atten.squeeze(0))
+
+        return all_generated, all_dec_atten, all_enc_dec_atten
