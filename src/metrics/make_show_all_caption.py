@@ -18,7 +18,9 @@ def make_show_all_caption(
         layer,
         device,
         use_subword,
-        sp_model_path
+        sp_model_path,
+        use_beam_search,
+        beam_size
 ):
     
     _, best_val_loss = load_checkpoint(
@@ -40,11 +42,20 @@ def make_show_all_caption(
 
         features = encoder(images, return_features=True)
 
-        generated_token, dec_atten, enc_dec_atten = decoder.generate(
+        if use_beam_search:
+            generated_token, dec_atten, enc_dec_atten = decoder.generate_beam(
                 features, # B, 49, 512
                 torch.full((features.size(0),), w2i["<sos>"], device=device), # B,
                 w2i["<eos>"],
+                beam_size
             )
+        else:
+            generated_token, dec_atten, enc_dec_atten = decoder.generate(
+                    features, # B, 49, 512
+                    torch.full((features.size(0),), w2i["<sos>"], device=device), # B,
+                    w2i["<eos>"],
+                )
+            
         all_dec_atten.extend(dec_atten) # all_B, layers, nhead, seq_len, seq_len
         all_enc_dec_atten.extend(enc_dec_atten) # all_B, layers, nhead, seq_len, 49
         all_images.extend(images.cpu())

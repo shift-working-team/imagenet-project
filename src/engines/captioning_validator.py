@@ -21,7 +21,7 @@ def validation_one_epoch(
 
             feature = encoder(images, return_features=True) # B, 49, 512
             
-            input_caption = captions[:, :-1] # B, seq_len-1
+            input_caption = captions[:, :-1] # B, seq_len-1 
             target_caption = captions[:, 1:] # B, seq_len-1
 
             outputs = decoder(feature, input_caption) # B, seq_len-1, voca_size

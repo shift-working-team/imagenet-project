@@ -32,6 +32,7 @@ from metrics.evaluate_caption import evaluate_caption
 from metrics.make_show_all_caption import make_show_all_caption
 
 from utils.checkpoint_manager import save_checkpoint, load_checkpoint
+from utils.noam_scheduler import NoamScheduler
 
 
 # params
@@ -169,6 +170,15 @@ elif optimizer_name == "adamw":
         weight_decay=params["captioning"]["transformer"]["weight_decay"]
     )
 
+scheduler = None
+if params["captioning"]["scheduler"]["use_scheduler"]:
+    scheduler = NoamScheduler(
+        optimizer,
+        d_model=params["captioning"]["transformer"]["d_model"],
+        warmup_step=params["captioning"]["scheduler"]["warmup_step"],
+        lr_scale=params["captioning"]["scheduler"]["lr_scale"],
+        )
+
 
 # loss
 criterion = nn.CrossEntropyLoss(
@@ -239,7 +249,8 @@ for epoch in range(start_epoch, params["captioning"]["epochs"]):
         train_loader,
         criterion,
         optimizer,
-        device
+        device,
+        scheduler
     )
 
     val_loss = validation_one_epoch(
@@ -293,7 +304,9 @@ all_generated_sentence, all_references = make_show_all_caption(
         params["captioning"]["heatmap"]["layer"],
         device,
         use_subword=params["captioning"]["tokenizer"]["use_subword"],
-        sp_model_path=params["captioning"]["tokenizer"]["sp_model_path"]
+        sp_model_path=params["captioning"]["tokenizer"]["sp_model_path"],
+        use_beam_search=params["captioning"]["beam_search"]["use_beam_search"],
+        beam_size=params["captioning"]["beam_search"]["beam_size"]
     )
 
 metric_result = evaluate_caption(all_generated_sentence, all_references)

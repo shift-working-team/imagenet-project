@@ -7,8 +7,9 @@ def train_one_epoch(
     loader,
     criterion,
     optimizer,
-    device
-):
+    device,
+    scheduler=None
+    ):
 
     encoder.train()
     decoder.train()
@@ -30,10 +31,11 @@ def train_one_epoch(
             target_caption.reshape(-1)
         )
 
+        if scheduler is not None:
+            scheduler.step()
+            
         optimizer.zero_grad()
-
         loss.backward()
-
         optimizer.step()
 
         total_loss += loss.item()
