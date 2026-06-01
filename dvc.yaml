@@ -83,12 +83,4 @@ stages:
      - data.dataset_version
      - classification.final_checkpoint
 
-    outs:
-     - outputs/classification/metrics.json
-     - outputs/classification/predictions.csv
-     - outputs/classification/classification_report.txt
-     - outputs/classification/confusion_matrix.png
-     - outputs/classification/correct_examples
-     - outputs/classification/incorrect_examples
-
 
