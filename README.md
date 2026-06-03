@@ -369,10 +369,12 @@ cd imagenet-project
 
 ## 6-2. Docker 환경 실행
 
-이미지
+이미지 정보
+```bash
 Name : j1seon/supercoding
 Tag : v4
 size : 60.11 GB
+```
 
 ## 6-3. Python 패키지 설치
 
@@ -514,16 +516,3 @@ W&B의 주요 사용 목적은 다음과 같다.
 * confusion matrix, latent space 결과 등 시각화 결과 기록
 
 W&B를 통해 여러 실험을 비교하면서 최종 backbone과 학습 조건을 선정하였다.
-
-## Git / GitHub
-
-Git과 GitHub는 코드 버전 관리를 위해 사용하였다.
-
-주요 사용 목적은 다음과 같다.
-
-* 기능 단위 branch 관리
-* 코드 변경 이력 추적
-* issue 기반 작업 관리
-* pull request 기반 코드 병합
-* 팀원 간 협업 관리
-
