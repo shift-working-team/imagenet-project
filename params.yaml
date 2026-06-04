@@ -69,7 +69,7 @@ captioning:
   decoder: transformer
   # decoder: lstm
   # decoder: gru
-  version: test
+  version: final
 
   epochs: 25
   learning_rate: 0.0001
@@ -94,7 +94,7 @@ captioning:
     n_layers: 6
     nhead: 8
     d_model: 512
-    drop_p: 0.1
+    drop_p: 0.3
     label_smoothing: 0
     weight_decay: 0.001
 
@@ -111,7 +111,7 @@ captioning:
     min_freq: 3
     max_vocab_size: 10000
     sp_vocab_size: 2000
-    use_subword: True
+    use_subword: False
     sp_model_path: ./src/dataset/sub_tokenizer2000.model
 
   checkpoint:
@@ -130,7 +130,7 @@ captioning:
     lr_scale: 0.5
 
   beam_search:
-    use_beam_search: False
+    use_beam_search: True
     beam_size: 3
     
 
