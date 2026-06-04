@@ -5,6 +5,7 @@ import tempfile
 from pathlib import Path
 
 import gradio as gr
+import torch
 import yaml
 
 
@@ -32,9 +33,9 @@ def get_runtime(checkpoint_path=None):
     return APP_STATE
 
 
-def predict(image, use_beam_search, beam_size):
+def predict(image):
     if image is None:
-        return "Please upload an image.", None, None
+        return "Please upload an image.", []
 
     runtime = get_runtime()
     params = runtime["params"]
@@ -47,8 +48,6 @@ def predict(image, use_beam_search, beam_size):
         features = runtime["encoder"](image_tensor, return_features=True)
         start_token = runtime["w2i"]["<sos>"]
 
-        import torch
-
         start_token = torch.full(
             (features.size(0),),
             start_token,
@@ -56,19 +55,13 @@ def predict(image, use_beam_search, beam_size):
             device=runtime["device"],
         )
 
-        if use_beam_search:
-            generated_tokens, dec_atten, enc_dec_atten = runtime["decoder"].generate_beam(
-                features,
-                start_token,
-                runtime["w2i"]["<eos>"],
-                int(beam_size),
-            )
-        else:
-            generated_tokens, dec_atten, enc_dec_atten = runtime["decoder"].generate(
-                features,
-                start_token,
-                runtime["w2i"]["<eos>"],
-            )
+        beam_size = params["captioning"]["beam_search"]["beam_size"]
+        generated_tokens, _, enc_dec_atten = runtime["decoder"].generate_beam(
+            features,
+            start_token,
+            runtime["w2i"]["<eos>"],
+            beam_size,
+        )
 
         from utils.captioning_inference import decode_tokens
 
@@ -81,36 +74,27 @@ def predict(image, use_beam_search, beam_size):
         )
 
         caption_tokens = caption.split()
-        layer = params["captioning"]["heatmap"]["layer"]
-        dec_atten_path = Path(tmp_dir) / "decoder_attention.jpg"
-        cross_atten_path = Path(tmp_dir) / "cross_attention.jpg"
+        heatmap_images = []
+        n_layers = len(runtime["decoder"].layers)
 
-        runtime["decoder"].show_dec_atten(
-            dec_atten[0],
-            caption_tokens,
-            layer,
-            str(dec_atten_path),
-        )
-        runtime["decoder"].show_cross_atten(
-            enc_dec_atten[0],
-            caption_tokens,
-            layer,
-            image_tensor.squeeze(0).detach().cpu(),
-            str(cross_atten_path),
-        )
+        for layer in range(1, n_layers + 1):
+            cross_atten_path = Path(tmp_dir) / f"cross_attention_layer_{layer}.jpg"
+            runtime["decoder"].show_cross_atten(
+                enc_dec_atten[0],
+                caption_tokens,
+                layer,
+                image_tensor.squeeze(0).detach().cpu(),
+                str(cross_atten_path),
+            )
+            heatmap_images.append((str(cross_atten_path), f"Layer {layer}"))
 
-        dec_image = str(dec_atten_path)
-        cross_image = str(cross_atten_path)
-
-        return caption, dec_image, cross_image
+        return caption, heatmap_images
     except Exception:
         raise
 
 
 def create_demo(checkpoint_path=None):
     runtime = get_runtime(checkpoint_path)
-    params = runtime["params"]
-    beam_config = params["captioning"]["beam_search"]
 
     with gr.Blocks(title="Image Captioning Demo") as demo:
         gr.Markdown("# Image Captioning Demo")
@@ -122,46 +106,28 @@ def create_demo(checkpoint_path=None):
                     type="pil",
                     label="Input Image",
                 )
-                use_beam_search = gr.Checkbox(
-                    value=bool(beam_config["use_beam_search"]),
-                    label="Use Beam Search",
-                )
-                beam_size = gr.Slider(
-                    minimum=1,
-                    maximum=10,
-                    step=1,
-                    value=int(beam_config["beam_size"]),
-                    label="Beam Size",
-                )
                 caption_button = gr.Button(
                     "Generate Caption",
                     variant="primary",
                 )
 
             with gr.Column():
+                cross_atten_output = gr.Gallery(
+                    label="Cross Attention Heatmaps",
+                    columns=2,
+                    object_fit="contain",
+                    height="auto",
+                )
                 caption_output = gr.Textbox(
                     label="Generated Caption",
                     lines=4,
                 )
-                dec_atten_output = gr.Image(
-                    type="filepath",
-                    label="Decoder Attention",
-                )
-                cross_atten_output = gr.Image(
-                    type="filepath",
-                    label="Cross Attention",
-                )
 
         caption_button.click(
             fn=predict,
-            inputs=[
-                image_input,
-                use_beam_search,
-                beam_size,
-            ],
+            inputs=[image_input],
             outputs=[
                 caption_output,
-                dec_atten_output,
                 cross_atten_output,
             ],
         )
