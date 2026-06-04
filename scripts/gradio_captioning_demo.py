@@ -74,21 +74,17 @@ def predict(image):
         )
 
         caption_tokens = caption.split()
-        heatmap_images = []
         n_layers = len(runtime["decoder"].layers)
+        cross_atten_path = Path(tmp_dir) / f"cross_attention_layer_{n_layers}.jpg"
+        runtime["decoder"].show_cross_atten(
+            enc_dec_atten[0],
+            caption_tokens,
+            n_layers,
+            image_tensor.squeeze(0).detach().cpu(),
+            str(cross_atten_path),
+        )
 
-        for layer in range(1, n_layers + 1):
-            cross_atten_path = Path(tmp_dir) / f"cross_attention_layer_{layer}.jpg"
-            runtime["decoder"].show_cross_atten(
-                enc_dec_atten[0],
-                caption_tokens,
-                layer,
-                image_tensor.squeeze(0).detach().cpu(),
-                str(cross_atten_path),
-            )
-            heatmap_images.append((str(cross_atten_path), f"Layer {layer}"))
-
-        return caption, heatmap_images
+        return caption, str(cross_atten_path)
     except Exception:
         raise
 
@@ -112,11 +108,9 @@ def create_demo(checkpoint_path=None):
                 )
 
             with gr.Column():
-                cross_atten_output = gr.Gallery(
-                    label="Cross Attention Heatmaps",
-                    columns=2,
-                    object_fit="contain",
-                    height="auto",
+                cross_atten_output = gr.Image(
+                    type="filepath",
+                    label="Cross Attention Heatmap",
                 )
                 caption_output = gr.Textbox(
                     label="Generated Caption",
