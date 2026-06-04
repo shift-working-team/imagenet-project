@@ -299,10 +299,13 @@ class DecoderTransformer(nn.Module):
         return generated[:,1:].tolist(), dec_atten, enc_dec_atten
     
 
-    def generate_beam(self, features, start_token, end_token, beam_size):
+    def generate_beam(self, features, start_token, end_token, beam_size, length_alpha=0.7):
         all_generated = []
         all_dec_atten = []
         all_enc_dec_atten = []
+        def normalized_score(seq, score):
+            return score / (len(seq) ** length_alpha)
+
         for b in range(len(features)):
             feature = features[b].unsqueeze(0) # 1, seq, dim
             beams = [([start_token[b].item()], 0.0, None, None)] # seq, score
@@ -345,7 +348,7 @@ class DecoderTransformer(nn.Module):
 
                         candidates.append((seq + [token], score + token_score, dec_atten, enc_dec_atten))
 
-                beams = sorted(candidates, key=lambda x: x[1], reverse=True)[:beam_size]
+                beams = sorted(candidates, key=lambda x: normalized_score(x[0], x[1]), reverse=True)[:beam_size]
 
                 if all(seq[-1] == end_token for seq, _, _, _ in beams):
                     break
