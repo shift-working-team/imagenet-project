@@ -15,7 +15,7 @@
 ### 캡셔닝 데이터셋
 
 - raw-20260509-v1 (초기 실험)
-- COCO Caption Dataset (최종 캡셔닝 실험)
+- cap_raw-20260524-v1 (최종 캡셔닝 실험)
 
 # 2. 분류 데이터셋 (Classification Dataset)
 
@@ -235,11 +235,46 @@ Validation과 Test 데이터에는 augmentation을 적용하지 않는다.
 
 캡셔닝 실험은 초기 raw-20260509-v1 데이터셋을 사용하였으나, 캡션 품질 개선과 장면(Scene) 중심 데이터 확보를 위해 최종적으로 COCO Caption Dataset을 사용하였다.
 
+### 3.1 데이터셋 기본 정보
+
 | 항목 | 내용 |
 | --- | --- |
 | 데이터셋 이름 | COCO Caption Dataset |
+| 데이터셋 버전 | cap_raw-20260524-v1 |
 | 사용 목적 | Image Captioning 학습 및 평가 |
 | 클래스 수 | 80개 |
 | 이미지  | Train 7,744 / Val 1,660 / Test 1,660 |
 | 캡션  | 이미지당 5개 |
 | 최소 해상도 기준 | 256px 이상 |
+
+### 3.2 클래스 구성
+
+| 카테고리      | 클래스 수 | 클래스                                                                                                             |
+| --------- | ----- | --------------------------------------------------------------------------------------------------------------- |
+| 사람        | 1     | person                                                                                                          |
+| 탈것        | 8     | bicycle, car, motorcycle, airplane, bus, train, truck, boat                                                     |
+| 교통 시설물    | 5     | traffic light, fire hydrant, stop sign, parking meter, bench                                                    |
+| 동물        | 10    | bird, cat, dog, horse, sheep, cow, elephant, bear, zebra, giraffe                                               |
+| 패션 및 잡화   | 5     | backpack, umbrella, handbag, tie, suitcase                                                                      |
+| 스포츠 및 레저  | 10    | frisbee, skis, snowboard, sports ball, kite, baseball bat, baseball glove, skateboard, surfboard, tennis racket |
+| 주방용품 및 식기 | 7     | bottle, wine glass, cup, fork, knife, spoon, bowl                                                               |
+| 음식 및 식재료  | 10    | banana, apple, sandwich, orange, broccoli, carrot, hot dog, pizza, donut, cake                                  |
+| 가구        | 4     | chair, couch, bed, dining table                                                                                 |
+| 전자기기      | 6     | tv, laptop, mouse, remote, keyboard, cell phone                                                                 |
+| 주방 가전     | 5     | microwave, oven, toaster, sink, refrigerator                                                                    |
+| 생활용품      | 9     | potted plant, toilet, book, clock, vase, scissors, teddy bear, hair drier, toothbrush                           |
+
+### 3.3 데이터 폴더 구조
+
+```
+data/
+└── captioning/
+    ├── raw/
+    │   ├── train/
+    │   ├── val/
+    │   └── test/
+    ├── annotations/
+        ├── train.json
+        ├── val.json
+        ├── test.json
+```
