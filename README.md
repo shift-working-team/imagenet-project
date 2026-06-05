@@ -16,8 +16,8 @@
 
 | 항목             | 값                   |
 | -------------- | ------------------- |
+| Dataset           | cls_raw-20260525-v2 |
 | 최종 모델          | Swin-T              |
-| 데이터셋           | cls_raw-20260525-v2 |
 | Test Accuracy  | 89.64%              |
 | Test Macro F1  | 89.61%              |
 | Test Precision | 90.01%              |
@@ -27,13 +27,13 @@
 
 | 항목        | 값                 |
 | --------- | ----------------- |
+| Dataset   | cap_raw-20260524-v1 |
 | Encoder   | Swin-T            |
 | Decoder   | Transformer       |
 | Tokenizer | Word-level        |
-| 탐색 방법     | Beam Search (k=5) |
-| BLEU-1    | (최종 결과 입력)        |
-| BLEU-4    | (최종 결과 입력)        |
-| CIDEr     | (최종 결과 입력)        |
+| 탐색 방법     | Beam Search (k=3) |
+| BLEU-4    | 0.1997        |
+| CIDEr     | 0.6054        |
 
 ---
 
@@ -41,64 +41,21 @@
 
 ### 이미지 분류
 
-- CNN Backbone 비교
-  - ResNet18
-  - EfficientNet-B0
-  - ConvNeXt-Tiny
-  - MobileNetV3-Small
-
-- Transformer Backbone 비교
-  - ViT-B/16
-  - Swin-T
-  - DeiT-Tiny
-
-- 데이터셋 정제 전/후 성능 비교
-- Augmentation 실험 (MixUp, CutMix)
-- Hyperparameter Tuning
-  - Learning Rate
-  - Weight Decay
-  - Scheduler
-  - Label Smoothing
-
-- Confusion Matrix 생성
+- 이미지 분류 모델 학습
 - Grad-CAM 시각화
 - UMAP 기반 Latent Space 분석
-- Gradio 기반 추론 데모
+- Gradio 추론 데모
 
 ### 이미지 캡셔닝
 
-- Decoder 비교
-  - LSTM
-  - GRU
-  - Transformer
-
-- Encoder 비교
-  - ResNet18
-  - ViT
-  - Swin-T
-
-- Tokenizer 비교
-  - Word-level
-  - Subword-level
-
-- Transformer 구조 실험
-  - Layer 수
-  - Hidden Dimension
-  - Multi-Head Attention
-
-- 정규화 및 최적화 실험
-  - Dropout
-  - Weight Decay
-  - Learning Rate
-  - Scheduler
-
-- Greedy Search / Beam Search 비교
-- BLEU 및 CIDEr 평가
-- Gradio 기반 캡션 생성 데모
+- 이미지 기반 캡션 생성
+- BLEU / CIDEr 평가
+- Beam Search 기반 문장 생성
+- Attention Heatmap 분석
+- Gradio 데모
 
 ### 데이터 및 실험 관리
 
-* 데이터 수집 및 정제
 * DVC 기반 데이터 버전 관리
 * W&B 기반 실험 추적
 * Docker 기반 개발 환경 통일
@@ -160,23 +117,87 @@ root/
 ### 이미지 분류
 
 1. ResNet18 Baseline 구축
+
 2. CNN Backbone 비교
+  - ResNet18
+  - EfficientNet-B0
+  - ConvNeXt-Tiny
+  - MobileNetV3-Small
+
 3. Transformer Backbone 비교
-4. 최종 Backbone 선정
-5. 데이터셋 정제 후 재검증
-6. Augmentation 비교
+  - ViT-B/16
+  - Swin-T
+  - DeiT-Tiny
+
+4. Best Backbone 선정
+  - CNN Best vs Transformer Best
+  - Seed(42, 7, 21) 반복 실험 수행
+
+5. 데이터셋 정제 전/후 성능 비교
+  - raw-20260509-v1
+  - cls_raw-20260525-v2
+
+6. Augmentation 실험
+  - MixUp
+  - CutMix
+
 7. Hyperparameter Tuning
-8. 최종 평가
+  - Learning Rate
+  - Batch Size
+  - Scheduler
+  - Weight Decay
+  - Label Smoothing
+
+8. 최종 모델 평가
+  - Accuracy
+  - Macro F1
+  - Precision / Recall
+  - Confusion Matrix
+  - Grad-CAM
+  - UMAP
 
 ### 이미지 캡셔닝
 
-1. Decoder 비교 (LSTM / GRU / Transformer)
+1. Decoder Baseline 선정
+  - LSTM
+  - GRU
+  - Transformer
+
 2. Encoder 비교
+  - ResNet18
+  - ViT
+  - Swin-T
+
 3. Tokenizer 비교
-4. 모델 구조 개선
-5. Optimization 실험
-6. Beam Search 평가
-7. 최종 평가
+  - Word-level
+  - Subword-level
+
+4. Transformer 구조 실험
+  - Layer 수
+  - Hidden Dimension
+  - Multi-Head Attention
+  - ReLU, GELU 비교
+  - Positional 비교 (sinusoidal, Learnable)
+
+5. 정규화 및 일반화 성능 개선
+  - Dropout
+  - Weight Decay
+  - Label Smoothing
+
+6. 최적화 실험
+  - Learning Rate
+  - Learning Rate Scheduler
+  - Batch Size
+
+7. Decoding 비교
+  - Greedy Search
+  - Beam Search
+
+8. 최종 평가
+  - 생성 캡션 정성 평가
+  - BLEU 및 CIDEr 평가
+  - Attention Heatmap
+  - Gradio 기반 캡션 생성 데모
 
 ---
 
