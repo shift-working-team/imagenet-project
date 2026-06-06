@@ -52,7 +52,7 @@
 - BLEU / CIDEr 평가
 - Beam Search 기반 문장 생성
 - Attention Heatmap 분석
-- Gradio 데모
+- Gradio 추론 데모
 
 ### 데이터 및 실험 관리
 
@@ -63,8 +63,6 @@
 ---
 
 ## 4. 프로젝트 구조
-
-## 프로젝트 구조
 
 ```text
 root/
@@ -83,8 +81,7 @@ root/
 │   ├── train_classification.py
 │   ├── train_captioning.py
 │   ├── evaluate_classification.py
-│   ├── gradio_classification_demo.py
-│   └── gradio_captioning_demo.py
+│   └── app.py
 ├── outputs/
 ├── docker/
 ├── params.yaml
@@ -210,6 +207,18 @@ git clone https://github.com/Mini-imagenet-project/imagenet-project.git
 cd imagenet-project
 ```
 
+### docker 이미지 pull
+
+```bash
+docker pull j1seon/supercoding:v4
+```
+
+### docker 컨테이너 실행
+
+```bash
+docker run --shm-size=8g -it --gpus all --name 컨테이너이름 -v "본인절대경로:/workspace" j1seon/supercoding:v4 /bin/bash
+```
+
 ### 라이브러리 설치
 
 ```bash
@@ -226,24 +235,22 @@ dvc pull
 
 ```bash
 python scripts/train_classification.py
+or
+dvc repro train_classification
 ```
 
 ### 이미지 캡셔닝 학습
 
 ```bash
 python scripts/train_captioning.py
+or
+dvc repro train_captioning
 ```
 
-### 이미지 분류 데모 실행
+### 이미지 분류 & 캡셔닝 추론 데모 
 
 ```bash
-python scripts/gradio_classification_demo.py
-```
-
-### 이미지 캡셔닝 데모 실행
-
-```bash
-python scripts/gradio_captioning_demo.py
+python app.py
 ```
 
 ---
