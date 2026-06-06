@@ -266,8 +266,8 @@ python scripts/app.py
 | 항목 | 버전 |
 | --- | --- |
 | Python | 3.10 |
-| PyTorch | 2.1.0+cu128 |
-| CUDA | 12.x |
+| PyTorch | 2.11.0+cu128 |
+| CUDA | 12.9 |
 
 ### Docker
 
