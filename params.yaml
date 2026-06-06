@@ -52,6 +52,7 @@ demo:
   share: false
   top_k: 5
   show_gradcam: true
+  class_names : [airplane, apple, aster, banana, bicycle, bracelet, bulldog, bus, butterfly, car, carrot, cucumber, cup-cake, daisy, dandelion, dumpling, earrings, elephant, glasses, golden-retriever, hamburger, horse, iris, lavender, lily, marigold, motorcycle, necklace, orange, orchid, pants, pasta, penguin, persian-cat, pizza, rose, salad, sandwich, sheep, siamese-cat, sneakers, squirrel, steak, strawberry, sunflower, sushi, tomato, t-shirt, tulip, waffle]
 
 cnn:
   backbone: resnet18
@@ -116,6 +117,7 @@ captioning:
 
   checkpoint:
     save_dir: ./outputs/captioning
+    final_checkpoint: swin-transformer_final_best.pt
     resume: False
 
   heatmap:
