@@ -234,28 +234,40 @@ dvc pull
 ### 이미지 분류 학습
 
 ```bash
+# 직접 학습 실행
 python scripts/train_classification.py
-or
+
+# DVC 파이프라인으로 실행
 dvc repro train_classification
 ```
 
 ### 이미지 캡셔닝 학습
 
 ```bash
+# 직접 학습 실행
 python scripts/train_captioning.py
-or
+
+# DVC 파이프라인으로 실행
 dvc repro train_captioning
 ```
 
 ### 이미지 분류 & 캡셔닝 추론 데모 
 
 ```bash
-python app.py
+python scripts/app.py
 ```
 
 ---
 
 ## 8. MLOps 및 실험 관리
+
+## 개발 환경
+
+| 항목 | 버전 |
+| --- | --- |
+| Python | 3.10 |
+| PyTorch | 2.1.0+cu128 |
+| CUDA | 12.x |
 
 ### Docker
 
