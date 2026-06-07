@@ -1,18 +1,12 @@
-FROM j1seon/supercoding:v3
-
-RUN pip uninstall -y torch torchvision torchaudio
+FROM j1seon/supercoding:v4
 
 RUN python -m pip install \
-    torch torchvision torchaudio \
-    --index-url https://download.pytorch.org/whl/cu128
-
-RUN python -m pip install \
-    torchmetrics==1.9.0 \
-    scikit-learn==1.7.2 \
-    ipykernel==7.2.0 \
-    jupyterlab==4.5.6 \
-    gradio==5.49.1
-
-RUN python -c "import torch; print(torch.__version__)"
-RUN python -c "import torch; print(torch.version.cuda)"
-RUN python -c "import torchmetrics, sklearn, torchvision, torchaudio"
+    notebook==7.5.0 \
+    einops==0.8.2 \
+    umap-learn==0.5.12 \
+    grad-cam==1.5.5 \
+    opencv-python==4.11.0.86 \
+    ttach==0.0.3 \
+    gradio==4.44.1 \
+    fastapi==0.112.4 \
+    starlette==0.38.6
