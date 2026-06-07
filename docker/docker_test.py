@@ -230,7 +230,102 @@ print("jupyterlab Version:", jupyterlab.__version__)
 print("✅ jupyterlab OK")
 
 # =========================================================
+print("\n[12] Notebook")
 
+import notebook
+
+print("Notebook Version:", notebook.__version__)
+
+print("✅ Notebook OK")
+
+# =========================================================
+
+print("\n[13] Einops")
+
+from einops import rearrange
+
+x = torch.randn(2, 3, 4)
+y = rearrange(x, "b c h -> b h c")
+
+print("Einops Output Shape:", y.shape)
+
+print("✅ Einops OK")
+
+# =========================================================
+
+print("\n[14] UMAP")
+
+import umap
+
+reducer = umap.UMAP(
+    n_neighbors=5,
+    n_components=2,
+    random_state=42
+)
+
+dummy = np.random.rand(20, 8)
+
+embedding = reducer.fit_transform(dummy)
+
+print("UMAP Output Shape:", embedding.shape)
+
+print("✅ UMAP OK")
+
+# =========================================================
+
+print("\n[15] Grad-CAM")
+
+from pytorch_grad_cam import GradCAM
+
+print("GradCAM Class:", GradCAM)
+
+print("✅ Grad-CAM OK")
+
+# =========================================================
+
+print("\n[16] TTACH")
+
+import ttach as tta
+
+transforms = tta.aliases.flip_transform()
+
+print("TTACH Transform:", transforms)
+
+print("✅ TTACH OK")
+
+# =========================================================
+
+print("\n[17] Gradio")
+
+import gradio as gr
+
+print("Gradio Version:", gr.__version__)
+
+print("✅ Gradio OK")
+
+# =========================================================
+
+print("\n[18] FastAPI")
+
+import fastapi
+
+app = fastapi.FastAPI()
+
+print("FastAPI Version:", fastapi.__version__)
+
+print("✅ FastAPI OK")
+
+# =========================================================
+
+print("\n[19] Starlette")
+
+import starlette
+
+print("Starlette Version:", starlette.__version__)
+
+print("✅ Starlette OK")
+
+# =========================================================
 print("\n" + "=" * 60)
 print("🎉 ALL IMPORTS & BASIC FUNCTION TESTS PASSED")
 print("=" * 60)
