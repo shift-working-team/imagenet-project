@@ -210,13 +210,13 @@ cd imagenet-project
 ### docker 이미지 pull
 
 ```bash
-docker pull j1seon/supercoding:v4
+docker pull j1seon/supercoding:v5
 ```
 
 ### docker 컨테이너 실행
 
 ```bash
-docker run --shm-size=8g -it --gpus all --name 컨테이너이름 -v "본인절대경로:/workspace" j1seon/supercoding:v4 /bin/bash
+docker run --shm-size=8g -it --gpus all --name 컨테이너이름 -v "본인절대경로:/workspace" j1seon/supercoding:v5 /bin/bash
 ```
 
 ### 라이브러리 설치
@@ -292,7 +292,18 @@ python scripts/app.py
 
 ---
 
-## 9. 팀 구성
+### 9. 참고 자료
+1. 실험 로그(wandb)
+   - URL : https://wandb.ai/super-shift-working/imagenet-project
+2. 최종 가중치 및 시연 영상(Dagshub)
+   - URL : https://dagshub.com/Shift-working/imagenet-project
+   - 분류 모델 가중치 경로 : root/outputs/classification/cls_swin-t_base_cls_raw-20260525-v2_lr-0005_bs-32_adamw_none_wdc-0.05_ls-0.0_best.pth
+   - 캡션 모델 가중치 경로 : root/outputs/captioning/swin-transformer_final_best.pt
+   - 시연 영상 경로 : root/outputs/슈퍼코딩 2차 프로젝트 시연 영상.mp4
+
+---
+
+## 10. 팀 구성
 
 | 역할            | 담당 |
 | ------------- | --         |
