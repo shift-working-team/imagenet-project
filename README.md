@@ -300,6 +300,8 @@ python scripts/app.py
    - 분류 모델 가중치 경로 : root/outputs/classification/cls_swin-t_base_cls_raw-20260525-v2_lr-0005_bs-32_adamw_none_wdc-0.05_ls-0.0_best.pth
    - 캡션 모델 가중치 경로 : root/outputs/captioning/swin-transformer_final_best.pt
    - 시연 영상 경로 : root/outputs/슈퍼코딩 2차 프로젝트 시연 영상.mp4
+3. 배포(Hugging Face space)
+   - URL : https://huggingface.co/spaces/ImAMJayKIM/Mini-ImageNet
 
 ---
 
